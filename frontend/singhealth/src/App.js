@@ -1,13 +1,18 @@
 import logo from './logo.svg';
 import './App.css';
+import SignIn from "./SignIn";
+import { ThemeProvider } from '@material-ui/core';
+import theme from "./theme";
 
-function App() {
+const App = () => {
   return (
+    <ThemeProvider theme = {theme}>
     <div className="App">
+      <SignIn />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          MAIN APP SCREEN
+          TEST POST PLS IGNORE
         </p>
         <a
           className="App-link"
@@ -19,6 +24,7 @@ function App() {
         </a>
       </header>
     </div>
+    </ThemeProvider>
   );
 }
 
