@@ -3,29 +3,89 @@ import './App.css';
 import SignIn from "./SignIn";
 import { ThemeProvider } from '@material-ui/core';
 import theme from "./theme";
+import TaskBar from "./TaskBar";
+import Home from "./Home";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 const App = () => {
   return (
+    <Router>
     <ThemeProvider theme = {theme}>
     <div className="App">
-      <SignIn />
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          TEST POST PLS IGNORE
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TaskBar />
+      <Switch>
+       <Route path="/about">
+         {/* <About /> */}
+       </Route>
+       <Route path="/dashboard">
+         <SignIn />
+         {/* <Users /> */}
+       </Route>
+       <Route path="/home">
+         <Home />
+       </Route>
+      </Switch>
     </div>
+    
     </ThemeProvider>
+    </Router>
   );
 }
 
 export default App;
+
+// import React from "react";
+
+
+// export default function App() {
+//   return (
+//     <Router>
+//       <div>
+//         <nav>
+//           <ul>
+//             <li>
+          // <Link to="/">Home</Link>
+//             </li>
+//             <li>
+          // <Link to="/about">About</Link>
+//             </li>
+//             <li>
+          // <Link to="/users">Users</Link>
+//             </li>
+//           </ul>
+//         </nav>
+
+//         {/* A <Switch> looks through its children <Route>s and
+//             renders the first one that matches the current URL. */}
+//         <Switch>
+//           <Route path="/about">
+//             <About />
+//           </Route>
+//           <Route path="/users">
+//             <Users />
+//           </Route>
+//           <Route path="/">
+//             <Home />
+//           </Route>
+//         </Switch>
+//       </div>
+//     </Router>
+//   );
+// }
+
+// function Home() {
+//   return <h2>Home</h2>;
+// }
+
+// function About() {
+//   return <h2>About</h2>;
+// }
+
+// function Users() {
+//   return <h2>Users</h2>;
+// }
