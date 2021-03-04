@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function RecipeReviewCard() {
+export default function DirectoryCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -74,8 +74,8 @@ export default function RecipeReviewCard() {
             <ExpandMoreIcon />
           </IconButton>
         }
-        title="Coffee Bean"
-        subheader="#03-616"
+        title={props.store}
+        subheader={props.location}
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
@@ -93,28 +93,28 @@ export default function RecipeReviewCard() {
                         <Grid item xs = {1}><LocationOnRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="p">#03-616</Typography>
+                        <Typography variant="p">{props.location}</Typography>
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
                         <Grid item xs = {1}><PhoneRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="p">6123 4567</Typography>
+                        <Typography variant="p">{props.phone}</Typography>
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
                         <Grid item xs = {1}><MailRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="p">worsethanstarbucks@coffeebean.com</Typography>
+                        <Typography variant="p">{props.email}</Typography>
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
                         <Grid item xs = {1}><DescriptionRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="p">Contract expires: 10/10/21</Typography>
+                        <Typography variant="p">{props.tenancy}</Typography>
                         </Grid>
                 </Grid>
             </Grid>
