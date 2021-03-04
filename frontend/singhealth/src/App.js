@@ -5,6 +5,7 @@ import { ThemeProvider } from '@material-ui/core';
 import theme from "./theme";
 import TaskBar from "./TaskBar";
 import Home from "./Home";
+import Directory from "./Directory"
 import {
   BrowserRouter as Router,
   Switch,
@@ -18,15 +19,16 @@ const App = () => {
     <ThemeProvider theme = {theme}>
     <div className="App">
       <Switch>
-        <Route path="/about">
+      <Route path="/home">
           <TaskBar />
+          <Home />
         </Route>
         <Route path="/dashboard">
           <TaskBar />
         </Route>
-        <Route path="/home">
+        <Route path="/directory">
           <TaskBar />
-          <Home />
+          <Directory />
         </Route>
         <Route path="/">
           <SignIn />
