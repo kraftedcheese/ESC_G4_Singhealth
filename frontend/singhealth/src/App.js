@@ -17,18 +17,20 @@ const App = () => {
     <Router>
     <ThemeProvider theme = {theme}>
     <div className="App">
-      <TaskBar />
       <Switch>
-       <Route path="/about">
-         {/* <About /> */}
-       </Route>
-       <Route path="/dashboard">
-         <SignIn />
-         {/* <Users /> */}
-       </Route>
-       <Route path="/home">
-         <Home />
-       </Route>
+        <Route path="/about">
+          <TaskBar />
+        </Route>
+        <Route path="/dashboard">
+          <TaskBar />
+        </Route>
+        <Route path="/home">
+          <TaskBar />
+          <Home />
+        </Route>
+        <Route path="/">
+          <SignIn />
+        </Route>
       </Switch>
     </div>
     
