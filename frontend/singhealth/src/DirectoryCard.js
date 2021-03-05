@@ -20,6 +20,8 @@ import LocationOnRoundedIcon from '@material-ui/icons/LocationOnRounded';
 import PhoneRoundedIcon from '@material-ui/icons/PhoneRounded';
 import MailRoundedIcon from '@material-ui/icons/MailRounded';
 import DescriptionRoundedIcon from '@material-ui/icons/DescriptionRounded';
+import CreateRoundedIcon from '@material-ui/icons/CreateRounded';
+import Popup from "./DirectoryForm";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -48,10 +50,17 @@ const useStyles = makeStyles((theme) => ({
 export default function DirectoryCard(props) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
+  const [openPopup, setOpenPopup] = React.useState(false)
+  const [recordForEdit, setRecordForEdit] = React.useState(null) //can't remember what this is
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  const openInPopup = item => {
+    setRecordForEdit(item)
+    setOpenPopup(true)
+  }
 
   return (
     <Card className={classes.root}>
@@ -95,6 +104,7 @@ export default function DirectoryCard(props) {
                         <Grid item xs = {10}>
                         <Typography variant="p">{props.location}</Typography>
                         </Grid>
+                        
                 </Grid>
                 <Grid item container direction='row'>
                         <Grid item xs = {1}><PhoneRoundedIcon /></Grid>
@@ -117,9 +127,26 @@ export default function DirectoryCard(props) {
                         <Typography variant="p">{props.tenancy}</Typography>
                         </Grid>
                 </Grid>
+                <Grid item container direction='row'>
+                        <Grid item xs = {10}></Grid>
+                        <Grid item xs = {1}>
+                          <IconButton  onClick={() => { setOpenPopup(true); setRecordForEdit(null); }}>
+                            <CreateRoundedIcon />
+                          </IconButton>
+                        </Grid>
+                </Grid>
             </Grid>
         </CardContent>
       </Collapse>
+      <Popup
+        title="Employee Form"
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+       >
+        {/* <EmployeeForm
+            recordForEdit={recordForEdit}
+            addOrEdit={addOrEdit} /> */}
+      </Popup>
     </Card>
   );
 }
