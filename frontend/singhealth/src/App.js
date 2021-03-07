@@ -5,7 +5,7 @@ import { ThemeProvider } from '@material-ui/core';
 import theme from "./theme";
 import TaskBar from "./TaskBar";
 import Home from "./Home";
-import Directory from "./Directory"
+import Directory from "./Directory/Directory"
 import {
   BrowserRouter as Router,
   Switch,
