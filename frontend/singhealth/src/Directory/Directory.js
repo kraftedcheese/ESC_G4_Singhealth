@@ -21,44 +21,36 @@ import AddIcon from '@material-ui/icons/Add';
 import * as tenantService from './tenantService';
 import DirectoryForm from './DirectoryForm';
 import Popup from './Popup';
+import Frame from '../Frame';
 
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: '5px 4px',
-    height: '100vh',
-  },
   fab: {
     position: 'fixed',
     bottom: theme.spacing(5),
     right: theme.spacing(5),
-  },
-  roundcard:{
-    borderRadius: '100px 100px 0px 0px',
-    padding: theme.spacing(4,8),
-    height: '100vh',
-  },
+  }
 }));
 
-const storeinfo = [
-    {tenant_id: 1,
-    name: 'Coffee Bean', 
-    unit: '03-616', 
-    phone: '6123 4567', 
-    email: 'worsethanstarbucks@coffeebean.com',
-    institution: 'SGH',
-    fnb: true,
-    tenancyEndDate: '10/10/21'},
+// const storeinfo = [
+//     {tenant_id: 1,
+//     name: 'Coffee Bean', 
+//     unit: '03-616', 
+//     phone: '6123 4567', 
+//     email: 'worsethanstarbucks@coffeebean.com',
+//     institution: 'SGH',
+//     fnb: true,
+//     tenancyEndDate: '10/10/21'},
 
-    {tenant_id: 2,
-    name: 'Starbucks', 
-    unit: '03-404', 
-    phone: '6888 8888', 
-    email: 'betterthancoffeebean@starbucks.com',
-    institution: 'CGH',
-    fnb: true,
-    tenancyEndDate: '06/02/22'},
-];
+//     {tenant_id: 2,
+//     name: 'Starbucks', 
+//     unit: '03-404', 
+//     phone: '6888 8888', 
+//     email: 'betterthancoffeebean@starbucks.com',
+//     institution: 'CGH',
+//     fnb: true,
+//     tenancyEndDate: '06/02/22'},
+// ];
 
 export default function Directory() {
   const classes = useStyles(useTheme);
@@ -66,11 +58,15 @@ export default function Directory() {
   const [openPopup, setOpenPopup] = useState(false)
   const [recordForEdit, setRecordForEdit] = useState(null)
 
+  const openInPopup = () => {
+    return
+  }
+
   const addOrEdit = (tenant, resetForm) => {
     if (tenant.tenant_id == 0)
-            tenantService.insertTenant(tenant)
-        else
-            tenantService.updateTenant(tenant)
+      tenantService.insertTenant(tenant)
+    else
+      tenantService.updateTenant(tenant)
     resetForm()
     setRecordForEdit(null)
     setOpenPopup(false)
@@ -78,27 +74,28 @@ export default function Directory() {
   }
 
   const DirectoryList = 
-    records.map(store => (
-      <Grid item xs={12} sm={6} md={3}>
+    records.map(item => {
+      return {
+        ...item,
+        addOrEdit: addOrEdit
+      }
+    })
+    .map(store => (
+      <Grid item xs={12} sm={6} md={4}>
           <DirectoryCard {...store} />
       </Grid>
     ))
-
+      
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <Grid container spacing={2} direction='column' alignItems='center'>
+    <Frame title="Directory">
+    <div>
+      <Grid container xs={12} spacing={2} direction='column' alignItems='center'>
         <Grid item ></Grid>
         <Grid item ></Grid>
-        <Grid item xs={12} wrap='wrap'>
-            <Typography variant="h3">
-                Directory
-            </Typography>
-        </Grid>
-        <Grid item xs={12}><SearchBar /></Grid>
+        <Grid item xs={10}><SearchBar /></Grid>
         <Grid item ></Grid>
         <Grid item ></Grid>
-        <Grid container xs={12} spacing={5} classname={classes.roundcard} component={Paper} justify='center'>
+        <Grid container xs={12} spacing={5} justify='center' alignitems='center'>
             { DirectoryList }
         </Grid> 
       </Grid>
@@ -106,16 +103,18 @@ export default function Directory() {
       <Fab color="primary" className={classes.fab} aria-label="add">
         <AddIcon onClick={() => { setOpenPopup(true); setRecordForEdit(null); }} />
       </Fab>
-      
+
       <Popup
-        title="Add Tenant"
-        openPopup={openPopup}
-        setOpenPopup={setOpenPopup}
-       >
-        <DirectoryForm
-            recordForEdit={recordForEdit}
-            addOrEdit={addOrEdit} />
+          title="Add Tenant"
+          openPopup={openPopup}
+          setOpenPopup={setOpenPopup}
+        >
+          <DirectoryForm
+              recordForEdit={recordForEdit}
+              addOrEdit={addOrEdit} />
       </Popup>
+
     </div>
+    </Frame>
   );
 }

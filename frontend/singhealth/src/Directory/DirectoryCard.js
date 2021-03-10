@@ -60,19 +60,6 @@ export default function DirectoryCard(props) {
     setExpanded(!expanded);
   };
 
-  // const edit = (tenant, resetForm) => {
-  //   tenantService.updateTenant(tenant)
-  //   resetForm()
-  //   setRecordForEdit(null)
-  //   setOpenPopup(false)
-  //   setRecords(tenantService.getAllTenants())
-  // }
-
-  const openInPopup = item => {
-    setRecordForEdit(item)
-    setOpenPopup(true)
-  }
-
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -138,12 +125,12 @@ export default function DirectoryCard(props) {
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
-                        <Grid item xs = {10}></Grid>
                         <Grid item xs = {1}>
                           <IconButton  onClick={() => { setOpenPopup(true); setRecordForEdit(props); }}>
                             <CreateRoundedIcon />
                           </IconButton>
                         </Grid>
+                        <Grid item xs = {11}></Grid>
                 </Grid>
             </Grid>
         </CardContent>

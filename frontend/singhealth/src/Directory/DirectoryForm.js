@@ -70,7 +70,7 @@ export default function DirectoryForm(props) {
     return (
         <Form onSubmit={handleSubmit}>
             <Grid container>
-                <Grid item xs={6}>
+                <Grid item xs={12} md={6} >
                     <TextField
                         name="name"
                         label="Name"
@@ -100,7 +100,7 @@ export default function DirectoryForm(props) {
                     />
 
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} md={6}>
                     <RadioGroup
                         name="fnb"
                         label=""
@@ -114,12 +114,11 @@ export default function DirectoryForm(props) {
                         value={values.institution}
                         onChange={handleInputChange}
                         options={tenantService.getInstitutionCollection()}
-                        error={errors.institution}
                     />
                     <DatePicker
                         name="tenancyEndDate"
                         label="Tenancy End Date"
-                        value={values.hireDate}
+                        value={values.tenancyEndDate}
                         onChange={handleInputChange}
                     />
                     <div>

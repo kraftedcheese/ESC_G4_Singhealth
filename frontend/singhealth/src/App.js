@@ -6,6 +6,8 @@ import theme from "./theme";
 import TaskBar from "./TaskBar";
 import Home from "./Home";
 import Directory from "./Directory/Directory"
+import Frame from "./Frame";
+import NewAudit from "./NewAudit";
 import {
   BrowserRouter as Router,
   Switch,
@@ -27,8 +29,13 @@ const App = () => {
           <TaskBar />
         </Route>
         <Route path="/directory">
-          <TaskBar />
           <Directory />
+        </Route>
+        <Route path="/newaudit">
+          <NewAudit />
+        </Route>
+        <Route path="/frame">
+          <Frame />
         </Route>
         <Route path="/">
           <SignIn />

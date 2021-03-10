@@ -4,15 +4,15 @@ const KEYS = {
 }
 
 export const getInstitutionCollection = () => ([
-    { id: '1', title: 'CGH' },
-    { id: '2', title: 'KKH' },
-    { id: '3', title: 'SGH' },
-    { id: '4', title: 'SKH' },
-    { id: '5', title: 'NCCS' },
-    { id: '6', title: 'NHCS' },
-    { id: '7', title: 'BVH' },
-    { id: '8', title: 'OCH' },
-    { id: '9', title: 'Academia' },
+    { title: 'CGH' },
+    { title: 'KKH' },
+    { title: 'SGH' },
+    { title: 'SKH' },
+    { title: 'NCCS' },
+    { title: 'NHCS' },
+    { title: 'BVH' },
+    { title: 'OCH' },
+    { title: 'Academia' },
 ])
 
 export function insertTenant(data) {
@@ -45,7 +45,6 @@ export function getAllTenants() {
     //map institutionID to institution title
     let institutions = getInstitutionCollection();
     return tenants.map(x => ({
-        ...x,
-        institution: institutions[x.tenant_id - 1].title
+        ...x
     }))
 }
