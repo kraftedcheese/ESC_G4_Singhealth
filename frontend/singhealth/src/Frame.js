@@ -10,14 +10,14 @@ import TaskBar from './TaskBar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor:'e9e9e9',
+    backgroundColor:'#f06d1a',
   },
   title: {
     position: 'absolute',
     top: '100px'
   },
   roundcard:{
-    borderRadius: '50px 50px 0px 0px',
+    borderRadius: '25px 25px 0px 0px',
     position: 'absolute',
     top: '200px',
     minHeight: 'calc(100vh)',
@@ -26,28 +26,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//changes the background color, not sure why react doesn't allow you to
+document.body.style.backgroundColor = "#f06d1a";
 
 export default function Frame(props) {
-  const classes = useStyles(useTheme);
+  const classes = useStyles();
 
   return (
     <div>
-    <CssBaseline />    
-    <TaskBar />
-    <Grid container component="main" className={classes.root}>
-      <Grid container alignItems='top' justify='center' item>
-        <Typography component="h1" variant="h3" className={classes.title}>
-            {props.title}
-          </Typography>
-      </Grid>
-      <Grid container 
-        justify='center' 
-        component={Paper} 
-        className={classes.roundcard} 
-        elevation={3}>
-            {props.children}
-      </Grid>
-    </Grid>
+        <CssBaseline />    
+        <TaskBar />
+        <Grid container component="main">
+        <Grid container alignItems='top' justify='center' item>
+            <Typography component="h1" variant="h2" color="secondary" className={classes.title}>
+                {props.title}
+            </Typography>
+        </Grid>
+        <Grid container 
+            justify='center' 
+            component={Paper} 
+            className={classes.roundcard} 
+            elevation={3}>
+                {props.children}
+        </Grid>
+        </Grid>
     </div>
   );
 }

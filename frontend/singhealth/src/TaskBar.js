@@ -26,9 +26,6 @@ const useStyles = makeStyles((theme) => ({
       display: 'block',
     },
   },
-  inputRoot: {
-    color: 'inherit',
-  },
   sectionDesktop: {
     display: 'flex',
     [theme.breakpoints.up('md')]: {
@@ -72,25 +69,25 @@ export default function PrimarySearchAppBar() {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar position="static" color="secondary">
         <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
+          <Typography className={classes.title} color="primary" variant="h6" noWrap>
             Singhealth Audits
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new mails" color="inherit" onClick={() => history.push("/home")}>
-              <Badge badgeContent={0} color="secondary">
+              <Badge badgeContent={0} color="primary">
                 <AssignmentRoundedIcon />
               </Badge>
             </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit" onClick={() => history.push("/dashboard")}>
-              <Badge badgeContent={5} color="secondary">
+              <Badge badgeContent={5} color="primary">
                 <TimelineRoundedIcon />
               </Badge>
             </IconButton>
             <IconButton aria-label="something" color="inherit" onClick={() => history.push("/directory")}>
-              <Badge badgeContent={0} color="secondary">
+              <Badge badgeContent={0} color="primary">
                 <StoreMallDirectoryRoundedIcon />
               </Badge>
             </IconButton>
