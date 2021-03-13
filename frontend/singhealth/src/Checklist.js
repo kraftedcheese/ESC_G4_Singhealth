@@ -1,0 +1,107 @@
+import React, { useState, useEffect } from "react";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import { useTheme } from "@material-ui/core/styles";
+import { useForm } from 'react-hook-form';
+import Frame from "./Frame";
+import Select from "@material-ui/core/Select";
+import FormControl from "@material-ui/core/FormControl";
+import Button from "@material-ui/core/Button";
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import * as tenantService from "./Directory/tenantService";
+import ChecklistCard from './ChecklistCard';
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+}));
+
+const non_fnb_audit = {
+  "Professionalism and Staff Hygiene": {
+    issues: [
+      "Shop is open and ready to service patients/visitors according to operating hours.", 
+      "Staff Attendance: adequate staff for peak and non-peak hours.",
+      "At least one (1) clearly assigned person in-charge on site.",
+      "Staff uniform/attire is not soiled.",
+      "Staff who are unfit for work due to illness should not report to work.",
+      "Staff who are fit for work but suffering from the lingering effects of a cough and/or cold should cover their mouths with a surgical mask."
+    ],
+    weightage: 0.20
+  },
+  "Housekeeping and General Cleanliness": {
+    issues: [
+      "Adequate and regular pest control.",
+      "Goods and equipment are within shop boundary.",
+      "Store display/ Shop front is neat and tidy.",
+      "Work/ serving area is neat, clean and free of spillage.",
+      "Uncluttered circulation space free of refuse/ furniture.",
+      "Fixtures and fittings including shelves, cupboards and drawers are clean and dry and in a good state.",
+      "Ceiling/ ceiling boards are free from stains/ dust with no gaps.",
+      "Fans and air-con units are in proper working order and clean and free from dust. Proper maintenance and routine cleaning are carried out regularly.",
+      "Equipment is clean, in good condition and serviced.",
+      "Surfaces, walls and ceilings within customer areas are dry and clean.",
+      "Floor within customer areas is clean and dry.",
+      "Waste is properly managed and disposed."
+    ],
+    weightage: 0.40
+  },
+  "Workplace Safety and Health": {
+    issues: [
+      "MSDS for all industrial chemicals are available and up to date.",
+      "Proper chemicals storage.",
+      "All detergent and bottles containing liquids are labelled appropriately.",
+      "All personnel to wear safety shoes and safety attire where necessary.",
+      "Knives and sharp objects are kept at a safe place.",
+      "Area under the sink should not be cluttered with items other than washing agents.",
+      "Delivery personnel do not stack goods above the shoulder level.",
+      "Stacking of goods does not exceed 600mm from the ceiling and heavy items at the bottom, light items on top.",
+      "Proper signage/ label (fire, hazards, warnings, food stuff) and Exit signs in working order.",
+      "Fire extinguishers access is unobstructed; Fire extinguishers are not expired and employees know how to use them.",
+      "Escape route and exits are unobstructed.",
+      "First aid box is available and well-equipped.",
+      "Electrical sockets are not overloaded – one plug to one socket.",
+      "Plugs and cords are intact and free from exposure/ tension with PSB safety mark.",
+      "Power points that are in close proximity to flammable and/or water sources are installed with a plastic cover.",
+      "Electrical panels / DBs are covered."
+    ],
+    weightage: 0.40
+  }
+}
+
+const renderChecklist = (type) => {
+  non_fnb_audit.map((x) => {
+    
+  })
+}
+
+
+export default function Checklist(props) {
+  const classes = useStyles(useTheme);
+  const { type } = props;
+
+  return (
+    <div>
+      {
+        Object.keys(non_fnb_audit).map(x => {
+          return (
+            <Grid container spacing={1} width="100%" alignItems="center" justify="center">
+              <h2>{x}</h2>
+              {
+                non_fnb_audit[x].issues.map(issue => {
+                  return(
+                    <Grid item xs={10}>
+                      <ChecklistCard desc={issue} />
+                    </Grid>
+                    )
+                })
+              }
+            </Grid>
+            )
+          })
+      }
+    </div>
+  );
+}

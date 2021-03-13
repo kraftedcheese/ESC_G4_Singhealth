@@ -32,26 +32,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-// const storeinfo = [
-//     {tenant_id: 1,
-//     name: 'Coffee Bean', 
-//     unit: '03-616', 
-//     phone: '6123 4567', 
-//     email: 'worsethanstarbucks@coffeebean.com',
-//     institution: 'SGH',
-//     fnb: true,
-//     tenancyEndDate: '10/10/21'},
-
-//     {tenant_id: 2,
-//     name: 'Starbucks', 
-//     unit: '03-404', 
-//     phone: '6888 8888', 
-//     email: 'betterthancoffeebean@starbucks.com',
-//     institution: 'CGH',
-//     fnb: true,
-//     tenancyEndDate: '06/02/22'},
-// ];
-
 export default function Directory() {
   const classes = useStyles(useTheme);
   const [records, setRecords] = useState(tenantService.getAllTenants())
