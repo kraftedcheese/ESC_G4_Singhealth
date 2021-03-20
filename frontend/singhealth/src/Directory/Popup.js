@@ -1,6 +1,6 @@
 import React from 'react'
 import { Dialog, DialogTitle, DialogContent, makeStyles, Typography } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -27,9 +27,9 @@ export default function Popup(props) {
                         {title}
                     </Typography>
                     <Button
-                        color="secondary"
+                        color="default"
                         onClick={()=>{setOpenPopup(false)}}>
-                        <CloseIcon />
+                        <CloseRoundedIcon />
                     </ Button>
                 </div>
             </DialogTitle>

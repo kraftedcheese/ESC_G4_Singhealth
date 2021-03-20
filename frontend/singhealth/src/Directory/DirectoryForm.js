@@ -7,21 +7,24 @@ import Button from "./Button";
 import DatePicker from "./DatePicker";
 import Select from "./Select";
 import * as tenantService from "./tenantService";
+import UploadPhoto from "./UploadPhoto";
 
 const fnbItems = [
   { id: "fnb", title: "F&B" },
   { id: "not_fnb", title: "Non-F&B" },
 ];
 
+//allows you to define the things we're storing for each tenant.
 const initialFValues = {
   tenant_id: 0,
   name: "",
   phone: "",
   email: "",
+  password: "",
   institution: "",
   fnb: "false",
   unit: "",
-  tenancyEndDate: new Date(),
+  tenancyEndDate: new Date(), //should be a unix datetime integer
 };
 
 export default function DirectoryForm(props) {
@@ -87,6 +90,12 @@ export default function DirectoryForm(props) {
             error={errors.email}
           />
           <TextField
+            label="Password"
+            name="password"
+            value={values.password}
+            onChange={handleInputChange}
+          />
+          <TextField
             label="Phone"
             name="phone"
             value={values.phone}
@@ -101,6 +110,18 @@ export default function DirectoryForm(props) {
           />
         </Grid>
         <Grid item xs={12} md={6}>
+          <Grid container style={{gap: 20}} justify="center"> 
+            <UploadPhoto 
+              name="logo"
+              label="Upload Logo"
+              onChange={handleInputChange}
+            />
+            <UploadPhoto 
+              name="storefront"
+              label="Upload Storefront"
+              onChange={handleInputChange}
+            />
+          </Grid>
           <RadioGroup
             name="fnb"
             label=""
@@ -121,10 +142,11 @@ export default function DirectoryForm(props) {
             value={values.tenancyEndDate}
             onChange={handleInputChange}
           />
-          <div>
+          
+          <Grid container justify="center">
             <Button type="submit" text="Submit" />
             <Button text="Reset" color="default" onClick={resetForm} />
-          </div>
+          </Grid>
         </Grid>
       </Grid>
     </Form>
