@@ -9,6 +9,8 @@ import Directory from "./Directory/Directory";
 import Frame from "./Frame";
 import NewAudit from "./NewAudit";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Issues from "./Issues";
+
 
 const App = () => {
   return (
@@ -31,6 +33,10 @@ const App = () => {
             </Route>
             <Route path="/frame">
               <Frame />
+            </Route>
+            <Route path="/issues">
+              <TaskBar />
+              <Issues />
             </Route>
             <Route exact path="/">
               <SignIn />

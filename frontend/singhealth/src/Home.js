@@ -17,7 +17,8 @@ import AddIcon from '@material-ui/icons/Add';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
-import { Badge, GridList } from '@material-ui/core';
+import { Badge, CardActionArea, GridList } from '@material-ui/core';
+import { useHistory } from 'react-router';
 
 function Copyright() {
   return (
@@ -38,14 +39,6 @@ const useStyles = makeStyles((theme) => ({
     height: '93vh',
     backgroundColor:'e9e9e9',
   },
-  image: {
-    backgroundImage: 'url(https://source.unsplash.com/featured/?health)',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor:
-      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  },
   paper: {
     margin: theme.spacing(7, 4),
     display: 'flex',
@@ -55,13 +48,6 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
   },
   button:{
     margin: theme.spacing(2,4),
@@ -78,21 +64,35 @@ const useStyles = makeStyles((theme) => ({
   },
   ascgrid:{
     margin: theme.spacing(2,0),
-    textAlign: 'left',
   },
   gridList:{
     padding: theme.spacing(4,8),
   },
-
+  card:{
+    textAlign:'left',
+    borderRadius: 15,
+    borderColor: theme.palette.primary.main,
+  },
 
 }));
 
+
 function AuditScreenCard(props){
   const classes = useStyles();
+  const history = useHistory();
+
+  function cardClick(store){
+    //alert(store);
+    localStorage.setItem('storeToDisplay',store);
+    history.push("/issues");
+    //get card.store then display that in the next page header
+  };
+
   return(
     <Grid item xs={12} sm={5} md={3} className={classes.ascgrid}>
       <Badge badgeContent={props.notifs} color="primary">
-        <Card className="card">
+        <Card hoverable className={classes.card} variant="outlined" >
+          <CardActionArea onClick={() => cardClick(props.store)}>
           <CardHeader
             avatar={
               <Avatar aria-label="coffeebean" className={classes.avatar}>
@@ -102,6 +102,7 @@ function AuditScreenCard(props){
             title={props.store}
             subheader={"Due Date: " + props.date}
           />
+          </CardActionArea>
         </Card>
       </Badge>
     </Grid>
@@ -135,7 +136,7 @@ export default function SignIn() {
       </Grid>
       <Grid item xs={12} sm={12} md={12} component={Paper} className={classes.roundcard} elevation={3}>
         <Typography className={classes.typography}>Open Audits</Typography>
-        <hr color="#f06d1a" className={classes.hr}></hr>
+        <hr color='#f06d1a' className={classes.hr}></hr>
         <Grid container className={classes.gridList}>
           <AuditScreenCard store="coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
           <AuditScreenCard store="Coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
@@ -148,7 +149,7 @@ export default function SignIn() {
           <AuditScreenCard store="coffee bean" date="16/03/21" notifs="1"></AuditScreenCard>
           <AuditScreenCard store="coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
           <AuditScreenCard store="Coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
-          <AuditScreenCard store="coffee bean" date="16/03/21" notifs="9"></AuditScreenCard>
+          <AuditScreenCard store="coffee asfvan" date="16/03/21" notifs="9"></AuditScreenCard>
           <AuditScreenCard store="Starbucks" date="16/03/21" notifs="10"></AuditScreenCard>
           <AuditScreenCard store="coffee bean" date="16/03/21" notifs="4"></AuditScreenCard>
           <AuditScreenCard store="Watsons" date="16/03/21" notifs="10"></AuditScreenCard>
