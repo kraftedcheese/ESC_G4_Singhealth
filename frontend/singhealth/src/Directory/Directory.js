@@ -51,6 +51,7 @@ export default function Directory() {
     setRecordForEdit(null)
     setOpenPopup(false)
     setRecords(tenantService.getAllTenants())
+    console.log(tenantService.getAllTenants()) //shows the current tenants and their details, for debug purposes
   }
 
   const DirectoryList = 
@@ -61,21 +62,23 @@ export default function Directory() {
       }
     })
     .map(store => (
-      <Grid item xs={12} sm={6} md={4}>
-          <DirectoryCard {...store} />
-      </Grid>
+      <React.Fragment key={store.id}>
+        <Grid item xs={12} sm={6} md={4}>
+            <DirectoryCard {...store} />
+        </Grid>
+      </React.Fragment>
     ))
       
   return (
     <Frame title="Directory">
     <div>
-      <Grid container xs={12} spacing={2} direction='column' alignItems='center'>
+      <Grid container item xs={12} spacing={2} direction='column' alignItems='center'>
         <Grid item ></Grid>
         <Grid item ></Grid>
         <Grid item xs={10}><SearchBar /></Grid>
         <Grid item ></Grid>
         <Grid item ></Grid>
-        <Grid container xs={12} spacing={5} justify='center' alignitems='center'>
+        <Grid container item xs={12} spacing={5} justify='center' alignitems='center'>
             { DirectoryList }
         </Grid> 
       </Grid>

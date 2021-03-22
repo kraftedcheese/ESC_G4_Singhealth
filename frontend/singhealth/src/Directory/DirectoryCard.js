@@ -100,28 +100,28 @@ export default function DirectoryCard(props) {
                         <Grid item xs = {1}><LocationOnRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="p">{props.institution}</Typography>
+                        <Typography variant="body2">{props.institution}</Typography>
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
                         <Grid item xs = {1}><PhoneRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="p">{props.phone}</Typography>
+                        <Typography variant="body2">{props.phone}</Typography>
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
                         <Grid item xs = {1}><MailRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="p">{props.email}</Typography>
+                        <Typography variant="body2">{props.email}</Typography>
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
                         <Grid item xs = {1}><DescriptionRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="p">Contract expires: {props.tenancyEndDate}</Typography>
+                        <Typography variant="body2">Contract expires: {props.tenancyEndDate}</Typography>
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
