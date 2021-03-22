@@ -6,18 +6,23 @@ import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
+import UploadPhoto from "./Directory/UploadPhoto";
+import TextField from "@material-ui/core/TextField";
 
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
   },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 5,
-  },
 });
+
+const AddDetails = () => {
+  return (
+    <Grid container direction="column">
+      <TextField label="Add a Description"/>
+      <UploadPhoto label="Upload photo"/>
+    </Grid>
+  )
+}
 
 export default function ChecklistCard(props) {
   const classes = useStyles();
@@ -57,7 +62,7 @@ export default function ChecklistCard(props) {
             </Button>
           </Grid>
         </Grid>
-        {showMore && <p>time to fix</p>}
+        {showMore && <AddDetails />}
       </CardContent>
       {/* <CardActions>
         
