@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     height:200,
   },
   issueCard:{
-    margin: theme.spacing(4,0),
+    margin: theme.spacing(4,4),
   },
   gridList:{
     padding: theme.spacing(4,8),
@@ -82,11 +82,21 @@ const useStyles = makeStyles((theme) => ({
 
 function IssueCard(props){
     const classes= useStyles();
+    const history = useHistory();
+
+    function cardClick(issueName,dueDate){
+      //alert(dueDate);
+      localStorage.setItem('issueName',issueName);
+      localStorage.setItem('dueDate',dueDate);
+      history.push("/issueChat");
+      //get card.store then display that in the next page header
+    };
+    
     return(
     <Grid item xs={10} sm={5} md={3} className={classes.issueCard}>
         <Badge badgeContent={props.unreadMsgs} color="primary">
             <Card>
-                <CardActionArea>
+                <CardActionArea onClick={() => cardClick(props.issue,props.date)}>
                     <CardMedia
                         className={classes.media}
                         image="https://source.unsplash.com/featured/?food"
@@ -114,6 +124,11 @@ const tenantIssues = [
                 issueName: "Staff who are fit for work but suffering from the lingering effects of a cough and/or cold should cover their mouths with a surgical mask",
                 dueDate: "16/03/21",
                 msgs: 9
+            },
+            {
+                issueName: "Staff who are fit for work but suffering from the lingering effects of a cough and/or cold should cover their mouths with a surgical mask",
+                dueDate: "16/03/21",
+                msgs: 6
             }
         ]
     },
@@ -131,18 +146,15 @@ const tenantIssues = [
 
 function IssueGrid(props){
     const classes = useStyles();
+    const tenantIssueCards = props.openIssues;
     return(
         <Grid item xs={12} sm={12} md={12}>
             <Typography className={classes.issueCategory}>{props.issueCategory}</Typography>
             <hr color="#f06d1a" className={classes.hr}></hr>
             <GridList>
-                <IssueCard date="16/03/21" unreadMsgs="10" issue="some issue"/>
-                <IssueCard date="16/03/21" unreadMsgs="10" issue="some issue"/>
-                <IssueCard date="16/03/21" unreadMsgs="10" issue="some issue"/>
-                <IssueCard date="16/03/21" unreadMsgs="10" issue="some issue"/>
-                <IssueCard date="16/03/21" unreadMsgs="10" issue="some issue"/>
-                <IssueCard date="16/03/21" unreadMsgs="10" issue="some issue"/>
-                <IssueCard date="16/03/21" unreadMsgs="10" issue="some issue"/>
+                {tenantIssueCards.map(issueCard =>(
+                  <IssueCard date={issueCard.dueDate} unreadMsgs={issueCard.msgs} issue={issueCard.issueName}/>
+                ))}
             </GridList>
         </Grid>
     )
@@ -163,7 +175,7 @@ export default function Issues() {
       </Grid>
       <Grid item xs={12} sm={12} md={12} component={Paper} className={classes.roundcard} elevation={3}>
         {tenantIssues.map(broadIssue => (
-            <IssueGrid issueCategory={broadIssue.category}/>
+            <IssueGrid issueCategory={broadIssue.category} openIssues={broadIssue.openIssues}/>
         ))}
       </Grid>
     </Grid>

@@ -10,6 +10,7 @@ import Frame from "./Frame";
 import NewAudit from "./NewAudit";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Issues from "./Issues";
+import IssueChat from "./IssueChat";
 
 
 const App = () => {
@@ -37,6 +38,10 @@ const App = () => {
             <Route path="/issues">
               <TaskBar />
               <Issues />
+            </Route>
+            <Route path="/issueChat">
+              <TaskBar/>
+              <IssueChat/>
             </Route>
             <Route exact path="/">
               <SignIn />
