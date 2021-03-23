@@ -11,6 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import * as tenantService from "./Directory/tenantService";
 import Checklist from './Checklist';
+import { DataProvider } from './DataContext';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -54,26 +55,27 @@ export default function NewAudit() {
   }, [currentTenant])
 
   return (
-    <Frame title="New Audit">
-      <Grid container spacing={1} align="center" direction="column">
-        <Grid item container direction="row" justify="center" alignItems="center">
-        <FormControl className={classes.formControl}>
-        <InputLabel>Store</InputLabel>
-        <Select
-          value={name}
-          onChange={handleChange}
-        >
-          {tenants.map((x) => <MenuItem key={x.tenant_id} value={x.name}>{x.name}</MenuItem>)}
-        </Select>
-        </FormControl>
-        <Grid item xs={1}></Grid>
-        <Grid justify="center">{fnb} audit</Grid>
+    <DataProvider>
+      <Frame title="New Audit">
+        <Grid container spacing={1} align="center" direction="column">
+          <Grid item container direction="row" justify="center" alignItems="center">
+          <FormControl className={classes.formControl}>
+          <InputLabel>Store</InputLabel>
+          <Select
+            value={name}
+            onChange={handleChange}
+          >
+            {tenants.map((x) => <MenuItem key={x.tenant_id} value={x.name}>{x.name}</MenuItem>)}
+          </Select>
+          </FormControl>
+          <Grid item xs={1}></Grid>
+          <Grid justify="center">{fnb} audit</Grid>
+          </Grid>
+          <Grid item container direction="column">
+            <Checklist></Checklist>
+          </Grid>
         </Grid>
-        <Grid item container direction="column">
-          <Checklist></Checklist>
-          <Button variant="contained" color="primary">Next</Button>
-        </Grid>
-      </Grid>
-    </Frame>
+      </Frame>
+    </DataProvider>
   );
 }

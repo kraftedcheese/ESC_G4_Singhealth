@@ -1,3 +1,4 @@
+//simplest to integrate with backend. simply replace the get/post requests to localstorage to actual REST calls
 const KEYS = {
     tenants: 'tenants',
     tenant_id: 'tenant_id'

@@ -8,9 +8,10 @@ export default function UploadPhoto(props) {
     const GetImageLink = (e) => {
         console.log(e)
         //do the uploading here. then replace some_link below with the image url returned.
+        //access the target using e.target.files[0]
         //I'm not sure if we need to async this? and do something while awaiting the return of the image url?
         const new_e = Object.create(
-            {target: { name: {name}, value: "some_link"}}
+            {target: { name: {name}, value: e.target.files[0].name}}
         )
         onChange(new_e)
     }

@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import { useForm } from 'react-hook-form';
+import { useData } from './DataContext';
 import Frame from "./Frame";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
@@ -29,7 +30,7 @@ const non_fnb_audit = {
       "Staff who are unfit for work due to illness should not report to work.",
       "Staff who are fit for work but suffering from the lingering effects of a cough and/or cold should cover their mouths with a surgical mask."
     ],
-    weightage: 0.20
+    weightage: 20
   },
   "Housekeeping and General Cleanliness": {
     issues: [
@@ -40,13 +41,13 @@ const non_fnb_audit = {
       "Uncluttered circulation space free of refuse/ furniture.",
       "Fixtures and fittings including shelves, cupboards and drawers are clean and dry and in a good state.",
       "Ceiling/ ceiling boards are free from stains/ dust with no gaps.",
-      "Fans and air-con units are in proper working order and clean and free from dust. Proper maintenance and routine cleaning are carried out regularly.",
+      "Fans and air-con units are in proper working order and clean and free from dust, Proper maintenance and routine cleaning are carried out regularly.",
       "Equipment is clean, in good condition and serviced.",
       "Surfaces, walls and ceilings within customer areas are dry and clean.",
       "Floor within customer areas is clean and dry.",
       "Waste is properly managed and disposed."
     ],
-    weightage: 0.40
+    weightage: 40
   },
   "Workplace Safety and Health": {
     issues: [
@@ -67,41 +68,75 @@ const non_fnb_audit = {
       "Power points that are in close proximity to flammable and/or water sources are installed with a plastic cover.",
       "Electrical panels / DBs are covered."
     ],
-    weightage: 0.40
+    weightage: 40
   }
 }
 
+//to fill when done figuring out checklist
 const renderChecklist = (type) => {
   non_fnb_audit.map((x) => {
-    
   })
 }
 
 
 export default function Checklist(props) {
+  const { setValues, data } = useData();
   const classes = useStyles(useTheme);
+  const { register, handleSubmit, setValue, errors } = useForm();
   const { type } = props;
 
+  const onSubmit = (data) => {
+     console.log(data);
+     var score = 0;
+    
+    for (const [category, issues] of Object.entries(data)){
+      var count = 0;
+      // console.log(category)
+      for (const [issue, details] of Object.entries(issues)){
+        if (details.ok == "true") count += 1;
+      }
+      // console.log(score)
+      const weightage = non_fnb_audit[`${category}`].weightage
+      // console.log(weightage)
+      const length = Object.keys(issues).length
+      // console.log(length)
+      const catScore = weightage * count/length
+      // console.log(catScore)
+      score += catScore;
+    }
+
+    console.log("here's the total score!!")
+    console.log(score)
+
+
+  }
+
   return (
-    <div>
+    <form onSubmit={handleSubmit(onSubmit)}>
       {
+        //ideally non_fnb_audit should be interchangeable with other audit types
         Object.keys(non_fnb_audit).map(x => {
           return (
-            <Grid container spacing={1} width="100%" alignItems="center" justify="center">
-              <h2>{x}</h2>
-              {
-                non_fnb_audit[x].issues.map(issue => {
-                  return(
-                    <Grid item xs={10}>
-                      <ChecklistCard desc={issue} />
-                    </Grid>
-                    )
-                })
-              }
-            </Grid>
+            <React.Fragment key={x}>
+              <Grid container spacing={1} width="100%" alignItems="center" justify="center">
+                <h2>{/* category name: */ x}</h2>
+                {
+                  non_fnb_audit[x].issues.map(issue => {
+                    return(
+                      <React.Fragment key={issue}>
+                        <Grid item xs={10}>
+                          <ChecklistCard desc={issue} name={`${x}.${issue}`} register={register} setValue={setValue}/>
+                        </Grid>
+                      </React.Fragment>
+                      )
+                  })
+                }
+              </Grid>
+            </React.Fragment>
             )
           })
       }
-    </div>
+      <Button variant="contained" type="submit" color="primary">Submit</Button>
+    </form>
   );
 }
