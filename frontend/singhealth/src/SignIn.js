@@ -16,6 +16,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 function Copyright() {
   return (
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   image: {
-    backgroundImage: "url(https://source.unsplash.com/featured/?health)",
+    backgroundImage: "url(https://source.unsplash.com/featured/?covid-19)",
     backgroundRepeat: "no-repeat",
     backgroundColor:
       theme.palette.type === "light"
@@ -69,9 +70,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+export default function SignIn({ setToken }) {
   const classes = useStyles(useTheme);
   const history = useHistory();
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    console.log({email: email, password: password});
+    axios.post("http://singhealthdb.herokuapp.com/login", {email: email, password: password})
+      .then((response) => {
+        console.log(response.data);
+        setToken(response.data);
+        console.log("I've set the token!");
+        history.push("/home");
+      })
+      .catch(error => {
+        alert("Incorrect password, or user not found");
+        console.error(error);
+      });
+  };
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -108,7 +127,9 @@ export default function SignIn() {
               label="Email Address"
               name="email"
               autoComplete="email"
+              onChange={e => setEmail(e.target.value)}
               autoFocus
+
             />
             <TextField
               variant="outlined"
@@ -120,6 +141,7 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={e => setPassword(e.target.value)}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -131,7 +153,8 @@ export default function SignIn() {
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick={() => history.push("/home")}
+              // onClick={() => history.push("/home")}
+              onClick={handleLogin}
             >
               Sign In
             </Button>

@@ -8,35 +8,59 @@ import Home from "./Home";
 import Directory from "./Directory/Directory";
 import Frame from "./Frame";
 import NewAudit from "./NewAudit";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect, useHistory, useLocation } from "react-router-dom";
 import { DataProvider } from "./DataContext";
+import useToken from "./useToken";
 
 const App = () => {
+  const { token, setToken } = useToken();
+  const history = useHistory();
+
+  function PrivateRoute({ children, ...rest }) {
+    return (
+      <Route
+        {...rest}
+        render={({ location }) =>
+          token ? (
+            children
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/signin",
+                state: { from: location }
+              }}
+            />
+          )
+        }
+      />
+    );
+  }
+
   return (
     <Router>
       <ThemeProvider theme={theme}>
         <div className="App">
           <Switch>
-            <Route path="/home">
+            <PrivateRoute path="/home">
               <TaskBar />
               <Home />
-            </Route>
+            </PrivateRoute>
             <Route path="/dashboard">
               <TaskBar />
             </Route>
-            <Route path="/directory">
+            <PrivateRoute path="/directory">
               <Directory />
-            </Route>
-            <Route path="/newaudit">
+            </PrivateRoute>
+            <PrivateRoute path="/newaudit">
               <DataProvider>
                 <NewAudit />
               </DataProvider>
-            </Route>
-            <Route path="/frame">
+            </PrivateRoute>
+            <PrivateRoute path="/frame">
               <Frame />
-            </Route>
-            <Route exact path="/">
-              <SignIn />
+            </PrivateRoute>
+            <Route exact path="/signin">
+              <SignIn setToken={setToken}/>
             </Route>
           </Switch>
         </div>

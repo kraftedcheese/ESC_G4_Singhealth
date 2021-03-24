@@ -18,6 +18,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
 import { Badge, GridList } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 function Copyright() {
   return (
@@ -109,6 +110,7 @@ function AuditScreenCard(props){
 }
 
 export default function SignIn() {
+  const history = useHistory();
   const classes = useStyles(useTheme);
 
   return (
@@ -120,6 +122,7 @@ export default function SignIn() {
         color="primary"
         className={classes.button}
         startIcon={<AddIcon />}
+        onClick={() => history.push("/newaudit")}
       >
         New Audit
       </Button>

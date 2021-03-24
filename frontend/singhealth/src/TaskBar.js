@@ -12,6 +12,7 @@ import TimelineRoundedIcon from '@material-ui/icons/TimelineRounded';
 import StoreMallDirectoryRoundedIcon from '@material-ui/icons/StoreMallDirectoryRounded';
 import PersonRoundedIcon from '@material-ui/icons/PersonRounded';
 import { useHistory } from "react-router-dom";
+import useToken from "./useToken";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PrimarySearchAppBar() {
   const classes = useStyles();
+  const { removeToken } = useToken();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -46,6 +48,11 @@ export default function PrimarySearchAppBar() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLogout = () => {
+    removeToken();
+    history.push("/signin");
+  }
 
   const menuId = 'primary-search-account-menu';
 
@@ -63,7 +70,7 @@ export default function PrimarySearchAppBar() {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem onClick={() => history.push("/")}>Logout</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 

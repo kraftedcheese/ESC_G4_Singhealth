@@ -65,7 +65,6 @@ export default function NewAudit() {
 
   return (
     // <DataProvider>
-      <Router>
         <Frame title="New Audit">
           <Switch>
             
@@ -105,7 +104,6 @@ export default function NewAudit() {
 
           </Switch>
         </Frame>
-      </Router>
     // </DataProvider>
   );
 }
