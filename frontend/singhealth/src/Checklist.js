@@ -2,16 +2,11 @@ import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
-import { useForm } from 'react-hook-form';
-import { useData } from './DataContext';
-import Frame from "./Frame";
-import Select from "@material-ui/core/Select";
-import FormControl from "@material-ui/core/FormControl";
+import { useForm } from "react-hook-form";
+import { useData } from "./DataContext";
+import { useHistory } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import * as tenantService from "./Directory/tenantService";
-import ChecklistCard from './ChecklistCard';
+import ChecklistCard from "./ChecklistCard";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -23,14 +18,14 @@ const useStyles = makeStyles((theme) => ({
 const non_fnb_audit = {
   "Professionalism and Staff Hygiene": {
     issues: [
-      "Shop is open and ready to service patients/visitors according to operating hours.", 
+      "Shop is open and ready to service patients/visitors according to operating hours.",
       "Staff Attendance: adequate staff for peak and non-peak hours.",
       "At least one (1) clearly assigned person in-charge on site.",
       "Staff uniform/attire is not soiled.",
       "Staff who are unfit for work due to illness should not report to work.",
-      "Staff who are fit for work but suffering from the lingering effects of a cough and/or cold should cover their mouths with a surgical mask."
+      "Staff who are fit for work but suffering from the lingering effects of a cough and/or cold should cover their mouths with a surgical mask.",
     ],
-    weightage: 20
+    weightage: 20,
   },
   "Housekeeping and General Cleanliness": {
     issues: [
@@ -45,9 +40,9 @@ const non_fnb_audit = {
       "Equipment is clean, in good condition and serviced.",
       "Surfaces, walls and ceilings within customer areas are dry and clean.",
       "Floor within customer areas is clean and dry.",
-      "Waste is properly managed and disposed."
+      "Waste is properly managed and disposed.",
     ],
-    weightage: 40
+    weightage: 40,
   },
   "Workplace Safety and Health": {
     issues: [
@@ -66,77 +61,94 @@ const non_fnb_audit = {
       "Electrical sockets are not overloaded – one plug to one socket.",
       "Plugs and cords are intact and free from exposure/ tension with PSB safety mark.",
       "Power points that are in close proximity to flammable and/or water sources are installed with a plastic cover.",
-      "Electrical panels / DBs are covered."
+      "Electrical panels / DBs are covered.",
     ],
-    weightage: 40
-  }
-}
+    weightage: 40,
+  },
+};
 
 //to fill when done figuring out checklist
 const renderChecklist = (type) => {
-  non_fnb_audit.map((x) => {
-  })
-}
-
+  non_fnb_audit.map((x) => {});
+};
 
 export default function Checklist(props) {
   const { setValues, data } = useData();
+  const history = useHistory();
   const classes = useStyles(useTheme);
   const { register, handleSubmit, setValue, errors } = useForm();
   const { type } = props;
 
   const onSubmit = (data) => {
-     console.log(data);
-     var score = 0;
-    
-    for (const [category, issues] of Object.entries(data)){
+    console.log(data);
+
+    //score computation, move to its own component/function
+    var score = 0;
+    for (const [category, issues] of Object.entries(data)) {
       var count = 0;
       // console.log(category)
-      for (const [issue, details] of Object.entries(issues)){
+      for (const [issue, details] of Object.entries(issues)) {
         if (details.ok == "true") count += 1;
       }
       // console.log(score)
-      const weightage = non_fnb_audit[`${category}`].weightage
+      const weightage = non_fnb_audit[`${category}`].weightage;
       // console.log(weightage)
-      const length = Object.keys(issues).length
+      const length = Object.keys(issues).length;
       // console.log(length)
-      const catScore = weightage * count/length
+      const catScore = (weightage * count) / length;
       // console.log(catScore)
+      
+      data[`${category}`].catScore = catScore
+
       score += catScore;
     }
 
-    console.log("here's the total score!!")
-    console.log(score)
+    console.log("here's the total score!!");
+    console.log(score);
 
+    data.score = score;
 
-  }
+    history.push("./newaudit/result");
+    setValues(data);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {
         //ideally non_fnb_audit should be interchangeable with other audit types
-        Object.keys(non_fnb_audit).map(x => {
+        Object.keys(non_fnb_audit).map((x) => {
           return (
             <React.Fragment key={x}>
-              <Grid container spacing={1} width="100%" alignItems="center" justify="center">
+              <Grid
+                container
+                spacing={1}
+                width="100%"
+                alignItems="center"
+                justify="center"
+              >
                 <h2>{/* category name: */ x}</h2>
-                {
-                  non_fnb_audit[x].issues.map(issue => {
-                    return(
-                      <React.Fragment key={issue}>
-                        <Grid item xs={10}>
-                          <ChecklistCard desc={issue} name={`${x}.${issue}`} register={register} setValue={setValue}/>
-                        </Grid>
-                      </React.Fragment>
-                      )
-                  })
-                }
+                {non_fnb_audit[x].issues.map((issue) => {
+                  return (
+                    <React.Fragment key={issue}>
+                      <Grid item xs={10}>
+                        <ChecklistCard
+                          desc={issue}
+                          name={`${x}.${issue}`}
+                          register={register}
+                          setValue={setValue}
+                        />
+                      </Grid>
+                    </React.Fragment>
+                  );
+                })}
               </Grid>
             </React.Fragment>
-            )
-          })
+          );
+        })
       }
-      <Button variant="contained" type="submit" color="primary">Submit</Button>
+      <Button variant="contained" type="submit" color="primary">
+        Submit
+      </Button>
     </form>
   );
 }

@@ -9,6 +9,7 @@ import Directory from "./Directory/Directory";
 import Frame from "./Frame";
 import NewAudit from "./NewAudit";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { DataProvider } from "./DataContext";
 
 const App = () => {
   return (
@@ -27,7 +28,9 @@ const App = () => {
               <Directory />
             </Route>
             <Route path="/newaudit">
-              <NewAudit />
+              <DataProvider>
+                <NewAudit />
+              </DataProvider>
             </Route>
             <Route path="/frame">
               <Frame />

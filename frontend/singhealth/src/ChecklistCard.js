@@ -8,8 +8,8 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import UploadPhoto from "./Directory/UploadPhoto";
 import TextField from "@material-ui/core/TextField";
-import { Controller } from "react-hook-form";
-import {  RadioGroup,  FormControlLabel,  Radio } from "@material-ui/core";
+import DatePicker from "./Directory/DatePicker";
+
 
 const useStyles = makeStyles({
   root: {
@@ -31,17 +31,11 @@ const AddDetails = (props) => {
   )
 }
 
-const defaultValues = {
-  ok: "",
-  image: "",
-  desc: "",
-}
-
 export default function ChecklistCard(props) {
   const classes = useStyles();
   const { name, desc, register, setValue } = props;
-  // const control = useForm({ defaultValues });
   const [point, setPoint] = useState(null);
+  const [date, setDate] = useState(new Date());
   const [showMore, setShowMore] = useState(false);
 
   const handleClickOK = () => {
@@ -60,6 +54,14 @@ export default function ChecklistCard(props) {
     setValue(`${name}.image`, e.target.value);
   }
 
+  const setDueDate = (e) => {
+    console.log(e.target.value);
+    register(`${name}.due_date`, '');
+    setValue(`${name}.due_date`, e.target.value);
+    setDate(e.target.value);
+  }
+  
+
   useEffect(() => {
     if (point==0) setShowMore(true);
     else setShowMore(false);
@@ -76,23 +78,6 @@ export default function ChecklistCard(props) {
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            {/* <Controller
-                as={
-                  <RadioGroup >
-                    <FormControlLabel
-                      value="true"
-                      control={<Radio />}
-                      label="Ok"
-                    />
-                    <FormControlLabel
-                      value="false"
-                      control={<Radio />}
-                      label="Not Ok"
-                    />
-                  </RadioGroup>
-                }
-                name="RadioGroup"
-              /> */}
             <Button 
               variant="contained" 
               ref={register} 
@@ -120,7 +105,10 @@ export default function ChecklistCard(props) {
         {showMore && (
           <Grid container spacing={1} direction="column">
           <Grid item>
-            <TextField name={`${name}.desc`} label="Add a Description" required={true} inputRef={register}/>
+            <DatePicker name="due_date" label="Select due date" value={date} onChange={setDueDate}/>
+          </Grid>
+          <Grid item>
+            <TextField name={`${name}.desc`} label="Add a description" required={true} inputRef={register}/>
           </Grid>
           <Grid item>
             <UploadPhoto name="image" label="Upload photo" onChange={setImageURL}/>
@@ -128,9 +116,6 @@ export default function ChecklistCard(props) {
         </Grid>
         )}
       </CardContent>
-      {/* <CardActions>
-        
-      </CardActions> */}
     </Card>
   );
 }
