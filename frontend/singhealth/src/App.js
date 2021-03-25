@@ -8,7 +8,7 @@ import Home from "./Home";
 import Directory from "./Directory/Directory";
 import Frame from "./Frame";
 import NewAudit from "./NewAudit";
-import { BrowserRouter as Router, Switch, Route, Redirect, useHistory, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from "react-router-dom";
 import { DataProvider } from "./DataContext";
 import useToken from "./useToken";
 
@@ -61,6 +61,11 @@ const App = () => {
             </PrivateRoute>
             <Route exact path="/signin">
               <SignIn setToken={setToken}/>
+            </Route>
+            <Route exact path="/">
+              <Redirect to={{
+                pathname: "/signin",
+              }}></Redirect>
             </Route>
           </Switch>
         </div>

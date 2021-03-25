@@ -60,13 +60,21 @@ export default function DirectoryCard(props) {
     setExpanded(!expanded);
   };
 
+  const displayDate = (date_string) => {
+    let date = new Date(date_string);
+    let dd = date.getDate();
+    let mm = date.getMonth()+1;
+    let yyyy = date.getFullYear();
+    return(`${dd}/${mm}/${yyyy}`);
+  }
+
   return (
     <Card className={classes.root}>
       <CardHeader
         avatar={
           <Avatar aria-label="storefront" 
           className={classes.avatar}
-          src='http://photos.prnewswire.com/prnfull/20130709/LA44075LOGO'>
+          src={props.image_logo}>
           </Avatar>
         }
         action={
@@ -90,9 +98,9 @@ export default function DirectoryCard(props) {
                 <Grid item>
                     <CardMedia
                     component="img"
-                    alt="cover"
+                    alt="Add a cover image?"
                     height="100"
-                    image="https://burpple-3.imgix.net/venue_images/img_20190211_193340-min-jpg_5676_original"
+                    image={props.image_location}
                     title="cover"
                     />
                 </Grid>
@@ -121,7 +129,7 @@ export default function DirectoryCard(props) {
                         <Grid item xs = {1}><DescriptionRoundedIcon /></Grid>
                         <Grid item xs = {1}></Grid>
                         <Grid item xs = {10}>
-                        <Typography variant="body2">Contract expires: {props.tenancyEndDate}</Typography>
+                        <Typography variant="body2">Contract expires: {displayDate(props.contract_date)}</Typography>
                         </Grid>
                 </Grid>
                 <Grid item container direction='row'>
@@ -142,7 +150,9 @@ export default function DirectoryCard(props) {
        >
         <DirectoryForm
             recordForEdit={recordForEdit}
-            addOrEdit={props.addOrEdit} />
+            addOrEdit={props.addOrEdit} 
+            setOpenPopup={setOpenPopup}
+        />
       </Popup>
     </Card>
   );

@@ -16,7 +16,6 @@ const fnbItems = [
 
 //allows you to define the things we're storing for each tenant.
 const initialFValues = {
-  tenant_id: 0,
   name: "",
   phone: "",
   email: "",
@@ -24,11 +23,13 @@ const initialFValues = {
   institution: "",
   fnb: "false",
   unit: "",
-  tenancyEndDate: new Date(), //should be a unix datetime integer
+  image_logo: "",
+  image_location: "",
+  contract_date: new Date(), //should be a unix datetime integer
 };
 
 export default function DirectoryForm(props) {
-  const { addOrEdit, recordForEdit } = props;
+  const { addOrEdit, recordForEdit, setOpenPopup } = props;
 
   const validate = (fieldValues = values) => {
     let temp = { ...errors };
@@ -62,6 +63,7 @@ export default function DirectoryForm(props) {
     if (validate()) {
       addOrEdit(values, resetForm);
     }
+    setOpenPopup(false);
   };
 
   useEffect(() => {
@@ -112,12 +114,12 @@ export default function DirectoryForm(props) {
         <Grid item xs={12} md={6}>
           <Grid container style={{gap: 20}} justify="center"> 
             <UploadPhoto 
-              name="logo"
+              name="image_logo"
               label="Upload Logo"
               onChange={handleInputChange}
             />
             <UploadPhoto 
-              name="storefront"
+              name="image_location"
               label="Upload Storefront"
               onChange={handleInputChange}
             />
@@ -137,9 +139,9 @@ export default function DirectoryForm(props) {
             options={tenantService.getInstitutionCollection()}
           />
           <DatePicker
-            name="tenancyEndDate"
-            label="Tenancy End Date"
-            value={values.tenancyEndDate}
+            name="contract_date"
+            label="Contract End Date"
+            value={values.contract_date}
             onChange={handleInputChange}
           />
           
