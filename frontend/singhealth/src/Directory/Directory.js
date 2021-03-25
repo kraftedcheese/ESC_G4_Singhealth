@@ -45,6 +45,7 @@ export default function Directory() {
         tenants = Object.values(response.data);
         setRecords(tenants);
         setLoading(false);
+        console.log("got some tenants");
         console.log(tenants);
       })
       .catch((error) => {
@@ -52,49 +53,46 @@ export default function Directory() {
       });
   }
 
+  async function updateTenant() {
+    return;
+  }
+
+  async function insertTenant(data) {
+    setLoading(true);
+    
+    // data.map
+  
+    console.log("inserting tenant");
+    console.log(data);
+    await axios
+      .post("http://singhealthdb.herokuapp.com/api/tenant", data, {
+        params: { secret_token: token },
+      })
+      .then((response) =>{
+        console.log("done inserting")
+        console.log(response)
+        getAllTenants();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   useEffect(() => {
-    // This is be executed when `loading` state changes
     getAllTenants();
   }, [setRecords]);
 
-  // var DirectoryList;
-  // useDidUpdateEffect(() => {
-  //   console.log("updating directory list");
-  //   DirectoryList = records
-  //   .map((item) => {
-  //     return {
-  //       ...item,
-  //       addOrEdit: addOrEdit,
-  //     };
-  //   })
-  //   .map((store) => (
-  //     <React.Fragment key={store.id}>
-  //       <Grid item xs={12} sm={6} md={4}>
-  //         <DirectoryCard {...store} />
-  //       </Grid>
-  //     </React.Fragment>
-  //   ));
-  // }, [loading]);
+  const add = (tenant, resetForm) => {
+    insertTenant(tenant);
+    resetForm();
+    setRecordForEdit(null);
+    setOpenPopup(false);
+  };
 
-  // const DirectoryList =
-  //   records
-  //     .map((item) => {
-  //       return {
-  //         ...item,
-  //         addOrEdit: addOrEdit,
-  //       };
-  //     })
-  //     .map((store) => (
-  //       <React.Fragment key={store.id}>
-  //         <Grid item xs={12} sm={6} md={4}>
-  //           <DirectoryCard {...store} />
-  //         </Grid>
-  //       </React.Fragment>
-  //     ));
-
-  const addOrEdit = (tenant, resetForm) => {
-    if (tenant.tenant_id == 0) tenantService.insertTenant(tenant);
-    else tenantService.updateTenant(tenant);
+  const edit = (tenant, resetForm) => {
+    console.log(tenant);
+    // edit/put tenant using axios
+    // else tenantService.updateTenant(tenant);
     resetForm();
     setRecordForEdit(null);
     setOpenPopup(false);
@@ -130,12 +128,11 @@ export default function Directory() {
             justify="center"
             alignitems="center"
           >
-            {
-              records
+            {records
               .map((item) => {
                 return {
                   ...item,
-                  addOrEdit: addOrEdit,
+                  addOrEdit: edit,
                 };
               })
               .map((store) => (
@@ -144,8 +141,7 @@ export default function Directory() {
                     <DirectoryCard {...store} />
                   </Grid>
                 </React.Fragment>
-              ))
-            }
+              ))}
           </Grid>
         </Grid>
 
@@ -163,7 +159,11 @@ export default function Directory() {
           openPopup={openPopup}
           setOpenPopup={setOpenPopup}
         >
-          <DirectoryForm recordForEdit={recordForEdit} addOrEdit={addOrEdit} />
+          <DirectoryForm
+            recordForEdit={recordForEdit}
+            addOrEdit={add}
+            setOpenPopup={setOpenPopup}
+          />
         </Popup>
       </div>
     </Frame>

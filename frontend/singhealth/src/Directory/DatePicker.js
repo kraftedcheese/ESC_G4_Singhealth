@@ -20,7 +20,8 @@ export default function DatePicker(props) {
                 format="MMM/dd/yyyy"
                 name={name}
                 value={value}
-                onChange={date =>onChange(convertToDefEventPara(name,date))}
+                onChange={date =>onChange(convertToDefEventPara(name,parseInt((date.getTime() / 1000).toFixed(0))
+                ))}
 
             />
         </MuiPickersUtilsProvider>

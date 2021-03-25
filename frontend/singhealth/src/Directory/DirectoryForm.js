@@ -10,8 +10,8 @@ import * as tenantService from "./tenantService";
 import UploadPhoto from "./UploadPhoto";
 
 const fnbItems = [
-  { id: "fnb", title: "F&B" },
-  { id: "not_fnb", title: "Non-F&B" },
+  { id: "true", title: "F&B" },
+  { id: "false", title: "Non-F&B" },
 ];
 
 //allows you to define the things we're storing for each tenant.
@@ -63,7 +63,6 @@ export default function DirectoryForm(props) {
     if (validate()) {
       addOrEdit(values, resetForm);
     }
-    setOpenPopup(false);
   };
 
   useEffect(() => {
