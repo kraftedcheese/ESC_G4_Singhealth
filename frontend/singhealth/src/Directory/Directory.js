@@ -166,6 +166,8 @@ export default function Directory() {
       )
       .catch((error) => {
         console.log(error);
+        getAllTenants();
+        alert(error.message);
       });
   }
 

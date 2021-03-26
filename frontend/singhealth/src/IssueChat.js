@@ -169,7 +169,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const isStaff = true;
+const isStaff = false;
 const chat_data = [{
   from_staff: true,
   body: "heyyy this is from the staff",
@@ -251,7 +251,7 @@ function ChatBar(props){
     //alert(JSON.stringify(data));
     messageService.sendMessage(data.messageToSend,isStaff);
     //messageService.clearMessages();
-    // messageService.defaultMessages();
+    //messageService.defaultMessages();
     //alert(JSON.stringify(messageService.getAllMessages()));
     props.setStateFunction(messageService.getAllMessages());
     reset();
