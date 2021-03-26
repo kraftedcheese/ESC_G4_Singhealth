@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.secondary.dark,
   },
   button:{
     margin: theme.spacing(2,4),

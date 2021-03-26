@@ -2,27 +2,25 @@ import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import {useEffect, useState} from 'react';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Badge from '@material-ui/core/Badge';
-import Card from '@material-ui/core/Card';
+import { useForm } from "react-hook-form";
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
 import { useHistory } from "react-router-dom";
-import { GridList, IconButton, InputBase } from '@material-ui/core';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { GridList, IconButton, InputBase,Fab } from '@material-ui/core';
+import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
+import AddAPhotoRoundedIcon from '@material-ui/icons/AddAPhotoRounded';
+import Message from "./Messages";
+import * as messageService from './messageService';
+import AlarmAddRoundedIcon from '@material-ui/icons/AlarmAddRounded';
+import Popover from '@material-ui/core/Popover';
+import DatePicker from "./Directory/DatePicker";
+
 
 function Copyright() {
   return (
@@ -57,17 +55,17 @@ const useStyles = makeStyles((theme) => ({
   },
   roundcard:{
     borderRadius: '100px 100px 0px 0px',
-    padding: theme.spacing(10,4),
+    // padding: theme.spacing(10,4),
   },
   storename:{
     margin: theme.spacing(4,4),
     fontSize: 40,
     color: theme.palette.primary.light,
   },
-  message:{
+  messageContainer:{
     //maxWidth: theme.spacing(150),
-    padding: theme.spacing(2,4),
-    justifyContent: 'flex-end',
+    //padding: theme.spacing(2,4),
+    textAlign: 'right',
   },
   messageOther:{
     textAlign: 'left',
@@ -79,6 +77,7 @@ const useStyles = makeStyles((theme) => ({
     borderBottomLeftRadius: '20px',
     borderTopRightRadius: '20px',
     borderBottomRightRadius: '20px',
+    width: 'fit-content'
   },
   
   messageMine: {
@@ -91,86 +90,197 @@ const useStyles = makeStyles((theme) => ({
     borderBottomLeftRadius: '20px',
     borderTopRightRadius: '2px',
     borderBottomRightRadius: '20px',
-    marginLeft: '25%',
+    marginLeft: 'auto',
+    width: 'fit-content',
   },
   chatbarbase:{
     background: theme.palette.primary.main,
+    maxWidth: '100vw',
+    position: 'sticky',
+    bottom: 0,
   },
   compose:{
     background: "#ffffff",
     borderRadius: theme.spacing(100),
     padding: "10px 15px",
     margin: "10px 15px",
-    borderColor: "#ffffff",
     width: '75%',
+    border: '1px solid white',
+    outline: 'none'
   },
   icon:{
     color: "#ffffff",
-    fontSize: '50px',
+    fontSize: '40px',
+  },
+  timestamp:{
+    display: 'flex',
+    justifyContent: 'center',
+    color: '#999',
+    fontWeight: '600',
+    fontSize: '12px',
+    margin: '10px 0px',
+    textTransform: 'uppercase',
+  },
+  msgImage:{
+    maxHeight: '350px',
+    maxWidth: '100%',
+  },
+  yesnobutton:{
+    color: 'white',
+  },
+  duedate:{
+    color: 'white',
+    backgroundColor: theme.palette.primary.main,
+    margin: theme.spacing(2),
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  },
+  dueDateContainer:{
+    position: 'sticky',
+    top: '5%',
+    width: '100%',
+    height: 0,
+  },
+  chatroomContainer:{
+    padding: theme.spacing(10,4,2),
+  },
+  timeReqPopup:{
+    padding: theme.spacing(10,4),
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 }));
 
+const isStaff = false;
 const chat_data = [{
   from_staff: true,
-  body: "heyyy this is from the staff"
+  body: "heyyy this is from the staff",
+  timestamp: new Date().getTime(),
+  tag: "textonly"
 },
 {
   from_staff: false,
-  body: "from da tenant"
+  body: "from da tenant",
+  timestamp: new Date().getTime(),
+  tag: "textonly"
 },
 {
   from_staff: true,
-  body: "this is gonna be a long piece of text to test qwrap LYRICS Can't count the years one hand  That we've been together  I need the other one to hold you. Make you feel, make you feel better.  It's not a walk in the park  To love each other.  But when our fingers interlock,  Can't eny, can't deny you're worth it  Cause after all this time.  I'm still into you I should be over all the butterflies But i'm into you (I'm in to you) And baby even on our worst nights I'm into you (I'm into you) Let em wonder how we got this far Cause I don't really need to wonder at all Yeah after all this time I'm still into you"
+  body: "this is gonna be a long piece of text to test qwrap LYRICS Can't count the years one hand  That we've been together  I need the other one to hold you. Make you feel, make you feel better.  It's not a walk in the park  To love each other.  But when our fingers interlock,  Can't eny, can't deny you're worth it  Cause after all this time.  I'm still into you I should be over all the butterflies But i'm into you (I'm in to you) And baby even on our worst nights I'm into you (I'm into you) Let em wonder how we got this far Cause I don't really need to wonder at all Yeah after all this time I'm still into you",
+  timestamp: new Date().getTime(),
+  tag: "textimage"
 },
 {
   from_staff:true,
-  body:"Miusov, as a man man of breeding and deilcacy, could not but feel some inwrd qualms, when he reached the Father Superior's with Ivan: he felt ashamed of havin lost his temper. He felt that he ought to have disdaimed that despicable wretch, Fyodor Pavlovitch, too much to have been upset by him in Father Zossima's cell, and so to have forgotten himself. 'Teh monks were not to blame, in any case,' he reflceted, on the steps. 'And if they're decent people here (and the Father Superior, I understand, is a nobleman) why not be friendly and courteous withthem? I won't argue, I'll fall in with everything, I'll win them by politness, and show them that I've nothing to do with that Aesop, thta buffoon, that Pierrot, and have merely been takken in over this affair, just as they have.'"
+  body:"Miusov, as a man man of breeding and deilcacy, could not but feel some inwrd qualms, when he reached the Father Superior's with Ivan: he felt ashamed of havin lost his temper. He felt that he ought to have disdaimed that despicable wretch, Fyodor Pavlovitch, too much to have been upset by him in Father Zossima's cell, and so to have forgotten himself. 'Teh monks were not to blame, in any case,' he reflceted, on the steps. 'And if they're decent people here (and the Father Superior, I understand, is a nobleman) why not be friendly and courteous withthem? I won't argue, I'll fall in with everything, I'll win them by politness, and show them that I've nothing to do with that Aesop, thta buffoon, that Pierrot, and have merely been takken in over this affair, just as they have.'",
+  timestamp: new Date().getTime(),
+  tag: "textonly"
+},
+{
+  from_staff: false,
+  body: "i want a pic",
+  timestamp: new Date().getTime(),
+  tag: "timeextension"
 }];
 
-function Message(props){
+function TimeExtReqPopup(props){
   const classes = useStyles(useTheme);
-  const {
-    data,
-    isMine,
-    startsSequence,
-    endsSequence,
-    showTimestamp
-  } = props;
-
-  //const friendlyTimestamp = moment(data.timestamp).format('LLLL');
-  return (
-    <div>
-      <div className={classes.message}>
-        <div className={props.fromStaff ? classes.messageOther : classes.messageMine} >
-          <Typography>{ props.text }</Typography>
-        </div>
-        {/* {show time here} */}
-      </div>
-    </div>
-  );
+  
+  return(
+    <Grid item>
+      <Typography className={classes.timeReqPopup}>When would you like to extend the due date until?</Typography>
+      {/*insert datepicker here*/}
+    </Grid>
+  )
 }
 
 function ChatBar(props){
   const classes = useStyles(useTheme);
-  return(
-    <Container className={classes.chatbarbase}>
-      <InputBase className={classes.compose}></InputBase>
-      <IconButton>
-        <CheckCircleIcon className={classes.icon}/>
-      </IconButton>
-    </Container>
-  )
+  const { register, handleSubmit, reset } = useForm();
+  const onSubmit = (data) => mehandleSubmit(data); 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  function mehandleSubmit(data){
+    //alert(JSON.stringify(data));
+    messageService.sendMessage(data.messageToSend,isStaff);
+    //messageService.clearMessages();
+    //messageService.defaultMessages();
+    //alert(JSON.stringify(messageService.getAllMessages()));
+    props.setStateFunction(messageService.getAllMessages());
+    reset();
+  }
+
+  if(isStaff){
+    return(
+      <Container className={classes.chatbarbase}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input name="messageToSend" ref={register} className={classes.compose} autoComplete="off"></input>
+          <IconButton>
+            <CheckCircleRoundedIcon className={classes.icon}/>
+          </IconButton>
+          <IconButton>
+            <AddAPhotoRoundedIcon className={classes.icon}/>
+          </IconButton>
+        </form>
+      </Container>
+    )
+  }
+  else{
+    return(
+      <Container className={classes.chatbarbase}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input name="messageToSend" ref={register} className={classes.compose} autoComplete="off"></input>
+          <IconButton>
+            <AlarmAddRoundedIcon className={classes.icon} onClick={(event) => setAnchorEl(event.currentTarget)}/>
+          </IconButton>
+          <Popover open={open} anchorEl={anchorEl} onClose={handleClose} anchorReference="none" className={classes.timeReqPopup}
+          anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+          >
+            <TimeExtReqPopup/>
+          </Popover>
+          <IconButton>
+            <AddAPhotoRoundedIcon className={classes.icon}/>
+          </IconButton>
+        </form>
+      </Container>
+    )
+  }
+  
 }
 
 function Chatroom(props){
+  const classes = useStyles(useTheme);
+  const [messages, setMessages] = useState(chat_data)
+  //if the user isStaff, then 
+  //i should render left or right based on whether it is mine. if i am staff then i can use the value fromstaff, if i am tenant then i flip it
   return(
     <Grid item>
-      {chat_data.map(message =>(
-        <Message text={message.body} fromStaff={message.from_staff}/>
-      ))}
+      <Grid item className={classes.chatroomContainer}>
+        {messages.map(message =>(
+          //<BasicMessage text={message.body} fromStaff={message.from_staff}/>
+          <Message type = {message.tag} body={message.body} is_mine={isStaff ? message.from_staff : !message.from_staff} timestamp={message.timestamp} is_staff={isStaff}/>
+        ))}
+      </Grid>
+      <ChatBar className={classes.chatbar} setStateFunction = {setMessages}/>
     </Grid>
+    
   );
 }
+
 export default function IssueChat() {
   const classes = useStyles(useTheme);
   const history = useHistory();
@@ -184,14 +294,17 @@ export default function IssueChat() {
         <Typography className = {classes.storename}>
             {issueName}
         </Typography>
-        <Typography className = {classes.storename}>
-            {"Due Date: " + dueDate}
-        </Typography>
       </Grid>
+      <div className={classes.dueDateContainer}>
+        <Fab variant="extended" className = {classes.duedate}>
+            {"Due Date: " + dueDate}
+        </Fab>
+      </div>
       <Grid item xs={12} sm={12} md={12} component={Paper} className={classes.roundcard} elevation={3}>
         <Chatroom/>
       </Grid>
-      <ChatBar/>
+      {/* <ChatBar/> */}
     </Grid>
+    
   );
 }
