@@ -199,7 +199,7 @@ const chat_data = [{
   body:  new Date().getTime(),
   timestamp: new Date().getTime(),
   tag: "timeextension",
-  // info: new Date().getTime(),
+  info: "pending",
 }];
 
 function TimeExtReqPopup(props){
@@ -221,7 +221,6 @@ function TimeExtReqPopup(props){
       messageService.sendTimeExtReq(date.getTime());
       props.setStateFunction(messageService.getAllMessages());
     }
-    //close popup
     props.closePopup();
   }
   
@@ -313,7 +312,7 @@ function Chatroom(props){
       <Grid item className={classes.chatroomContainer}>
         {messages.map(message =>(
           //<BasicMessage text={message.body} fromStaff={message.from_staff}/>
-          <Message type = {message.tag} body={message.body} is_mine={isStaff ? message.from_staff : !message.from_staff} timestamp={message.timestamp} is_staff={isStaff}/>
+          <Message type = {message.tag} body={message.body} is_mine={isStaff ? message.from_staff : !message.from_staff} timestamp={message.timestamp} is_staff={isStaff} info={message.info}/>
         ))}
       </Grid>
       <ChatBar className={classes.chatbar} setStateFunction = {setMessages}/>

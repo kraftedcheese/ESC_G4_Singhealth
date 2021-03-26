@@ -29,6 +29,7 @@ const chat_data = [{
     body: new Date().getTime(),
     timestamp: new Date().getTime(),
     tag: "timeextension",
+    info: "pending",
   }];
 
 export function clearMessages(){
@@ -62,10 +63,15 @@ export function sendTimeExtReq(date){ //data gotten is the text itself
     body: date,
     timestamp: new Date().getTime(),
     tag: "timeextension",
-    //info: date,  prob put rejected...
+    info: "pending",
   })
   localStorage.setItem("chat_data", JSON.stringify(chat_data));
   //console.log(JSON.stringify(chat_data))
+}
+
+export function approveReq(msgid,date){
+  let chat_data = getAllMessages();
+  
 }
 
 export function getAllMessages() {

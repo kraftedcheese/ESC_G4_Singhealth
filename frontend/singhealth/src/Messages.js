@@ -7,6 +7,7 @@ import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
 import AddAPhotoRoundedIcon from '@material-ui/icons/AddAPhotoRounded';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
+import {useEffect, useState} from 'react';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -142,6 +143,18 @@ const useStyles = makeStyles((theme) => ({
     const classes = useStyles(useTheme);
     const friendlyTimestamp = moment(props.timestamp).format('LLLL');
     const newDateReq = moment(props.text).format('Do MMMM YYYY');
+    const [status,setStatus] = useState(props.status);
+
+    function approveReq(){
+      setStatus("approved");
+      //have to set in msgservice
+      //alert(status)
+    }
+
+    function rejectReq(){
+      setStatus("rejected");
+      //alert(status)
+    }
     
     if(props.isStaff){
       return (
@@ -149,8 +162,8 @@ const useStyles = makeStyles((theme) => ({
           <div className={classes.messageContainer}>
             <div className={props.isMine ? classes.messageMine : classes.messageOther} >
               <Typography>{"Request for time extension til " + newDateReq}</Typography>
-              <Button className={classes.yesnobutton}>Yes</Button>
-              <Button className={classes.yesnobutton}>No</Button> {/*only visible to staff!*/}
+              <Button className={classes.yesnobutton} onClick={approveReq}>Yes</Button>
+              <Button className={classes.yesnobutton} onClick={rejectReq}>No</Button> {/*only visible to staff!*/}
             </div>
             <div className={props.isMine ? classes.timestampRight : classes.timestampLeft}>
               { friendlyTimestamp }
@@ -165,7 +178,7 @@ const useStyles = makeStyles((theme) => ({
           <div className={classes.messageContainer}>
             <div className={props.isMine ? classes.messageMine : classes.messageOther} >
               <Typography>{"Request for time extension til " + newDateReq}</Typography>
-              <Button disabled style={{color: 'white'}}>Pending</Button> {/*change this based on approved/rejected/pending later on*/}
+              <Button disabled style={{color: 'white'}}>{status}</Button> {/*change this based on approved/rejected/pending later on*/}
             </div>
             <div className={props.isMine ? classes.timestampRight : classes.timestampLeft}>
               { friendlyTimestamp }
@@ -184,6 +197,6 @@ export default function Message(props){
       return(<ImageMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp}/>)
     }
     else if (props.type == "timeextension"){
-      return(<TimeExtensionMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp} isStaff={props.is_staff}/>)
+      return(<TimeExtensionMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp} isStaff={props.is_staff} status={props.info}/>)
     }
   }
