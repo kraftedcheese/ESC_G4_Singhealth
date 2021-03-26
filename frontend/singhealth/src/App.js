@@ -11,6 +11,9 @@ import NewAudit from "./NewAudit";
 import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from "react-router-dom";
 import { DataProvider } from "./DataContext";
 import useToken from "./useToken";
+import Issues from "./Issues";
+import IssueChat from "./IssueChat";
+
 
 const App = () => {
   const { token, setToken } = useToken();
@@ -61,6 +64,14 @@ const App = () => {
             </PrivateRoute>
             <Route exact path="/signin">
               <SignIn setToken={setToken}/>
+            </Route>
+            <Route path="/issues">
+              <TaskBar />
+              <Issues />
+            </Route>
+            <Route path="/issueChat">
+              <TaskBar/>
+              <IssueChat/>
             </Route>
             <Route exact path="/">
               <Redirect to={{
