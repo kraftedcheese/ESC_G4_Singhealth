@@ -78,6 +78,9 @@ const useStyles = makeStyles((theme) => ({
   gridList:{
     padding: theme.spacing(4,8),
   },
+  cardContainer:{
+    width: '300px',
+  }
 }));
 
 function IssueCard(props){
@@ -95,7 +98,7 @@ function IssueCard(props){
     return(
     <Grid item xs={10} sm={5} md={3} className={classes.issueCard}>
         <Badge badgeContent={props.unreadMsgs} color="primary">
-            <Card>
+            <Card className={classes.cardContainer}>
                 <CardActionArea onClick={() => cardClick(props.issue,props.date)}>
                     <CardMedia
                         className={classes.media}
