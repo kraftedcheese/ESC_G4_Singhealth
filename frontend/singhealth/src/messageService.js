@@ -56,11 +56,13 @@ export function sendTimeExtReq(date){ //data gotten is the text itself
   let chat_data = getAllMessages();
   //alert("from msgservice"+data);
   //chat_data.push(data);
+  alert(date);
   chat_data.push({
     from_staff: false,
     body: date,
     timestamp: new Date().getTime(),
-    tag: "timeextension"
+    tag: "timeextension",
+    info: date,
   })
   localStorage.setItem("chat_data", JSON.stringify(chat_data));
 }

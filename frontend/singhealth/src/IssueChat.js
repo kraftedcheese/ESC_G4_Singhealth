@@ -146,10 +146,26 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(10,4,2),
   },
   timeReqPopup:{
-    padding: theme.spacing(10,4),
+    padding: theme.spacing(4,4),
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  popupContents:{
+    textAlign: 'center',
+  },
+  datepicker:{
+    padding: theme.spacing(2)
+  },
+  submitbutton:{
+    padding: theme.spacing(2,4),
+    backgroundColor: theme.palette.primary.main,
+    borderRadius: '50px',
+    color: 'white',
+    margin: theme.spacing(2),
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
   }
 }));
 
@@ -187,11 +203,33 @@ const chat_data = [{
 
 function TimeExtReqPopup(props){
   const classes = useStyles(useTheme);
+  const [date,setDate] = useState(null); //maybe set to current due date
+
+  const changeDate = (e) => {
+    setDate(e.target.value);
+    //alert(e.target.value)
+  }
+
+  function submitNewDate(){
+    //alert(JSON.stringify(date));
+    alert(date);
+    if(date == null){
+      alert("No date specified"); //should remove this later, prob just cannot submit
+    }else{
+      alert(parseInt(date.getTime()).toFixed(0));
+      messageService.sendTimeExtReq(date.getTime());
+      props.setStateFunction(messageService.getAllMessages());
+    }
+  }
   
   return(
-    <Grid item>
+    <Grid item className={classes.popupContents}>
       <Typography className={classes.timeReqPopup}>When would you like to extend the due date until?</Typography>
       {/*insert datepicker here*/}
+      <Grid item className={classes.datepicker}>
+        <DatePicker name="newDueDate" label="New Due Date" value={date} onChange={changeDate}/>
+      </Grid>
+      <Button className={classes.submitbutton} onClick={submitNewDate} >Submit</Button>
     </Grid>
   )
 }
@@ -250,7 +288,7 @@ function ChatBar(props){
               horizontal: 'center',
             }}
           >
-            <TimeExtReqPopup/>
+            <TimeExtReqPopup setStateFunction={props.setStateFunction}/>
           </Popover>
           <IconButton>
             <AddAPhotoRoundedIcon className={classes.icon}/>
