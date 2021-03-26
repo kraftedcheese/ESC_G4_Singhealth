@@ -141,14 +141,14 @@ const useStyles = makeStyles((theme) => ({
   function TimeExtensionMessage(props){
     const classes = useStyles(useTheme);
     const friendlyTimestamp = moment(props.timestamp).format('LLLL');
-    const newDateReq = moment(props.timestamp).format('Do MMMM YYYY');
+    const newDateReq = moment(props.text).format('Do MMMM YYYY');
     
     if(props.isStaff){
       return (
         <div>
           <div className={classes.messageContainer}>
             <div className={props.isMine ? classes.messageMine : classes.messageOther} >
-              <Typography>{newDateReq}</Typography>
+              <Typography>{"Request for time extension til " + newDateReq}</Typography>
               <Button className={classes.yesnobutton}>Yes</Button>
               <Button className={classes.yesnobutton}>No</Button> {/*only visible to staff!*/}
             </div>
@@ -164,7 +164,7 @@ const useStyles = makeStyles((theme) => ({
         <div>
           <div className={classes.messageContainer}>
             <div className={props.isMine ? classes.messageMine : classes.messageOther} >
-              <Typography>{ newDateReq}</Typography>
+              <Typography>{"Request for time extension til " + newDateReq}</Typography>
               <Button disabled style={{color: 'white'}}>Pending</Button> {/*change this based on approved/rejected/pending later on*/}
             </div>
             <div className={props.isMine ? classes.timestampRight : classes.timestampLeft}>

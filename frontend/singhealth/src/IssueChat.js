@@ -196,9 +196,10 @@ const chat_data = [{
 },
 {
   from_staff: false,
-  body: "i want a pic",
+  body:  new Date().getTime(),
   timestamp: new Date().getTime(),
-  tag: "timeextension"
+  tag: "timeextension",
+  // info: new Date().getTime(),
 }];
 
 function TimeExtReqPopup(props){
@@ -212,14 +213,16 @@ function TimeExtReqPopup(props){
 
   function submitNewDate(){
     //alert(JSON.stringify(date));
-    alert(date);
+    //alert(date);
     if(date == null){
       alert("No date specified"); //should remove this later, prob just cannot submit
     }else{
-      alert(parseInt(date.getTime()).toFixed(0));
+      //alert(date.getTime());
       messageService.sendTimeExtReq(date.getTime());
       props.setStateFunction(messageService.getAllMessages());
     }
+    //close popup
+    props.closePopup();
   }
   
   return(
@@ -249,7 +252,7 @@ function ChatBar(props){
     //alert(JSON.stringify(data));
     messageService.sendMessage(data.messageToSend,isStaff);
     //messageService.clearMessages();
-    //messageService.defaultMessages();
+    messageService.defaultMessages();
     //alert(JSON.stringify(messageService.getAllMessages()));
     props.setStateFunction(messageService.getAllMessages());
     reset();
@@ -288,7 +291,7 @@ function ChatBar(props){
               horizontal: 'center',
             }}
           >
-            <TimeExtReqPopup setStateFunction={props.setStateFunction}/>
+            <TimeExtReqPopup setStateFunction={props.setStateFunction} closePopup={handleClose}/>
           </Popover>
           <IconButton>
             <AddAPhotoRoundedIcon className={classes.icon}/>

@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign:'left',
     borderRadius: 15,
     borderColor: theme.palette.primary.main,
+    width: '200px'
   },
 
 }));
@@ -100,7 +101,8 @@ function AuditScreenCard(props){
               </Avatar>
             }
             title={props.store}
-            subheader={"Due Date: " + props.date}
+            // subheader={"Due Date: " + props.date}
+            subheader={"Score: " + props.score}
           />
           </CardActionArea>
         </Card>
@@ -109,7 +111,66 @@ function AuditScreenCard(props){
   )
 }
 
-export default function SignIn() {
+const audits=[
+  {
+    tenant_name: "Coffee Bean",
+    notifs: 10,
+    score: 96,
+  },
+  {
+    tenant_name: "Watsons",
+    notifs: 10,
+    score: 97,
+  },
+  {
+    tenant_name: "Starbucks",
+    notifs: 1,
+    score: 96,
+  },
+  {
+    tenant_name: "NTUC",
+    notifs: 19,
+    score: 96,
+  },
+  {
+    tenant_name: "Coffee Bean",
+    notifs: 10,
+    score: 96,
+  },
+  {
+    tenant_name: "Coffee Bean",
+    notifs: 10,
+    score: 96,
+  },
+  {
+    tenant_name: "Coffee Bean",
+    notifs: 10,
+    score: 96,
+  },
+
+  {
+    tenant_name: "Coffee Bean",
+    notifs: 10,
+    score: 96,
+  },
+  {
+    tenant_name: "Coffee Bean",
+    notifs: 10,
+    score: 96,
+  },
+  {
+    tenant_name: "Coffee Bean",
+    notifs: 10,
+    score: 96,
+  },
+  {
+    tenant_name: "Coffee Bean",
+    notifs: 10,
+    score: 96,
+  },
+]
+
+export default function Home() {
   const classes = useStyles(useTheme);
 
   return (
@@ -138,7 +199,7 @@ export default function SignIn() {
         <Typography className={classes.typography}>Open Audits</Typography>
         <hr color='#f06d1a' className={classes.hr}></hr>
         <Grid container className={classes.gridList}>
-          <AuditScreenCard store="coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
+          {/* <AuditScreenCard store="coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
           <AuditScreenCard store="Coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
           <AuditScreenCard store="coffee bean" date="16/03/21" notifs="40"></AuditScreenCard>
           <AuditScreenCard store="Starbucks" date="16/03/21" notifs="10"></AuditScreenCard>
@@ -155,7 +216,10 @@ export default function SignIn() {
           <AuditScreenCard store="Watsons" date="16/03/21" notifs="10"></AuditScreenCard>
           <AuditScreenCard store="coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
           <AuditScreenCard store="Koi" date="16/03/21" notifs="10"></AuditScreenCard>
-          <AuditScreenCard store="coffee bean" date="16/03/21" notifs="10"></AuditScreenCard>
+          <AuditScreenCard store="coffee bean" date="16/03/21" notifs="10"></AuditScreenCard> */}
+          {audits.map(audit => (
+            <AuditScreenCard store={audit.tenant_name} notifs={audit.notifs} score={audit.score}/>
+          ))}
         </Grid>
       </Grid>
       
