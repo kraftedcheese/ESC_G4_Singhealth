@@ -24,7 +24,7 @@ import CreateRoundedIcon from '@material-ui/icons/CreateRounded';
 import Popup from "./Popup";
 import DirectoryForm from "./DirectoryForm";
 import * as tenantService from './tenantService';
-
+import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -138,6 +138,12 @@ export default function DirectoryCard(props) {
                             <CreateRoundedIcon />
                           </IconButton>
                         </Grid>
+                        <Grid item xs={1}></Grid>
+                        <Grid item xs = {1}>
+                          <IconButton onClick={() => { props.delete(props) }}>
+                            <DeleteForeverRoundedIcon />
+                          </IconButton>
+                        </Grid>
                         <Grid item xs = {11}></Grid>
                 </Grid>
             </Grid>
@@ -152,6 +158,7 @@ export default function DirectoryCard(props) {
             recordForEdit={recordForEdit}
             addOrEdit={props.addOrEdit} 
             setOpenPopup={setOpenPopup}
+            isAdd={false}
         />
       </Popup>
     </Card>

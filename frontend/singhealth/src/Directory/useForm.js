@@ -13,9 +13,13 @@ export function useForm(initialFValues, validateOnChange = false, validate) {
             ...values,
             [name]: value
         })
+
+        console.log("changing values")
+        console.log(values);
         if (validateOnChange)
             validate({ [name]: value })
     }
+
 
     const resetForm = () => {
         setValues(initialFValues);

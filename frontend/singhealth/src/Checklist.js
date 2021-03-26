@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import { useForm } from "react-hook-form";
 import { useData } from "./DataContext";
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import ChecklistCard from "./ChecklistCard";
 
@@ -78,6 +78,7 @@ export default function Checklist(props) {
   const classes = useStyles(useTheme);
   const { register, handleSubmit, setValue, errors } = useForm();
   const { type } = props;
+  const { path, url } = useRouteMatch();
 
   const onSubmit = (data) => {
     console.log(data);
@@ -106,10 +107,15 @@ export default function Checklist(props) {
     console.log("here's the total score!!");
     console.log(score);
 
-    data.score = score;
+    var output = {};
+    output.audit = data;
+    output.score = score;
 
-    history.push("./newaudit/result");
-    setValues(data);
+    console.log(output);
+
+    
+    setValues(output);
+    history.push("/newaudit/result");
   };
 
   return (

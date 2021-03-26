@@ -29,7 +29,7 @@ const initialFValues = {
 };
 
 export default function DirectoryForm(props) {
-  const { addOrEdit, recordForEdit, setOpenPopup } = props;
+  const { addOrEdit, recordForEdit, isAdd, setOpenPopup } = props;
 
   const validate = (fieldValues = values) => {
     let temp = { ...errors };
@@ -41,7 +41,17 @@ export default function DirectoryForm(props) {
         : "Email is not valid.";
     if ("phone" in fieldValues)
       temp.phone =
-        fieldValues.phone.length > 7 ? "" : "Minimum 8 numbers required.";
+        ((fieldValues.phone.length > 7) && (/[^a-zA-Z]/g.test(fieldValues.phone))) 
+        ? "" 
+        : "Minimum 8 numbers required.";
+    if ("unit" in fieldValues)
+      temp.unit = /[^a-zA-Z]/g.test(fieldValues.unit)
+        ? ""
+        : "Unit is not valid.";
+    if ("institution" in fieldValues)
+      temp.institution = fieldValues.institution ? "" : "This field is required.";
+    if ("fnb" in fieldValues)
+      temp.fnb = fieldValues.fnb ? "" : "This field is required.";
     setErrors({
       ...temp,
     });
@@ -60,9 +70,14 @@ export default function DirectoryForm(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("submitting")
     if (validate()) {
+      console.log("validated. these are the submitted values:")
+      console.log(values)
       addOrEdit(values, resetForm);
+      setOpenPopup(false);
     }
+    else console.log("not validated")
   };
 
   useEffect(() => {
@@ -90,12 +105,14 @@ export default function DirectoryForm(props) {
             onChange={handleInputChange}
             error={errors.email}
           />
+          {isAdd &&
           <TextField
             label="Password"
             name="password"
             value={values.password}
             onChange={handleInputChange}
-          />
+            error={errors.password}
+          />}
           <TextField
             label="Phone"
             name="phone"
@@ -108,6 +125,7 @@ export default function DirectoryForm(props) {
             name="unit"
             value={values.unit}
             onChange={handleInputChange}
+            error={errors.unit}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -129,6 +147,7 @@ export default function DirectoryForm(props) {
             value={values.fnb}
             onChange={handleInputChange}
             items={fnbItems}
+            error={errors.fnb}
           />
           <Select
             name="institution"
@@ -136,6 +155,7 @@ export default function DirectoryForm(props) {
             value={values.institution}
             onChange={handleInputChange}
             options={tenantService.getInstitutionCollection()}
+            error={errors.institution}
           />
           <DatePicker
             name="contract_date"

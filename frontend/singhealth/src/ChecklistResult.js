@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { useData } from "./DataContext";
 import { useHistory } from "react-router-dom";
 
-
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -19,31 +18,29 @@ export default function ChecklistResult() {
   const history = useHistory();
   const { register, handleSubmit, setValue, errors } = useForm();
 
-  const DisplayData = Object.entries(data).map(([category, issues]) => (
+  const DisplayData = Object.entries(data.audit).map(([category, issues]) => (
     <div>
       <h3>{category}</h3>
-      <p>Category Score: {data[category].catScore}</p>
+      <p>Weighted Category Score: {Math.round(data.audit[category].catScore)}</p>
       <h4>Known issues:</h4>
-      {
-        Object.entries(data[category])
-        .filter(issue => issue[1].ok == "false")
+      {Object.entries(data.audit[category])
+        .filter((issue) => issue[1].ok == "false")
         .map(([issue, items]) => (
           <div>
             <p>{issue}</p>
           </div>
-        ))
-      }
-      {/* {
-          data[category].reduce( () )
-      } */}
+        ))}
     </div>
-    ))
+  ));
 
-  return (
+  return data === null ? (
+    <div>you messed up</div>
+  ) : (
     <div>
-      <h3>Results</h3>
+      <h1>Results</h1>
       {DisplayData}
-      <h3>{data.score}</h3>
+      <h3>Total Score: {Math.round(data.score)}</h3>
+      <h1>{(data.score > 95) ? "PASSED!" : "FAILED" }</h1>
     </div>
   );
 }
