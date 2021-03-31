@@ -1,13 +1,18 @@
-import { useForm } from "react-hook-form";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import useToken from "../useToken";
+import { useState, useEffect } from "react";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 
 export default function UploadPhoto(props) {
   const { name, label, value, onChange, items } = props;
+  const [loading, setLoading] = useState(false);
+
   const { token } = useToken();
 
   const GetImageLink = (e) => {
+    setLoading(true);
     console.log(e);
     console.log(e.target.files[0]);
     console.log(token);
@@ -28,6 +33,7 @@ export default function UploadPhoto(props) {
         });
         console.log(new_e);
         onChange(new_e);
+        setLoading(false);
       })
       .catch(error => {
         console.log(error);
@@ -35,7 +41,7 @@ export default function UploadPhoto(props) {
   };
 
   return (
-    <Button variant="contained" component="label">
+    <Button variant="contained" component="label" style={{margin:"10px"}}>
       {label}
       <input
         onChange={GetImageLink}
@@ -44,6 +50,9 @@ export default function UploadPhoto(props) {
         name={name}
         hidden
       />
+      <p></p>
+      {loading && <CircularProgress size={20} style={{marginLeft:"10px"}} />}
+      
     </Button>
   );
 }
