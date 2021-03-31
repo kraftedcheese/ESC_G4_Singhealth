@@ -18,13 +18,12 @@ export default function ChecklistResult() {
   const history = useHistory();
   const { register, handleSubmit, setValue, errors } = useForm();
 
-  const DisplayData = Object.entries(data.audit).map(([category, issues]) => (
+  const DisplayData = Object.keys(data.audit).map(category => (
     <div>
       <h3>{category}</h3>
       <p>Weighted Category Score: {Math.round(data.audit[category].catScore)}</p>
-      <h4>Known issues:</h4>
-      {Object.entries(data.audit[category])
-        .filter((issue) => issue[1].ok == "false")
+      {(Object.keys(data.audit[category].issues).length > 0) && <h4>Known issues:</h4>}
+      {Object.entries(data.audit[category].issues)
         .map(([issue, items]) => (
           <div>
             <p>{issue}</p>

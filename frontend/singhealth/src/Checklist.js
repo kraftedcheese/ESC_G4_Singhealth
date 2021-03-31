@@ -81,9 +81,10 @@ export default function Checklist(props) {
   const { path, url } = useRouteMatch();
 
   const onSubmit = (data) => {
+    console.log("initial");
     console.log(data);
 
-    //score computation, move to its own component/function
+    //score computation, move to its own component/function?
     var score = 0;
     for (const [category, issues] of Object.entries(data)) {
       var count = 0;
@@ -98,8 +99,12 @@ export default function Checklist(props) {
       // console.log(length)
       const catScore = (weightage * count) / length;
       // console.log(catScore)
-      
-      data[`${category}`].catScore = catScore
+
+
+      let flaggedIssues = Object.fromEntries(Object.entries(issues).filter((issue) => issue[1].ok === "false"))
+      data[`${category}`] = {};
+      data[`${category}`].issues = flaggedIssues;
+      data[`${category}`].catScore = catScore;
 
       score += catScore;
     }
