@@ -30,22 +30,9 @@ export default function Directory() {
   const [openPopup, setOpenPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
 
-  const convertForDatabase = (data) => {
-    try {
-      let contract_date = parseInt(data.contract_date.getTime()).toFixed(0);
-      data.contract_date = contract_date;
-    } catch (error) {
-      console.log("Date not converted");
-    }
-
-    try {
-      let fnb = data.fnb;
-      if (fnb === "true") data.fnb = true;
-      else if (fnb === "false") data.fnb = false;
-    } catch (error) {
-      console.log("F&B not converted");
-    }
-  };
+  useEffect(() => {
+    getAllTenants();
+  }, [setRecords]);
 
   async function getAllTenants() {
     var tenants;
@@ -66,9 +53,6 @@ export default function Directory() {
       });
   }
 
-  useEffect(() => {
-    getAllTenants();
-  }, [setRecords]);
 
   async function deleteTenant(tenant) {
     setLoading(true);
@@ -170,6 +154,23 @@ export default function Directory() {
         alert(error.message);
       });
   }
+
+  const convertForDatabase = (data) => {
+    try {
+      let contract_date = parseInt(data.contract_date.getTime()).toFixed(0);
+      data.contract_date = contract_date;
+    } catch (error) {
+      console.log("Date not converted");
+    }
+
+    try {
+      let fnb = data.fnb;
+      if (fnb === "true") data.fnb = true;
+      else if (fnb === "false") data.fnb = false;
+    } catch (error) {
+      console.log("F&B not converted");
+    }
+  };
 
   return loading ? (
     <Loading />

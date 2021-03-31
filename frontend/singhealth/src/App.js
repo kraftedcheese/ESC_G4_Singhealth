@@ -55,6 +55,7 @@ const App = () => {
               <Directory />
             </PrivateRoute>
             <PrivateRoute path="/newaudit">
+              {/* //DataProvider holds all data for the new audit component */}
               <DataProvider>
                 <NewAudit />
               </DataProvider>

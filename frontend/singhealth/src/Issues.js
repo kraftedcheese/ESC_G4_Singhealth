@@ -167,13 +167,14 @@ export default function Issues() {
   const classes = useStyles(useTheme);
   const history = useHistory();
   const storeName = localStorage.getItem('storeToDisplay');
+  const audit_id = localStorage.getItem('audit_id');
 
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={12} sm={12} md={12} square >{/*this is for the buttons */}
         <Typography className = {classes.storename}>
-            {storeName}
+            {storeName} ({audit_id})
         </Typography>
       </Grid>
       <Grid item xs={12} sm={12} md={12} component={Paper} className={classes.roundcard} elevation={3}>

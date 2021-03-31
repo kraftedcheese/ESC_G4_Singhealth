@@ -134,5 +134,4 @@ export default function NewAudit() {
       </Switch>
     </Frame>
   );
-  // </DataProvider>
 }
