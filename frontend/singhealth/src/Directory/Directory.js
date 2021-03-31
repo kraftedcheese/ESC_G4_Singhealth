@@ -12,7 +12,7 @@ import Popup from "./Popup";
 import Frame from "../Frame";
 import useToken from "../useToken";
 import axios from "axios";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import Loading from "../Loading";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -172,9 +172,7 @@ export default function Directory() {
   }
 
   return loading ? (
-    <div style={{ position: "absolute", top: "50%", left: "50%" }}>
-      <CircularProgress color="secondary" />
-    </div>
+    <Loading />
   ) : (
     <Frame title="Directory">
       <div>

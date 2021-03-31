@@ -1,4 +1,4 @@
-import React from 'react';
+import React,  { useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -19,19 +19,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
 import { Badge, CardActionArea, GridList } from '@material-ui/core';
 import { useHistory } from 'react-router';
+import Loading from './Loading';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Singhealth Retail Audits
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 
 const useStyles = makeStyles((theme) => ({
@@ -111,6 +100,7 @@ function AuditScreenCard(props){
   )
 }
 
+
 const audits=[
   {
     tenant_name: "Coffee Bean",
@@ -173,8 +163,13 @@ const audits=[
 export default function Home() {
   const history = useHistory();
   const classes = useStyles(useTheme);
+  const [records, setRecords] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   return (
+    loading ? (
+      <Loading />
+    ) : (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={12} sm={12} md={12} square >{/*this is for the buttons */}
@@ -208,5 +203,6 @@ export default function Home() {
       </Grid>
       
     </Grid>
-  );
+    )
+  )
 }
