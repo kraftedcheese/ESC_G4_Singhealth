@@ -83,7 +83,6 @@ export default function SignIn({ setToken }) {
       .then((response) => {
         console.log(response.data);
         setToken(response.data);
-        console.log("I've set the token!");
         history.push("/home");
       })
       .catch(error => {

@@ -196,10 +196,11 @@ export default function Home() {
           for (var i = 0; i < audits.length; i++){
             let tenant = tenants.find(x => x.tenant_id === audits[i].tenant_id);
             audits[i].tenant_name = tenant.name;
+          }
+          console.log("Home is printing audits");
           console.log(audits);
           setAudits(audits);
           setLoading(false);
-          }
         })
       )
       .catch((error) => {

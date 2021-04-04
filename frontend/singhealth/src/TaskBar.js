@@ -37,7 +37,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PrimarySearchAppBar() {
   const classes = useStyles();
-  const { removeToken } = useToken();
+  const { removeToken, getRole } = useToken();
+  const role = getRole();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -79,7 +80,7 @@ export default function PrimarySearchAppBar() {
       <AppBar position="static" color="secondary">
         <Toolbar>
           <Typography className={classes.title} color="primary" variant="h6" noWrap>
-            Singhealth Audits
+            Singhealth Audits - {getRole() ? "Staff" : "Tenant"}
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>

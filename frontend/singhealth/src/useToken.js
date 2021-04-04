@@ -7,6 +7,14 @@ export default function useToken() {
     return userToken?.token
   };
 
+  //getRole returns the isAdmin value (true if staff, false if tenant).
+  //To be used for conditional rendering as needed.
+  const getRole = () => {
+    const roleString = localStorage.getItem('token');
+    const userRole = JSON.parse(roleString);
+    return userRole?.isAdmin;
+  }
+
   const [token, setToken] = useState(getToken());
 
   const saveToken = userToken => {
@@ -22,6 +30,7 @@ export default function useToken() {
   return {
     setToken: saveToken,
     removeToken,
+    getRole,
     token
   }
 }
