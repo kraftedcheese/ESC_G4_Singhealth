@@ -7,8 +7,11 @@ import { useData } from "./DataContext";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import ChecklistCard from "./ChecklistCard";
-import { non_fnb_audit, fnb_audit, safe_management_audit } from './ChecklistData';
-
+import {
+  non_fnb_audit,
+  fnb_audit,
+  safe_management_audit,
+} from "./ChecklistData";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -21,14 +24,16 @@ export default function Checklist(props) {
   const { setValues, data } = useData();
   const history = useHistory();
   const classes = useStyles(useTheme);
-  const { register, handleSubmit, setValue, errors } = useForm();
+  const { register, handleSubmit, setValue, getValues, errors } = useForm();
   const { path, url } = useRouteMatch();
   const [auditChecklist, setAuditChecklist] = useState(non_fnb_audit);
+  const [doRender, setDoRender] = useState(0);
+  
 
   useEffect(() => {
     console.log(data);
     console.log(data.type);
-    switch (data.type){
+    switch (data.type) {
       case 0:
         setAuditChecklist(non_fnb_audit);
         break;
@@ -39,7 +44,38 @@ export default function Checklist(props) {
         setAuditChecklist(safe_management_audit);
         break;
     }
-  }, [data])
+  }, [data]);
+
+  const renderType = () => {
+    switch (data.type) {
+      case 0:
+        return "Non-F&B Audit";
+      case 1:
+        return "F&B Audit";
+      case 2:
+        return "Safe Management Audit";
+    }
+  };
+
+  const handleActivate = () => {
+    console.log("activating all...")
+    Object.keys(auditChecklist).map((x) => {
+      auditChecklist[x].issues.map((issue) => {
+        setValue(`${x}.${issue}.ok`, true)
+      });
+    })
+    setDoRender(value => value+1);
+  }
+
+  const handleClear = () => {
+    console.log("clearing all...")
+    Object.keys(auditChecklist).map((x) => {
+      auditChecklist[x].issues.map((issue) => {
+        setValue(`${x}.${issue}.ok`, null)
+      });
+    })
+    setDoRender(value => value+1);
+  }
 
   const onSubmit = (data) => {
     console.log("initial");
@@ -65,8 +101,9 @@ export default function Checklist(props) {
       const catScore = (weightage * count) / length;
       // console.log(catScore)
 
-
-      let flaggedIssues = Object.fromEntries(Object.entries(issues).filter((issue) => issue[1].ok === "false"))
+      let flaggedIssues = Object.fromEntries(
+        Object.entries(issues).filter((issue) => issue[1].ok === "false")
+      );
       data[`${category}`] = {};
       data[`${category}`].issues = flaggedIssues;
       data[`${category}`].count = count;
@@ -84,13 +121,30 @@ export default function Checklist(props) {
 
     console.log(output);
 
-    
     setValues(output);
     history.push("/newaudit/result");
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid item container justify="center">
+        <h1>
+          {renderType()} for {data.tenant.name}
+        </h1>
+        <Grid
+          item
+          container
+          justify="space-evenly"
+          xs={10}
+          margin={5}
+          direction="row"
+        >
+          <Button variant="contained" color="primary" onClick={handleActivate} >
+            Activate all
+          </Button>
+          <Button variant="contained" onClick={handleClear}>Clear all</Button>
+        </Grid>
+      </Grid>
       {
         //ideally non_fnb_audit should be interchangeable with other audit types
         Object.keys(auditChecklist).map((x) => {
@@ -103,7 +157,7 @@ export default function Checklist(props) {
                 alignItems="center"
                 justify="center"
               >
-                <h2>{/* category name: */ x}</h2>
+                <h2>{/* category name: */ x} ({auditChecklist[x].weightage}%)</h2>
                 {auditChecklist[x].issues.map((issue) => {
                   return (
                     <React.Fragment key={issue}>
@@ -111,6 +165,8 @@ export default function Checklist(props) {
                         <ChecklistCard
                           desc={issue}
                           name={`${x}.${issue}`}
+                          getValues={getValues}
+                          update={doRender}
                           register={register}
                           setValue={setValue}
                         />

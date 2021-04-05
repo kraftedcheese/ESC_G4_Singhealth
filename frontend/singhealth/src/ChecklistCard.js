@@ -22,20 +22,26 @@ const useStyles = makeStyles({
 
 export default function ChecklistCard(props) {
   const classes = useStyles();
-  const { name, desc, register, setValue } = props;
-  const [point, setPoint] = useState(null);
+  const { name, desc, register, setValue, getValues, doRender } = props;
+  const [point, setPoint] = useState();
   const [date, setDate] = useState(new Date());
   const [showMore, setShowMore] = useState(false);
   const [hasImage, setHasImage] = useState(false);
 
+  useEffect(() => {
+    console.log("pingubg")
+    setPoint(getValues(`${name}`.ok));
+  }, [doRender])
+
+
   const handleClickOK = () => {
-    if ((point == null || point == 0)) setPoint(1);
-    setValue(`${name}.ok`, 'true')
+    setPoint(true);
+    setValue(`${name}.ok`, true);
   };
 
   const handleClickNotOK = () => {
-    if ((point == null || point == 1)) setPoint(0);
-    setValue(`${name}.ok`, 'false')
+    setPoint(false);
+    setValue(`${name}.ok`, false);
   };
 
   const setImageURL = (e) => {

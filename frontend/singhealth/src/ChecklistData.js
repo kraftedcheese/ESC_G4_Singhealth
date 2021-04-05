@@ -64,7 +64,7 @@ const non_fnb_audit = {
         "Hands are washed thoroughly with soap and water, frequently and at appropriate times.",
         "Fingernails are short, clean, unpolished and without nail accessories.",
         "No wrist watches/ rings or other hand jewellery (with exception of wedding ring) is worn by staff handling food.",
-        "Food is handled with clean utensils and gloves. ",
+        "Food is handled with clean utensils and gloves.",
         "Disposable gloves are changed regularly and/ or in between tasks; staff do not handle cash with gloved hands.",
       ],
       weightage: 10,
@@ -142,7 +142,7 @@ const non_fnb_audit = {
         "Use of healthier cooking oils.",
         "Offer wholemeal/ whole-grain option.",
         "Healthier option food sold at lower price than regular items.",
-        "Limit deep-fried and pre-deep fried food items sold (≤ 20% deep-fried items). ",
+        "Limit deep-fried and pre-deep fried food items sold (≤ 20% deep-fried items).",
   
         "No sugar / Lower-sugar brewed beverage offerings according to guidelines.",
         "Healthier option beverages sold at lower price than regular items.",
