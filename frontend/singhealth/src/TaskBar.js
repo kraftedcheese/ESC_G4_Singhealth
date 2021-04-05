@@ -89,11 +89,11 @@ export default function PrimarySearchAppBar() {
                 <AssignmentRoundedIcon />
               </Badge>
             </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit" onClick={() => history.push("/dashboard")}>
+            {/* <IconButton aria-label="show 17 new notifications" color="inherit" onClick={() => history.push("/dashboard")}>
               <Badge badgeContent={5} color="primary">
                 <TimelineRoundedIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton aria-label="something" color="inherit" onClick={() => history.push("/directory")}>
               <Badge badgeContent={0} color="primary">
                 <StoreMallDirectoryRoundedIcon />
