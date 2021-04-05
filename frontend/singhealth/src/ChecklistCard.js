@@ -9,6 +9,7 @@ import Grid from "@material-ui/core/Grid";
 import UploadPhoto from "./Directory/UploadPhoto";
 import TextField from "@material-ui/core/TextField";
 import DatePicker from "./Directory/DatePicker";
+import CardMedia from '@material-ui/core/CardMedia';
 
 
 const useStyles = makeStyles({
@@ -17,19 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-const AddDetails = (props) => {
-  const register = props;
-  return (
-    <Grid container spacing={1} direction="column">
-      <Grid item>
-        <TextField name="desc" label="Add a Description" required={true} ref={register}/>
-      </Grid>
-      <Grid item>
-        <UploadPhoto name="image" label="Upload photo" />
-      </Grid>
-    </Grid>
-  )
-}
+
 
 export default function ChecklistCard(props) {
   const classes = useStyles();
@@ -37,6 +26,7 @@ export default function ChecklistCard(props) {
   const [point, setPoint] = useState(null);
   const [date, setDate] = useState(new Date());
   const [showMore, setShowMore] = useState(false);
+  const [hasImage, setHasImage] = useState(false);
 
   const handleClickOK = () => {
     if ((point == null || point == 0)) setPoint(1);
@@ -61,6 +51,20 @@ export default function ChecklistCard(props) {
     setDate(e.target.value);
   }
   
+  const AddDetails = (props) => {
+    const register = props;
+    return (
+      <Grid container xs={10} spacing={1} direction="column">
+        <Grid item>
+          <TextField name="desc" label="Add a Description" required={true} ref={register}/>
+        </Grid>
+        <Grid item>
+          <UploadPhoto name="image" label="Upload photo" />
+        </Grid>
+        {showMore && <CardMedia />}
+      </Grid>
+    )
+  }
 
   useEffect(() => {
     if (point==0) setShowMore(true);
