@@ -9,7 +9,7 @@ import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import CardMedia from '@material-ui/core/CardMedia';
+import CardMedia from "@material-ui/core/CardMedia";
 import Container from "@material-ui/core/Container";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
@@ -17,6 +17,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import Loading from "./Loading";
+import tr from "date-fns/esm/locale/tr/index.js";
 
 function Copyright() {
   return (
@@ -48,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     margin: theme.spacing(8, 4),
-    maxWidth: '100%',
+    maxWidth: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -75,23 +77,42 @@ export default function SignIn({ setToken }) {
   const history = useHistory();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+
+  const validate = () => {
+    return (email && password && (/$^|.+@.+..+/.test(email)))
+  }
 
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log({email: email, password: password});
-    axios.post("http://singhealthdb.herokuapp.com/login", {email: email, password: password})
-      .then((response) => {
-        console.log(response.data);
-        setToken(response.data);
-        history.push("/home");
-      })
-      .catch(error => {
-        alert("Incorrect password, or user not found");
-        console.error(error);
-      });
+    if (validate()){
+      console.log({ email: email, password: password });
+      setLoading(true);
+      axios
+        .post("http://singhealthdb.herokuapp.com/login", {
+          email: email,
+          password: password,
+        })
+        .then((response) => {
+          setLoading(false);
+          console.log(response.data);
+          setToken(response.data);
+          history.push("/home");
+        })
+        .catch((error) => {
+          setLoading(false);
+          alert("Incorrect password, or user not found");
+          console.error(error);
+        });
+    }
+    else {
+      alert("Invalid login fields!")
+    }
   };
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -106,17 +127,13 @@ export default function SignIn({ setToken }) {
         square
       >
         <div className={classes.paper}>
-          {/* This stupid ass logo wasted 5hrs of my time */}
-          {/* <div width='100px'>
-           <img object-fit='contain' src="https://upload.wikimedia.org/wikipedia/en/7/78/SingHealth_Logo.png" />
-          </div> */}
           <Typography component="h1" variant="h3">
             Singhealth Retail Audits
           </Typography>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form className={classes.form}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -126,9 +143,8 @@ export default function SignIn({ setToken }) {
               label="Email Address"
               name="email"
               autoComplete="email"
-              onChange={e => setEmail(e.target.value)}
-              autoFocus
-
+              onChange={(e) => setEmail(e.target.value)}
+              autoFocus 
             />
             <TextField
               variant="outlined"
@@ -140,28 +156,27 @@ export default function SignIn({ setToken }) {
               type="password"
               id="password"
               autoComplete="current-password"
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              // onClick={() => history.push("/home")}
               onClick={handleLogin}
             >
               Sign In
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                {/* <Link href="#" variant="body2">
                   Forgot password?
-                </Link>
+                </Link> */}
               </Grid>
             </Grid>
             <Box mt={5}>
