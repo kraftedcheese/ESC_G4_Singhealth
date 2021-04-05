@@ -67,18 +67,95 @@ const non_fnb_audit = {
   },
 };
 
-//to fill when done figuring out checklist
-const renderChecklist = (type) => {
-  non_fnb_audit.map((x) => {});
+const fnb_audit = {
+  "fooodfoodFOOOOD": {
+    issues: [
+      "Adequate and regular pest control.",
+      "Goods and equipment are within shop boundary.",
+      "Store display/ Shop front is neat and tidy.",
+      "Work/ serving area is neat, clean and free of spillage.",
+      "Uncluttered circulation space free of refuse/ furniture.",
+      "Fixtures and fittings including shelves, cupboards and drawers are clean and dry and in a good state.",
+      "Ceiling/ ceiling boards are free from stains/ dust with no gaps.",
+      "Fans and air-con units are in proper working order and clean and free from dust, Proper maintenance and routine cleaning are carried out regularly.",
+      "Equipment is clean, in good condition and serviced.",
+      "Surfaces, walls and ceilings within customer areas are dry and clean.",
+      "Floor within customer areas is clean and dry.",
+      "Waste is properly managed and disposed.",
+    ],
+    weightage: 40,
+  },
+  "Workplace Safety and Health": {
+    issues: [
+      "MSDS for all industrial chemicals are available and up to date.",
+      "Proper chemicals storage.",
+      "All detergent and bottles containing liquids are labelled appropriately.",
+      "All personnel to wear safety shoes and safety attire where necessary.",
+      "Knives and sharp objects are kept at a safe place.",
+      "Area under the sink should not be cluttered with items other than washing agents.",
+      "Delivery personnel do not stack goods above the shoulder level.",
+      "Stacking of goods does not exceed 600mm from the ceiling and heavy items at the bottom, light items on top.",
+      "Proper signage/ label (fire, hazards, warnings, food stuff) and Exit signs in working order.",
+      "Fire extinguishers access is unobstructed; Fire extinguishers are not expired and employees know how to use them.",
+      "Escape route and exits are unobstructed.",
+      "First aid box is available and well-equipped.",
+      "Electrical sockets are not overloaded – one plug to one socket.",
+      "Plugs and cords are intact and free from exposure/ tension with PSB safety mark.",
+      "Power points that are in close proximity to flammable and/or water sources are installed with a plastic cover.",
+      "Electrical panels / DBs are covered.",
+    ],
+    weightage: 40,
+  },
 };
+
+const safe_management_audit = {
+  "saaaaaaaafe": {
+    issues: [
+      "MSDS for all industrial chemicals are available and up to date.",
+      "Proper chemicals storage.",
+      "All detergent and bottles containing liquids are labelled appropriately.",
+      "All personnel to wear safety shoes and safety attire where necessary.",
+      "Knives and sharp objects are kept at a safe place.",
+      "Area under the sink should not be cluttered with items other than washing agents.",
+      "Delivery personnel do not stack goods above the shoulder level.",
+      "Stacking of goods does not exceed 600mm from the ceiling and heavy items at the bottom, light items on top.",
+      "Proper signage/ label (fire, hazards, warnings, food stuff) and Exit signs in working order.",
+      "Fire extinguishers access is unobstructed; Fire extinguishers are not expired and employees know how to use them.",
+      "Escape route and exits are unobstructed.",
+      "First aid box is available and well-equipped.",
+      "Electrical sockets are not overloaded – one plug to one socket.",
+      "Plugs and cords are intact and free from exposure/ tension with PSB safety mark.",
+      "Power points that are in close proximity to flammable and/or water sources are installed with a plastic cover.",
+      "Electrical panels / DBs are covered.",
+    ],
+    weightage: 40,
+  },
+};
+
 
 export default function Checklist(props) {
   const { setValues, data } = useData();
   const history = useHistory();
   const classes = useStyles(useTheme);
   const { register, handleSubmit, setValue, errors } = useForm();
-  const { type } = props;
   const { path, url } = useRouteMatch();
+  const [auditChecklist, setAuditChecklist] = useState(non_fnb_audit);
+
+  useEffect(() => {
+    console.log(data);
+    console.log(data.type);
+    switch (data.type){
+      case 0:
+        setAuditChecklist(non_fnb_audit);
+        break;
+      case 1:
+        setAuditChecklist(fnb_audit);
+        break;
+      case 2:
+        setAuditChecklist(safe_management_audit);
+        break;
+    }
+  }, [data])
 
   const onSubmit = (data) => {
     console.log("initial");
@@ -93,7 +170,7 @@ export default function Checklist(props) {
         if (details.ok == "true") count += 1;
       }
       // console.log(score)
-      const weightage = non_fnb_audit[`${category}`].weightage;
+      const weightage = auditChecklist[`${category}`].weightage;
       // console.log(weightage)
       const length = Object.keys(issues).length;
       // console.log(length)
@@ -127,7 +204,7 @@ export default function Checklist(props) {
     <form onSubmit={handleSubmit(onSubmit)}>
       {
         //ideally non_fnb_audit should be interchangeable with other audit types
-        Object.keys(non_fnb_audit).map((x) => {
+        Object.keys(auditChecklist).map((x) => {
           return (
             <React.Fragment key={x}>
               <Grid
@@ -138,7 +215,7 @@ export default function Checklist(props) {
                 justify="center"
               >
                 <h2>{/* category name: */ x}</h2>
-                {non_fnb_audit[x].issues.map((issue) => {
+                {auditChecklist[x].issues.map((issue) => {
                   return (
                     <React.Fragment key={issue}>
                       <Grid item xs={10}>

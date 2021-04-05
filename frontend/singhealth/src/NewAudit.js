@@ -18,19 +18,24 @@ import {
   Switch,
   Route,
   useRouteMatch,
+  useHistory,
 } from "react-router-dom";
 import ChecklistResult from "./ChecklistResult";
 import useToken from "./useToken";
 import axios from "axios";
 import Loading from "./Loading";
+import CardMedia from "@material-ui/core/CardMedia";
+import Card from "@material-ui/core/Card";
+import SwitchUI from "@material-ui/core/Switch";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
   },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
+  media: {
+    height: 200,
   },
 }));
 
@@ -42,6 +47,7 @@ const initialFValues = {
   institution: "",
   fnb: "false",
   unit: "",
+  image_location: "",
   tenancyEndDate: new Date(),
 };
 
@@ -51,25 +57,57 @@ export default function NewAudit() {
   const { setValues, data } = useData();
   const [currentTenant, setCurrentTenant] = useState(initialFValues);
   const [name, setName] = useState("");
-  const [fnb, setFnb] = useState("Not yet an");
+  const [fnb, setFnb] = useState("");
   const [loading, setLoading] = useState(true);
   const { token } = useToken();
   const [records, setRecords] = useState(null);
+  const [safeMgmt, setSafeMgmt] = useState(false);
+  const [type, setType] = useState("");
+  const history = useHistory();
 
   const handleChange = (e) => {
-    console.log("handled change");
     setCurrentTenant(getTenant(e.target.value));
   };
+
+  const handleSwitchChange = (e) => {
+    if (safeMgmt){
+      setSafeMgmt(false);
+      setType(currentTenant.fnb);
+    }
+    else{
+      setSafeMgmt(true);
+      setType(2);
+    }
+  };
+
+  const renderType = () => {
+    switch (type) {
+      case 0:
+        return "Non-F&B Audit";
+      case 1:
+        return "F&B Audit";
+      case 2:
+        return "Safe Management Audit";
+    }
+  }
+
+  useEffect(() => {
+    setSafeMgmt(false);
+    setType(currentTenant.fnb);
+  }, [currentTenant])
+
+  const handleNext = (e) => {
+    e.preventDefault();
+    var output = {};
+    output.tenant = currentTenant;
+    output.type = type;
+    setValues(output);
+    history.push("/newaudit/checklist");
+  }
 
   const getTenant = (name) => {
     return records.find((tenant) => tenant.name === name);
   };
-
-  useEffect(() => {
-    console.log("useeffect is called");
-    setName(currentTenant.name);
-    setFnb(currentTenant.fnb);
-  }, [currentTenant]);
 
   async function getAllTenants() {
     var tenants;
@@ -100,32 +138,62 @@ export default function NewAudit() {
     <Frame title="New Audit">
       <Switch>
         <Route exact path={path}>
-          {/* tenant selector:might wanna make this part of the checklist component */}
-          <Grid container spacing={1} align="center" direction="column">
+          <Grid
+            item
+            container
+            xs={10}
+            sm={8}
+            md={6}
+            direction="column"
+            justify="center"
+          >
+            <CardMedia
+              className={classes.media}
+              image={currentTenant.image_location}
+            />
+            <Grid item xs={1}></Grid>
+            <FormControl className={classes.formControl}>
+              <InputLabel>Store</InputLabel>
+              <Select value={currentTenant.name} onChange={handleChange}>
+                {records.map((x) => (
+                  <MenuItem key={x.tenant_id} value={x.name}>
+                    {x.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Grid item xs={1}></Grid>
             <Grid
               item
               container
               direction="row"
+              align="center"
               justify="center"
-              alignItems="center"
             >
-              <FormControl className={classes.formControl}>
-                <InputLabel>Store</InputLabel>
-                <Select value={name} onChange={handleChange}>
-                  {records.map((x) => (
-                    <MenuItem key={x.tenant_id} value={x.name}>
-                      {x.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Typography variant="h6">
+                {renderType()}
+              </Typography>
               <Grid item xs={1}></Grid>
-              <Grid justify="center">{(fnb===1) ? "F&B" : "Non F&B"} audit</Grid>
+              <SwitchUI
+                checked={safeMgmt}
+                onChange={handleSwitchChange}
+                color="primary"
+              />
             </Grid>
-            <Grid item container direction="column">
-              <Checklist></Checklist>
-            </Grid>
+            <Grid item xs={1}></Grid>
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              color="primary"
+            >
+              Start Audit
+            </Button>
           </Grid>
+          <Grid item container xs={12} direction="column"></Grid>
+        </Route>
+
+        <Route path={`${path}/checklist/`}>
+          <Checklist></Checklist>
         </Route>
 
         <Route path={`${path}/result`}>
