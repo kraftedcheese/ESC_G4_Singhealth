@@ -141,9 +141,9 @@ export default function Checklist(props) {
           <Button variant="contained" color="primary" onClick={handleActivate}>
             Activate all
           </Button>
-          <Button variant="contained" onClick={handleClear}>
+          {/* <Button variant="contained" onClick={handleClear}>
             Clear all
-          </Button>
+          </Button> */}
         </Grid>
       </Grid>
       {

@@ -28,10 +28,10 @@ export default function ChecklistCard(props) {
   const [showMore, setShowMore] = useState(false);
   const [hasImage, setHasImage] = useState(false);
 
-  useEffect(() => {
-    console.log("pingubg")
-    setPoint(getValues(`${name}`.ok));
-  }, [doRender])
+  // useEffect(() => {
+  //   console.log("pingubg")
+  //   setPoint(getValues(`${name}`.ok));
+  // }, [doRender])
 
 
   const handleClickOK = () => {
