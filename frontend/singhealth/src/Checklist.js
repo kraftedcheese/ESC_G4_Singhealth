@@ -28,7 +28,6 @@ export default function Checklist(props) {
   const { path, url } = useRouteMatch();
   const [auditChecklist, setAuditChecklist] = useState(non_fnb_audit);
   const [doRender, setDoRender] = useState(0);
-  
 
   useEffect(() => {
     console.log(data);
@@ -58,24 +57,24 @@ export default function Checklist(props) {
   };
 
   const handleActivate = () => {
-    console.log("activating all...")
+    console.log("activating all...");
     Object.keys(auditChecklist).map((x) => {
       auditChecklist[x].issues.map((issue) => {
-        setValue(`${x}.${issue}.ok`, true)
+        setValue(`${x}.${issue}.ok`, true);
       });
-    })
-    setDoRender(value => value+1);
-  }
+    });
+    setDoRender((value) => value + 1);
+  };
 
   const handleClear = () => {
-    console.log("clearing all...")
+    console.log("clearing all...");
     Object.keys(auditChecklist).map((x) => {
       auditChecklist[x].issues.map((issue) => {
-        setValue(`${x}.${issue}.ok`, null)
+        setValue(`${x}.${issue}.ok`, null);
       });
-    })
-    setDoRender(value => value+1);
-  }
+    });
+    setDoRender((value) => value + 1);
+  };
 
   const onSubmit = (data) => {
     console.log("initial");
@@ -139,10 +138,12 @@ export default function Checklist(props) {
           margin={5}
           direction="row"
         >
-          <Button variant="contained" color="primary" onClick={handleActivate} >
+          <Button variant="contained" color="primary" onClick={handleActivate}>
             Activate all
           </Button>
-          <Button variant="contained" onClick={handleClear}>Clear all</Button>
+          <Button variant="contained" onClick={handleClear}>
+            Clear all
+          </Button>
         </Grid>
       </Grid>
       {
@@ -157,7 +158,9 @@ export default function Checklist(props) {
                 alignItems="center"
                 justify="center"
               >
-                <h2>{/* category name: */ x} ({auditChecklist[x].weightage}%)</h2>
+                <h2>
+                  {/* category name: */ x} ({auditChecklist[x].weightage}%)
+                </h2>
                 {auditChecklist[x].issues.map((issue) => {
                   return (
                     <React.Fragment key={issue}>
