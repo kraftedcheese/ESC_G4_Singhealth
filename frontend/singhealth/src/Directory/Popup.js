@@ -28,6 +28,7 @@ export default function Popup(props) {
                     </Typography>
                     <Button
                         color="default"
+                        data-test="close-popup"
                         onClick={()=>{setOpenPopup(false)}}>
                         <CloseRoundedIcon />
                     </ Button>

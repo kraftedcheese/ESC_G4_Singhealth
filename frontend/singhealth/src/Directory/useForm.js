@@ -20,6 +20,23 @@ export function useForm(initialFValues, validateOnChange = false, validate) {
             validate({ [name]: value })
     }
 
+    // const handlefnbChange = e => {
+    //     const { name, value } = e.target
+    //     if (value == 0) {
+    //         setValues({
+    //             [name]: "false"
+    //         })
+    //     }
+    //     else if (value == 1) {
+    //         setValues({
+    //             [name]: "true"
+    //         })
+    //     }
+    //     else{
+
+    //     }
+    // }
+
 
     const resetForm = () => {
         setValues(initialFValues);

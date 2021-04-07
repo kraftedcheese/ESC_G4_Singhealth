@@ -85,6 +85,7 @@ export default function DirectoryCard(props) {
             onClick={handleExpandClick}
             aria-expanded={expanded}
             aria-label="show more"
+            data-test="expand"
           >
             <ExpandMoreIcon />
           </IconButton>
@@ -134,13 +135,13 @@ export default function DirectoryCard(props) {
                 </Grid>
                 <Grid item container direction='row'>
                         <Grid item xs = {1}>
-                          <IconButton  onClick={() => { setOpenPopup(true); setRecordForEdit(props); }}>
+                          <IconButton data-test="edit" onClick={() => { setOpenPopup(true); setRecordForEdit(props); }}>
                             <CreateRoundedIcon />
                           </IconButton>
                         </Grid>
                         <Grid item xs={1}></Grid>
                         <Grid item xs = {1}>
-                          <IconButton onClick={() => { props.delete(props) }}>
+                          <IconButton data-test="delete" onClick={() => { props.delete(props) }}>
                             <DeleteForeverRoundedIcon />
                           </IconButton>
                         </Grid>
