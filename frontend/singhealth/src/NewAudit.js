@@ -37,6 +37,10 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 200,
   },
+  button: {
+    width: 200,
+    margin: theme.spacing(1)
+  },
 }));
 
 const initialFValues = {
@@ -56,8 +60,7 @@ export default function NewAudit() {
   const { path, url } = useRouteMatch();
   const { setValues, data } = useData();
   const [currentTenant, setCurrentTenant] = useState(initialFValues);
-  const [name, setName] = useState("");
-  const [fnb, setFnb] = useState("");
+  const [selected, setSelected] = useState(false);
   const [loading, setLoading] = useState(true);
   const { token } = useToken();
   const [records, setRecords] = useState(null);
@@ -66,43 +69,40 @@ export default function NewAudit() {
   const history = useHistory();
 
   const handleChange = (e) => {
+    setSelected(true);
     setCurrentTenant(getTenant(e.target.value));
   };
-
-  const handleSwitchChange = (e) => {
-    if (safeMgmt){
-      setSafeMgmt(false);
-      setType(currentTenant.fnb);
-    }
-    else{
-      setSafeMgmt(true);
-      setType(2);
-    }
-  };
-
-  const renderType = () => {
-    switch (type) {
-      case 0:
-        return "Non-F&B Audit";
-      case 1:
-        return "F&B Audit";
-      case 2:
-        return "Safe Management Audit";
-    }
-  }
 
   useEffect(() => {
     setSafeMgmt(false);
     setType(currentTenant.fnb);
   }, [currentTenant])
-
-  const handleNext = (e) => {
+  
+  const handleNextFnb = (e) => {
     e.preventDefault();
     var output = {};
     output.tenant = currentTenant;
-    output.type = type;
+    output.type = currentTenant.fnb;
     setValues(output);
     history.push("/newaudit/checklist");
+  }
+
+  const handleNextSafe = (e) => {
+    e.preventDefault();
+    var output = {};
+    output.tenant = currentTenant;
+    output.type = 2;
+    setValues(output);
+    history.push("/newaudit/checklist");
+  }
+
+  const renderType = () => {
+    switch (currentTenant.fnb) {
+      case 0:
+        return "Non-F&B Audit";
+      case 1:
+        return "F&B Audit";
+    }
   }
 
   const getTenant = (name) => {
@@ -168,26 +168,11 @@ export default function NewAudit() {
               container
               direction="row"
               align="center"
-              justify="center"
+              justify="space-evenly"
             >
-              <Typography variant="h6">
-                {renderType()}
-              </Typography>
-              <Grid item xs={1}></Grid>
-              <SwitchUI
-                checked={safeMgmt}
-                onChange={handleSwitchChange}
-                color="primary"
-              />
+              {selected && <Button variant="contained" color="primary" onClick={handleNextFnb} className={classes.button}>{renderType()}</Button>}
+              {selected && <Button variant="contained" color="primary" onClick={handleNextSafe} className={classes.button}>Safe Management Audit</Button>}
             </Grid>
-            <Grid item xs={1}></Grid>
-            <Button
-              variant="contained"
-              onClick={handleNext}
-              color="primary"
-            >
-              Start Audit
-            </Button>
           </Grid>
           <Grid item container xs={12} direction="column"></Grid>
         </Route>

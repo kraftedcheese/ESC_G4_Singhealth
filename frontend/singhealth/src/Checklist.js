@@ -18,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  submit: {
+    margin: theme.spacing(1),
+    minWidth: 200,
+  }
 }));
 
 export default function Checklist(props) {
@@ -158,9 +162,11 @@ export default function Checklist(props) {
                 alignItems="center"
                 justify="center"
               >
+                <Grid item xs={12}>
                 <h2>
                   {/* category name: */ x} ({auditChecklist[x].weightage}%)
                 </h2>
+                </Grid>
                 {auditChecklist[x].issues.map((issue) => {
                   return (
                     <React.Fragment key={issue}>
@@ -182,7 +188,7 @@ export default function Checklist(props) {
           );
         })
       }
-      <Button variant="contained" type="submit" color="primary">
+      <Button variant="contained" type="submit" color="primary" className={classes.submit}>
         Submit
       </Button>
     </form>
