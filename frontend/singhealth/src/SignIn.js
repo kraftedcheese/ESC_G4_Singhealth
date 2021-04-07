@@ -140,6 +140,7 @@ export default function SignIn({ setToken }) {
               required
               fullWidth
               id="email"
+              data-test="email"
               label="Email Address"
               name="email"
               autoComplete="email"
@@ -155,6 +156,7 @@ export default function SignIn({ setToken }) {
               label="Password"
               type="password"
               id="password"
+              data-test="password"
               autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -167,7 +169,7 @@ export default function SignIn({ setToken }) {
               fullWidth
               variant="contained"
               color="primary"
-              id="submit"
+              data-test="submit"
               className={classes.submit}
               onClick={handleLogin}
             >

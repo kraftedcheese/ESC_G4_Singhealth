@@ -43,10 +43,15 @@ export default function Directory() {
       })
       .then((response) => {
         tenants = Object.values(response.data);
-        setRecords(tenants);
-        setLoading(false);
+        for (var i = 0; i < tenants.length; i++){
+          if (tenants[i].fnb === 1) (tenants[i].fnb = "true");
+          else (tenants[i].fnb = "false");
+        }
         console.log("got some tenants");
         console.log(tenants);
+
+        setRecords(tenants);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -65,10 +70,9 @@ export default function Directory() {
         axios.delete("http://singhealthdb.herokuapp.com/api/tenant/tenant_id_param", {
           params: { secret_token: token, tenant_id: tenant.tenant_id },
         }),
-        // axios.delete("http://singhealthdb.herokuapp.com/signup", {
-        //   email: tenant.email,
-        //   password: tenant.password,
-        // }),
+        axios.delete("http://singhealthdb.herokuapp.com/auth/tenant_delete", {
+          email: tenant.email,
+        }),
       ])
       .then(
         axios.spread((res1) => {
@@ -130,7 +134,7 @@ export default function Directory() {
         axios.post("http://singhealthdb.herokuapp.com/api/tenant", data, {
           params: { secret_token: token },
         }),
-        axios.post("http://singhealthdb.herokuapp.com/signup", {
+        axios.post("http://singhealthdb.herokuapp.com/auth/tenant_signup", {
           email: data.email,
           password: data.password,
         }),

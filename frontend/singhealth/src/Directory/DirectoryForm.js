@@ -36,16 +36,18 @@ export default function DirectoryForm(props) {
     if ("name" in fieldValues)
       temp.name = fieldValues.name ? "" : "This field is required.";
     if ("email" in fieldValues)
-      temp.email = /$^|.+@.+..+/.test(fieldValues.email)
+      temp.email = (/$^|.+@.+..+/.test(fieldValues.email) && fieldValues.email)
         ? ""
         : "Email is not valid.";
+    if ("password" in fieldValues)
+      temp.password = fieldValues.password ? "" : "This field is required.";
     if ("phone" in fieldValues)
       temp.phone =
-        ((fieldValues.phone.length > 7) && (/[^a-zA-Z]/g.test(fieldValues.phone))) 
+        ((fieldValues.phone.length > 7) && (/^[^a-z]+$/gi.test(fieldValues.phone))) 
         ? "" 
         : "Minimum 8 numbers required.";
     if ("unit" in fieldValues)
-      temp.unit = /[^a-zA-Z]/g.test(fieldValues.unit)
+      temp.unit = /^[^a-z]+$/gi.test(fieldValues.unit)
         ? ""
         : "Unit is not valid.";
     if ("institution" in fieldValues)
