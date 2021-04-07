@@ -99,6 +99,7 @@ export default function DirectoryForm(props) {
             value={values.name}
             onChange={handleInputChange}
             error={errors.name}
+            data-test="name"
           />
           <TextField
             label="Email"
@@ -106,6 +107,7 @@ export default function DirectoryForm(props) {
             value={values.email}
             onChange={handleInputChange}
             error={errors.email}
+            data-test="email"
           />
           {isAdd &&
           <TextField
@@ -114,6 +116,7 @@ export default function DirectoryForm(props) {
             value={values.password}
             onChange={handleInputChange}
             error={errors.password}
+            data-test="password"
           />}
           <TextField
             label="Phone"
@@ -121,6 +124,7 @@ export default function DirectoryForm(props) {
             value={values.phone}
             onChange={handleInputChange}
             error={errors.phone}
+            data-test="phone"
           />
           <TextField
             label="Unit"
@@ -128,19 +132,22 @@ export default function DirectoryForm(props) {
             value={values.unit}
             onChange={handleInputChange}
             error={errors.unit}
+            data-test="unit"
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <Grid container style={{gap: 20}} justify="center"> 
             <UploadPhoto 
-              name="image_logo"
+              name="upload_logo"
               label="Upload Logo"
               onChange={handleInputChange}
+              data-test="upload_logo"
             />
             <UploadPhoto 
-              name="image_location"
+              name="upload_storefront"
               label="Upload Storefront"
               onChange={handleInputChange}
+              data-test="upload_storefront"
             />
           </Grid>
           <RadioGroup
@@ -150,6 +157,7 @@ export default function DirectoryForm(props) {
             onChange={handleInputChange}
             items={fnbItems}
             error={errors.fnb}
+            data-test="fnb"
           />
           <Select
             name="institution"
@@ -158,17 +166,19 @@ export default function DirectoryForm(props) {
             onChange={handleInputChange}
             options={tenantService.getInstitutionCollection()}
             error={errors.institution}
+            data-test="institution"
           />
           <DatePicker
-            name="contract_date"
+            name="contract_end_date"
             label="Contract End Date"
             value={values.contract_date}
             onChange={handleInputChange}
+            data-test="contract_end_date"
           />
           
           <Grid container justify="center">
-            <Button type="submit" text="Submit" />
-            <Button text="Reset" color="default" onClick={resetForm} />
+            <Button type="submit" text="Submit" data-test="submit"/>
+            <Button text="Reset" color="default" onClick={resetForm} data-test="reset" />
           </Grid>
         </Grid>
       </Grid>

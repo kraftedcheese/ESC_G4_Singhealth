@@ -222,7 +222,7 @@ export default function Directory() {
           </Grid>
         </Grid>
 
-        <Fab color="primary" className={classes.fab} aria-label="add">
+        <Fab color="primary" className={classes.fab} data-test="add" aria-label="add">
           <AddIcon
             onClick={() => {
               setOpenPopup(true);

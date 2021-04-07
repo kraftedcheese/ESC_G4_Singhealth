@@ -81,7 +81,7 @@ function AuditScreenCard(props) {
   return (
     <Grid item xs={12} sm={5} md={3} className={classes.ascgrid}>
       <Badge badgeContent={props.notifs} color="primary">
-        <Card className={classes.card} variant="outlined">
+        <Card className={classes.card} variant="outlined"  data-test="audit">
           <CardActionArea onClick={() => cardClick(props)}>
             <CardHeader
               avatar={
@@ -218,6 +218,7 @@ export default function Home() {
         <Button
           variant="contained"
           color="primary"
+          data-test="new_audit"
           className={classes.button}
           startIcon={<AddIcon />}
           onClick={() => history.push("/newaudit")}
@@ -227,6 +228,7 @@ export default function Home() {
         <Button
           variant="contained"
           color="primary"
+          data-test="past_audit"
           className={classes.button}
           startIcon={<VisibilityIcon />}
         >
