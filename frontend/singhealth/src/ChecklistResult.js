@@ -5,6 +5,8 @@ import { useTheme } from "@material-ui/core/styles";
 import { useForm } from "react-hook-form";
 import { useData } from "./DataContext";
 import { useHistory } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -15,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ChecklistResult() {
   const { setValues, data } = useData();
+  const classes = useStyles(useTheme);
   const history = useHistory();
   const { register, handleSubmit, setValue, errors } = useForm();
 
@@ -32,6 +35,12 @@ export default function ChecklistResult() {
     </div>
   ));
 
+  const handleComplete = (e) => {
+    e.preventDefault();
+    axios
+      .post("")
+  }
+
   return data === null ? (
     <div>you messed up</div>
   ) : (
@@ -40,6 +49,7 @@ export default function ChecklistResult() {
       {DisplayData}
       <h3>Total Score: {Math.round(data.score)}</h3>
       <h1>{(data.score > 95) ? "PASSED!" : "FAILED" }</h1>
+      <Button color="primary" variant="contained" className={classes.formControl}>Complete Audit</Button>
     </div>
   );
 }

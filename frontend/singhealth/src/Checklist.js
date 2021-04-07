@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(1),
     minWidth: 200,
-  }
+  },
 }));
 
 export default function Checklist(props) {
@@ -34,8 +34,14 @@ export default function Checklist(props) {
   const [doRender, setDoRender] = useState(0);
 
   useEffect(() => {
+    console.log("logging data at checklist screen")
     console.log(data);
     console.log(data.type);
+
+    if (!data) {
+      history.push("/newaudit");
+    }
+    
     switch (data.type) {
       case 0:
         setAuditChecklist(non_fnb_audit);
@@ -128,7 +134,9 @@ export default function Checklist(props) {
     history.push("/newaudit/result");
   };
 
-  return (
+  return (data === null) ? (
+    <div>you messed up</div>
+    ) : (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid item container justify="center">
         <h1>
@@ -163,9 +171,9 @@ export default function Checklist(props) {
                 justify="center"
               >
                 <Grid item xs={12}>
-                <h2>
-                  {/* category name: */ x} ({auditChecklist[x].weightage}%)
-                </h2>
+                  <h2>
+                    {/* category name: */ x} ({auditChecklist[x].weightage}%)
+                  </h2>
                 </Grid>
                 {auditChecklist[x].issues.map((issue) => {
                   return (
@@ -188,7 +196,12 @@ export default function Checklist(props) {
           );
         })
       }
-      <Button variant="contained" type="submit" color="primary" className={classes.submit}>
+      <Button
+        variant="contained"
+        type="submit"
+        color="primary"
+        className={classes.submit}
+      >
         Submit
       </Button>
     </form>

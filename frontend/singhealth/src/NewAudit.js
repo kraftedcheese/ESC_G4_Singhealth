@@ -19,6 +19,7 @@ import {
   Route,
   useRouteMatch,
   useHistory,
+  Redirect,
 } from "react-router-dom";
 import ChecklistResult from "./ChecklistResult";
 import useToken from "./useToken";
@@ -66,6 +67,7 @@ export default function NewAudit() {
   const [records, setRecords] = useState(null);
   const [safeMgmt, setSafeMgmt] = useState(false);
   const [type, setType] = useState("");
+  const [hasData, setHasData] = useState(false);
   const history = useHistory();
 
   const handleChange = (e) => {
@@ -84,6 +86,7 @@ export default function NewAudit() {
     output.tenant = currentTenant;
     output.type = currentTenant.fnb;
     setValues(output);
+    setHasData(true);
     history.push("/newaudit/checklist");
   }
 
@@ -93,6 +96,7 @@ export default function NewAudit() {
     output.tenant = currentTenant;
     output.type = 2;
     setValues(output);
+    setHasData(true);
     history.push("/newaudit/checklist");
   }
 
@@ -178,11 +182,11 @@ export default function NewAudit() {
         </Route>
 
         <Route path={`${path}/checklist/`}>
-          <Checklist></Checklist>
+          {hasData ? <Checklist/> : <Redirect to="/newaudit"></Redirect>}
         </Route>
 
         <Route path={`${path}/result`}>
-          <ChecklistResult></ChecklistResult>
+          {hasData ? <ChecklistResult></ChecklistResult> : <Redirect to="/newaudit"></Redirect>}
         </Route>
       </Switch>
     </Frame>
