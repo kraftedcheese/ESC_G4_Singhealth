@@ -89,7 +89,7 @@ export default function SignIn({ setToken }) {
       console.log({ email: email, password: password });
       setLoading(true);
       axios
-        .post("http://singhealthdb.herokuapp.com/login", {
+        .post("http://singhealthdb.herokuapp.com/auth/login", {
           email: email,
           password: password,
         })
@@ -167,6 +167,7 @@ export default function SignIn({ setToken }) {
               fullWidth
               variant="contained"
               color="primary"
+              id="submit"
               className={classes.submit}
               onClick={handleLogin}
             >
