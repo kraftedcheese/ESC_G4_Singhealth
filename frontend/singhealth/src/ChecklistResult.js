@@ -24,37 +24,44 @@ const useStyles = makeStyles((theme) => ({
   cardContainer: {
     width: "300px",
   },
-  media:{
-    height:200,
+  media: {
+    height: 200,
+  },
+  hr: {
+    margin: theme.spacing(0, 8),
+  },
+  issueCategory: {
+    margin: theme.spacing(4, 10, 2),
+    textAlign: "left",
+  },
+  knownIssues: {
+    margin: theme.spacing(4, 10, 2),
   },
 }));
 
 function IssueCard(props) {
-  const {name, due_date, desc, image} = props;
+  const { name, due_date, desc, image } = props;
   const classes = useStyles();
 
   const displayDate = (date_string) => {
     let date = new Date(date_string);
     let dd = date.getDate();
-    let mm = date.getMonth()+1;
+    let mm = date.getMonth() + 1;
     let yyyy = date.getFullYear();
-    return(`${dd}/${mm}/${yyyy}`);
-  }
+    return `${dd}/${mm}/${yyyy}`;
+  };
 
   return (
     <Grid item xs={10} sm={5} md={3} className={classes.issueCard}>
       <Card className={classes.cardContainer}>
-        <CardHeader title={name}/>
-        <CardMedia
-          className={classes.media}
-          image={image}
-        />
+        <CardHeader title={desc} titleTypographyProps={{ variant: "body1" }} />
+        {image && <CardMedia className={classes.media} image={image} />}
         <CardContent>
           <Typography gutterBottom variant="h6">
             {"Due: " + displayDate(due_date)}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            {desc}
+            {name}
           </Typography>
         </CardContent>
       </Card>
@@ -66,30 +73,36 @@ export default function ChecklistResult() {
   const { setValues, data } = useData();
   const classes = useStyles(useTheme);
   const history = useHistory();
-  const classes = useStyles();
   const { register, handleSubmit, setValue, errors } = useForm();
 
   const DisplayData = Object.keys(data.audit).map((category) => (
-    <div>
-      <h3>{category}</h3>
-      <p>
-        Weighted Category Score: {Math.round(data.audit[category].catScore)}
-      </p>
+    <Grid item container xs={12} direction="row">
+      <Grid item container direction="column" xs={12}>
+        <Typography className={classes.issueCategory}>
+          {category} ({data.audit[category].count}/{data.audit[category].total})
+        </Typography>
+        <hr color="#f06d1a" className={classes.hr}></hr>
+      </Grid>
+
       {Object.keys(data.audit[category].issues).length > 0 && (
-        <h4>Known issues:</h4>
+        <Grid item xs={12}>
+          <Typography variant="h6" className={classes.knownIssues}>
+            Known issues:
+          </Typography>
+        </Grid>
       )}
-      {Object.entries(data.audit[category].issues).map(([issue, items]) => (
-        <div>
-          <IssueCard name={issue} {...items} ></IssueCard>
-        </div>
-      ))}
-    </div>
+      <Grid item container xs={12} justify="center" direction="row">
+        {Object.entries(data.audit[category].issues).map(([issue, items]) => (
+          <div>
+            <IssueCard name={issue} {...items}></IssueCard>
+          </div>
+        ))}
+      </Grid>
+    </Grid>
   ));
 
   // const handleComplete = (e) => {
   //   e.preventDefault();
-
-    
 
   //   axios.post("http://singhealthdb.herokuapp.com/api/audit", {
   //     params: { secret_token: token },
@@ -103,21 +116,26 @@ export default function ChecklistResult() {
   //   });
   // };
 
-  return data === null ? (
-    <div>you messed up</div>
-  ) : (
-    <div>
-      <h1>Results</h1>
+  return (
+    <Grid container direction="column">
+      <Grid item xs={12}>
+        <h1>Results</h1>
+      </Grid>
       {DisplayData}
-      <h3>Total Score: {Math.round(data.score)}</h3>
-      <h1>{data.score > 95 ? "PASSED!" : "FAILED"}</h1>
-      <Button
-        color="primary"
-        variant="contained"
-        className={classes.formControl}
-      >
-        Complete Audit
-      </Button>
-    </div>
+      <Typography variant="h4" className={classes.formControl}>
+        Score: {Math.round(data.score)}/100 -{" "}
+        {data.score > 95 ? "PASSED!" : "FAILED"}
+      </Typography>
+
+      <Grid item className={classes.formControl}>
+        <Button
+          color="primary"
+          variant="contained"
+          className={classes.formControl}
+        >
+          Complete Audit
+        </Button>
+      </Grid>
+    </Grid>
   );
 }

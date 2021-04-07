@@ -95,8 +95,8 @@ export default function Checklist(props) {
     for (const [category, issues] of Object.entries(data)) {
       var count = 0;
       for (const [issue, details] of Object.entries(issues)) {
-        console.log(issue, details);
         if (details.ok == "true") count += 1;
+        if (!details.due_date) data[`${category}`][`${issue}`].due_date = new Date();
       }
 
       // console.log("count")
@@ -113,9 +113,11 @@ export default function Checklist(props) {
       let flaggedIssues = Object.fromEntries(
         Object.entries(issues).filter((issue) => issue[1].ok === "false")
       );
+
       data[`${category}`] = {};
       data[`${category}`].issues = flaggedIssues;
       data[`${category}`].count = count;
+      data[`${category}`].total = length;
       data[`${category}`].catScore = catScore;
 
       score += catScore;
