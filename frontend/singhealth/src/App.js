@@ -13,10 +13,11 @@ import { DataProvider } from "./DataContext";
 import useToken from "./useToken";
 import Issues from "./Issues";
 import IssueChat from "./IssueChat";
+import Profile from "./Profile";
 
 
 const App = () => {
-  const { token, setToken } = useToken();
+  const { getToken, setToken } = useToken();
   const history = useHistory();
 
   function PrivateRoute({ children, ...rest }) {
@@ -24,7 +25,7 @@ const App = () => {
       <Route
         {...rest}
         render={({ location }) =>
-          token ? (
+          getToken() ? (
             children
           ) : (
             <Redirect
@@ -62,6 +63,9 @@ const App = () => {
             </PrivateRoute>
             <PrivateRoute path="/frame">
               <Frame />
+            </PrivateRoute>
+            <PrivateRoute path="/profile">
+              <Profile />
             </PrivateRoute>
             <Route exact path="/signin">
               <SignIn setToken={setToken}/>

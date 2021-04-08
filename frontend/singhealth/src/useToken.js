@@ -31,6 +31,7 @@ export default function useToken() {
     setToken: saveToken,
     removeToken,
     getRole,
+    getToken,
     token
   }
 }

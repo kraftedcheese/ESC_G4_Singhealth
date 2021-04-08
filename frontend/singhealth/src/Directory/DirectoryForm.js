@@ -155,6 +155,7 @@ export default function DirectoryForm(props) {
             onChange={handleInputChange}
             items={fnbItems}
             error={errors.fnb}
+            name="fnb"
           />
           <Select
             name="institution"
