@@ -87,7 +87,7 @@ export default function ChecklistResult() {
       {Object.keys(data.audit[category].issues).length > 0 && (
         <Grid item xs={12}>
           <Typography variant="h6" className={classes.knownIssues}>
-            Known issues:
+            Issues
           </Typography>
         </Grid>
       )}
@@ -117,24 +117,36 @@ export default function ChecklistResult() {
   // };
 
   return (
-    <Grid container direction="column">
+    <Grid container direction="row">
       <Grid item xs={12}>
-        <h1>Results</h1>
+        <Typography variant="h3" className={classes.issueCard}>Results</Typography>
       </Grid>
       {DisplayData}
-      <Typography variant="h4" className={classes.formControl}>
-        Score: {Math.round(data.score)}/100 -{" "}
-        {data.score > 95 ? "PASSED!" : "FAILED"}
-      </Typography>
 
-      <Grid item className={classes.formControl}>
-        <Button
-          color="primary"
-          variant="contained"
-          className={classes.formControl}
-        >
-          Complete Audit
-        </Button>
+      <Grid
+        item
+        container
+        xs={12}
+        justify="center"
+        direction="row"
+        className={classes.formControl}
+      >
+        <Grid item xs={12}>
+          <Typography variant="h4" className={classes.formControl}>
+            Score: {Math.round(data.score)}/100 -{" "}
+            {data.score > 95 ? "PASSED!" : "FAILED"}
+          </Typography>
+        </Grid>
+
+        <Grid item>
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.formControl}
+          >
+            Complete Audit
+          </Button>
+        </Grid>
       </Grid>
     </Grid>
   );

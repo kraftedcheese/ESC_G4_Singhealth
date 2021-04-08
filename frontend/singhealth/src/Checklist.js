@@ -95,6 +95,10 @@ export default function Checklist(props) {
     for (const [category, issues] of Object.entries(data)) {
       var count = 0;
       for (const [issue, details] of Object.entries(issues)) {
+        if (!details.ok) {
+          alert("Not all fields were filled in!");
+          return;
+        }
         if (details.ok == "true") count += 1;
         if (!details.due_date) data[`${category}`][`${issue}`].due_date = new Date();
       }
@@ -147,6 +151,7 @@ export default function Checklist(props) {
       return totalIndex + issueIndex;
     }
   }
+
 
   return (data === null) ? (
     <div>you messed up</div>
