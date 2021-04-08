@@ -151,13 +151,10 @@ export default function DirectoryForm(props) {
             />
           </Grid>
           <RadioGroup
-            name="fnb"
-            label=""
             value={values.fnb}
             onChange={handleInputChange}
             items={fnbItems}
             error={errors.fnb}
-            data-test="fnb"
           />
           <Select
             name="institution"
@@ -169,11 +166,11 @@ export default function DirectoryForm(props) {
             data-test="institution"
           />
           <DatePicker
-            name="contract_end_date"
+            name="contract_date"
             label="Contract End Date"
             value={values.contract_date}
             onChange={handleInputChange}
-            data-test="contract_end_date"
+            data-test="contract_date"
           />
           
           <Grid container justify="center">
