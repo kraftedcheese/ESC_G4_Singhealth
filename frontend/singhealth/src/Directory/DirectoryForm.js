@@ -138,26 +138,23 @@ export default function DirectoryForm(props) {
         <Grid item xs={12} md={6}>
           <Grid container style={{gap: 20}} justify="center"> 
             <UploadPhoto 
-              name="upload_logo"
+              name="image_logo"
               label="Upload Logo"
               onChange={handleInputChange}
-              data-test="upload_logo"
+              data-test="image_logo"
             />
             <UploadPhoto 
-              name="upload_storefront"
+              name="image_location"
               label="Upload Storefront"
               onChange={handleInputChange}
-              data-test="upload_storefront"
+              data-test="image_location"
             />
           </Grid>
           <RadioGroup
-            name="fnb"
-            label=""
             value={values.fnb}
             onChange={handleInputChange}
             items={fnbItems}
             error={errors.fnb}
-            data-test="fnb"
           />
           <Select
             name="institution"
@@ -169,11 +166,11 @@ export default function DirectoryForm(props) {
             data-test="institution"
           />
           <DatePicker
-            name="contract_end_date"
+            name="contract_date"
             label="Contract End Date"
             value={values.contract_date}
             onChange={handleInputChange}
-            data-test="contract_end_date"
+            data-test="contract_date"
           />
           
           <Grid container justify="center">

@@ -80,12 +80,13 @@ export default function SignIn({ setToken }) {
   const [loading, setLoading] = React.useState(false);
 
   const validate = () => {
-    return (email && password && (/$^|.+@.+..+/.test(email)))
-  }
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return email && password && re.test(email);
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (validate()){
+    if (validate()) {
       console.log({ email: email, password: password });
       setLoading(true);
       axios
@@ -104,9 +105,8 @@ export default function SignIn({ setToken }) {
           alert("Incorrect password, or user not found");
           console.error(error);
         });
-    }
-    else {
-      alert("Invalid login fields!")
+    } else {
+      alert("Invalid login fields!");
     }
   };
 
@@ -145,7 +145,7 @@ export default function SignIn({ setToken }) {
               name="email"
               autoComplete="email"
               onChange={(e) => setEmail(e.target.value)}
-              autoFocus 
+              autoFocus
             />
             <TextField
               variant="outlined"
