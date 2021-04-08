@@ -72,12 +72,12 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem data-test="profile" onClick={handleMenuClose}>
+      <MenuItem data-test="profile" onClick={() => history.push("./profile")}>
         Profile
       </MenuItem>
-      <MenuItem data-test="account" onClick={handleMenuClose}>
+      {/* <MenuItem data-test="account" onClick={handleMenuClose}>
         My account
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem data-test="logout" onClick={handleLogout}>
         Logout
       </MenuItem>

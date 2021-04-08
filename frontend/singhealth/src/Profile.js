@@ -17,10 +17,24 @@ import MailRoundedIcon from '@material-ui/icons/MailRounded';
 import DescriptionRoundedIcon from '@material-ui/icons/DescriptionRounded';
 
 const useStyles = makeStyles((theme) => ({
-  fab: {
-    position: "fixed",
-    bottom: theme.spacing(5),
-    right: theme.spacing(5),
+  root: {
+    minWidth: 300,
+    maxWidth: 500,
+    margin: theme.spacing(8, 4),
+  },
+  media: {
+    height: 0,
+    paddingTop: '56.25%', // 16:9
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
   },
 }));
 
@@ -37,7 +51,7 @@ export default function Profile() {
     return(`${dd}/${mm}/${yyyy}`);
   }
 
-  const tenantCard = (props) => {
+  const TenantCard = (props) => {
       return(
       <Card className={classes.root}>
         <CardHeader
@@ -47,7 +61,7 @@ export default function Profile() {
             src={props.image_logo}>
             </Avatar>
           }
-          title={props.name}
+          title={props.name + " (" + props.tenant_id + ")"}
           subheader={props.unit}
         />
           <CardContent>
@@ -94,11 +108,48 @@ export default function Profile() {
           </Card>)
   }
 
+  const StaffCard = (props) => {
+    return(
+    <Card className={classes.root}>
+        <CardHeader
+          title={props.name + " (" + props.staff_id + ")"}
+          subheader={props.unit}
+        />
+        <CardContent>
+            <Grid container spacing={2} direction='column'>
+                <Grid item container direction='row'>
+                        <Grid item xs = {1}><LocationOnRoundedIcon /></Grid>
+                        <Grid item xs = {1}></Grid>
+                        <Grid item xs = {10}>
+                        <Typography variant="body2">{props.institution}</Typography>
+                        </Grid>
+                </Grid>
+                <Grid item container direction='row'>
+                        <Grid item xs = {1}><PhoneRoundedIcon /></Grid>
+                        <Grid item xs = {1}></Grid>
+                        <Grid item xs = {10}>
+                        <Typography variant="body2">{props.phone}</Typography>
+                        </Grid>
+                </Grid>
+                <Grid item container direction='row'>
+                        <Grid item xs = {1}><MailRoundedIcon /></Grid>
+                        <Grid item xs = {1}></Grid>
+                        <Grid item xs = {10}>
+                        <Typography variant="body2">{props.email}</Typography>
+                        </Grid>
+                </Grid>
+            </Grid>
+        </CardContent>
+        </Card>)
+}
+
   console.log(user.name);
 
   return (
-    <Frame>
-      <p>{user.name}</p>
+    <Frame title="Profile">
+      <Grid item justify="center">
+        {getRole() ? <StaffCard {...user} /> : <TenantCard {...user} />}
+      </Grid>
     </Frame>
   );
 }
