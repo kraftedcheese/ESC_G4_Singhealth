@@ -34,7 +34,7 @@ export default function DirectoryForm(props) {
   const validate = (fieldValues = values) => {
     let temp = { ...errors };
     if ("name" in fieldValues)
-      temp.name = fieldValues.name ? "" : "This field is required.";
+      temp.name = /^[a-zA-Z\s]*$/gi.test(fieldValues.name) ? "" : "This field is required.";
     if ("email" in fieldValues)
       temp.email = (/$^|.+@.+..+/.test(fieldValues.email) && fieldValues.email)
         ? ""
