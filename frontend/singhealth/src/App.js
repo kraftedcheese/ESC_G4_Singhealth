@@ -17,7 +17,7 @@ import Profile from "./Profile";
 
 
 const App = () => {
-  const { token, setToken } = useToken();
+  const { getToken, setToken } = useToken();
   const history = useHistory();
 
   function PrivateRoute({ children, ...rest }) {
@@ -25,7 +25,7 @@ const App = () => {
       <Route
         {...rest}
         render={({ location }) =>
-          token ? (
+          getToken() ? (
             children
           ) : (
             <Redirect
