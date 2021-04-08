@@ -18,6 +18,10 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
+  submit: {
+    margin: theme.spacing(1),
+    minWidth: 200,
+  },
 }));
 
 export default function Checklist(props) {
@@ -30,8 +34,14 @@ export default function Checklist(props) {
   const [doRender, setDoRender] = useState(0);
 
   useEffect(() => {
+    console.log("logging data at checklist screen")
     console.log(data);
     console.log(data.type);
+
+    if (!data) {
+      history.push("/newaudit");
+    }
+    
     switch (data.type) {
       case 0:
         setAuditChecklist(non_fnb_audit);
@@ -85,8 +95,8 @@ export default function Checklist(props) {
     for (const [category, issues] of Object.entries(data)) {
       var count = 0;
       for (const [issue, details] of Object.entries(issues)) {
-        console.log(issue, details);
         if (details.ok == "true") count += 1;
+        if (!details.due_date) data[`${category}`][`${issue}`].due_date = new Date();
       }
 
       // console.log("count")
@@ -103,9 +113,11 @@ export default function Checklist(props) {
       let flaggedIssues = Object.fromEntries(
         Object.entries(issues).filter((issue) => issue[1].ok === "false")
       );
+
       data[`${category}`] = {};
       data[`${category}`].issues = flaggedIssues;
       data[`${category}`].count = count;
+      data[`${category}`].total = length;
       data[`${category}`].catScore = catScore;
 
       score += catScore;
@@ -124,7 +136,9 @@ export default function Checklist(props) {
     history.push("/newaudit/result");
   };
 
-  return (
+  return (data === null) ? (
+    <div>you messed up</div>
+    ) : (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid item container justify="center">
         <h1>
@@ -141,9 +155,9 @@ export default function Checklist(props) {
           <Button variant="contained" color="primary" onClick={handleActivate}>
             Activate all
           </Button>
-          <Button variant="contained" onClick={handleClear}>
+          {/* <Button variant="contained" onClick={handleClear}>
             Clear all
-          </Button>
+          </Button> */}
         </Grid>
       </Grid>
       {
@@ -158,9 +172,11 @@ export default function Checklist(props) {
                 alignItems="center"
                 justify="center"
               >
-                <h2>
-                  {/* category name: */ x} ({auditChecklist[x].weightage}%)
-                </h2>
+                <Grid item xs={12}>
+                  <h2>
+                    {/* category name: */ x} ({auditChecklist[x].weightage}%)
+                  </h2>
+                </Grid>
                 {auditChecklist[x].issues.map((issue) => {
                   return (
                     <React.Fragment key={issue}>
@@ -182,7 +198,12 @@ export default function Checklist(props) {
           );
         })
       }
-      <Button variant="contained" type="submit" color="primary">
+      <Button
+        variant="contained"
+        type="submit"
+        color="primary"
+        className={classes.submit}
+      >
         Submit
       </Button>
     </form>

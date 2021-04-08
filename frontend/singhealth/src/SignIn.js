@@ -19,6 +19,8 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import Loading from "./Loading";
 import tr from "date-fns/esm/locale/tr/index.js";
+import useToken from "./useToken";
+import useUser from "./useUser";
 
 function Copyright() {
   return (
@@ -72,12 +74,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn({ setToken }) {
+export default function SignIn() {
   const classes = useStyles(useTheme);
   const history = useHistory();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const { setToken, getRole } = useToken();
+  const { setUser } = useUser();
 
   const validate = () => {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -95,10 +99,9 @@ export default function SignIn({ setToken }) {
           password: password,
         })
         .then((response) => {
-          setLoading(false);
           console.log(response.data);
           setToken(response.data);
-          history.push("/home");
+          getUserAfterLogin(email, response.data.token);
         })
         .catch((error) => {
           setLoading(false);
@@ -108,6 +111,46 @@ export default function SignIn({ setToken }) {
     } else {
       alert("Invalid login fields!");
     }
+  };
+
+  const getUserAfterLogin = (email, token) => {
+    if (getRole()){
+      axios
+      .get("http://singhealthdb.herokuapp.com/api/staff/email_param", {
+        params: { secret_token: token, email: email },
+      })
+      .then((res) => {
+        console.log("getting staff complete");
+        console.log(res.data);
+        setUser(res.data);
+        setLoading(false);
+        history.push("/home");
+      })
+      .catch((error) => {
+        setLoading(false);
+        alert("Staff data not found");
+        console.error(error);
+      });
+    }
+    else {
+      axios
+      .get("http://singhealthdb.herokuapp.com/api/tenant/email_param", {
+        params: { secret_token: token, email: email },
+      })
+      .then((res) => {
+        console.log("getting tenant complete");
+        console.log(res.data);
+        setUser(res.data);
+        setLoading(false);
+        history.push("/home");
+      })
+      .catch((error) => {
+        setLoading(false);
+        alert("Tenant data not found");
+        console.error(error);
+      });
+    }
+    
   };
 
   return loading ? (
