@@ -101,6 +101,7 @@ export default function DirectoryForm(props) {
             error={errors.name}
             data-test="name"
           />
+          {isAdd &&
           <TextField
             label="Email"
             name="email"
@@ -108,7 +109,7 @@ export default function DirectoryForm(props) {
             onChange={handleInputChange}
             error={errors.email}
             data-test="email"
-          />
+          />}
           {isAdd &&
           <TextField
             label="Password"
