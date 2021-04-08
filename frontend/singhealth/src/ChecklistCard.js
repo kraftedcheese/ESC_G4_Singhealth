@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 
 export default function ChecklistCard(props) {
   const classes = useStyles();
-  const { name, desc, register, setValue, getValues, doRender } = props;
+  const { name, desc, register, setValue, index, getValues, doRender } = props;
   const [point, setPoint] = useState();
   const [date, setDate] = useState(new Date());
   const [showMore, setShowMore] = useState(false);
@@ -107,6 +107,7 @@ export default function ChecklistCard(props) {
               onClick={handleClickOK}
               disableElevation
               size="small"
+              data-test={index + "ok"}
               color={
                 point == null ? "secondary" : point ? "primary" : "secondary"
               }
@@ -121,6 +122,7 @@ export default function ChecklistCard(props) {
               onClick={handleClickNotOK}
               disableElevation
               size="small"
+              data-test={index + "not_ok"}
               color={
                 point == null ? "secondary" : point ? "secondary" : "primary"
               }
@@ -137,6 +139,7 @@ export default function ChecklistCard(props) {
                 label="Select due date"
                 value={date}
                 onChange={setDueDate}
+                datatest={index + "due_date"}
               />
             </Grid>
             <Grid item xs={12} md={3} className={classes.moreGrid}>
@@ -145,6 +148,7 @@ export default function ChecklistCard(props) {
                 label="Add a description"
                 required={true}
                 inputRef={register}
+                data-test={index + "desc"}
               />
             </Grid>
             <Grid item xs={12} md={3} className={classes.moreGrid}>
@@ -152,6 +156,7 @@ export default function ChecklistCard(props) {
                 name="image"
                 label="Upload photo"
                 onChange={setImageURL}
+                datatest={index + "upload"}
               />
             </Grid>
             <Grid item xs={12} md={11} className={classes.moreGrid}>
