@@ -34,7 +34,7 @@ export default function DirectoryForm(props) {
   const validate = (fieldValues = values) => {
     let temp = { ...errors };
     if ("name" in fieldValues)
-      temp.name = fieldValues.name ? "" : "This field is required.";
+      temp.name = /^[a-zA-Z\s]*$/gi.test(fieldValues.name) ? "" : "This field is required.";
     if ("email" in fieldValues)
       temp.email = (/$^|.+@.+..+/.test(fieldValues.email) && fieldValues.email)
         ? ""
@@ -43,11 +43,11 @@ export default function DirectoryForm(props) {
       temp.password = fieldValues.password ? "" : "This field is required.";
     if ("phone" in fieldValues)
       temp.phone =
-        ((fieldValues.phone.length > 7) && (/^[^a-z]+$/gi.test(fieldValues.phone))) 
+        ((fieldValues.phone.length === 8) && (/^[^a-z]+$/gi.test(fieldValues.phone))) 
         ? "" 
-        : "Minimum 8 numbers required.";
+        : "8 numbers required.";
     if ("unit" in fieldValues)
-      temp.unit = /^[^a-z]+$/gi.test(fieldValues.unit)
+      temp.unit = /^[^a-z]+-[^a-z]+$/gi.test(fieldValues.unit)
         ? ""
         : "Unit is not valid.";
     if ("institution" in fieldValues)
@@ -101,6 +101,7 @@ export default function DirectoryForm(props) {
             error={errors.name}
             data-test="name"
           />
+          {isAdd &&
           <TextField
             label="Email"
             name="email"
@@ -108,7 +109,7 @@ export default function DirectoryForm(props) {
             onChange={handleInputChange}
             error={errors.email}
             data-test="email"
-          />
+          />}
           {isAdd &&
           <TextField
             label="Password"
