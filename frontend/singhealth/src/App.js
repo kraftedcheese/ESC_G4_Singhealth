@@ -13,6 +13,7 @@ import { DataProvider } from "./DataContext";
 import useToken from "./useToken";
 import Issues from "./Issues";
 import IssueChat from "./IssueChat";
+import Profile from "./Profile";
 
 
 const App = () => {
@@ -62,6 +63,9 @@ const App = () => {
             </PrivateRoute>
             <PrivateRoute path="/frame">
               <Frame />
+            </PrivateRoute>
+            <PrivateRoute path="/profile">
+              <Profile />
             </PrivateRoute>
             <Route exact path="/signin">
               <SignIn setToken={setToken}/>

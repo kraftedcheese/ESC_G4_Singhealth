@@ -21,7 +21,7 @@ export default function RadioGroup(props) {
             value={item.id}
             control={<Radio color="primary" />}
             label={item.title}
-            name={item.title}
+            data-test={item.title}
           />
         ))}
       </MuiRadioGroup>
