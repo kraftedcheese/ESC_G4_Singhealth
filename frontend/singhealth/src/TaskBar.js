@@ -13,6 +13,7 @@ import StoreMallDirectoryRoundedIcon from "@material-ui/icons/StoreMallDirectory
 import PersonRoundedIcon from "@material-ui/icons/PersonRounded";
 import { useHistory } from "react-router-dom";
 import useToken from "./useToken";
+import useUser from "./useUser";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -38,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
 export default function PrimarySearchAppBar() {
   const classes = useStyles();
   const { removeToken, getRole } = useToken();
+  const { removeUser }= useUser();
   const role = getRole();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -47,11 +49,12 @@ export default function PrimarySearchAppBar() {
   };
 
   const handleMenuClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(null);  
   };
 
   const handleLogout = () => {
     removeToken();
+    removeUser();
     history.push("/signin");
   };
 
