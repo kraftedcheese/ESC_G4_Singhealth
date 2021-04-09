@@ -41,9 +41,12 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     margin: theme.spacing(2, 4),
+    padding: theme.spacing(2,4),
+    borderRadius: "50px",
   },
   roundcard: {
     borderRadius: "100px 100px 0px 0px",
+    minHeight: "-webkit-fill-available",
   },
   typography: {
     margin: theme.spacing(4, 10, 2),
