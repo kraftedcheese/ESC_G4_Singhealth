@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
+import { getContrastRatio, makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import SearchBar from "./SearchBar";
 import DirectoryCard from "./DirectoryCard";
@@ -64,20 +64,31 @@ export default function Directory() {
 
     console.log("deleting tenant");
     console.log(tenant);
+    console.log(tenant.email);
 
     await axios
       .all([
         axios.delete("http://singhealthdb.herokuapp.com/api/tenant/tenant_id_param", {
           params: { secret_token: token, tenant_id: tenant.tenant_id },
         }),
-        axios.delete("http://singhealthdb.herokuapp.com/auth/tenant_delete", {
-          email: tenant.email,
-        }),
+        // axios.delete("http://singhealthdb.herokuapp.com/auth/tenant_delete", {
+        //   email: tenant.email
+        // }),
+        axios({
+          method: 'delete',
+          url: "http://singhealthdb.herokuapp.com/auth/tenant_delete",
+          headers: {}, 
+          data: {
+            email: tenant.email, // This is the body part
+          }
+        })
       ])
       .then(
-        axios.spread((res1) => {
+        axios.spread((res1, res2) => {
           console.log("response from data database");
           console.log(res1);
+          console.log("response from auth database");
+          console.log(res2);
           //if 400 for data, delete from auth.
           //if 400 for auth, delete from data.
           //keep retrying for both??
