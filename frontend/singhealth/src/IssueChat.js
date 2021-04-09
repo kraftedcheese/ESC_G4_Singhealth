@@ -185,7 +185,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const isStaff = true;
+const isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
 const chat_data = [{
   from_staff: true,
   body: "heyyy this is from the staff",
@@ -253,7 +253,7 @@ function TimeExtReqPopup(props){
     .then((response) => {
       console.log(response);
       props.getMsgsFunction();
-      localStorage.setItem('issueForMsg',JSON.stringify(issue));
+      //localStorage.setItem('issueForMsg',JSON.stringify(issue));
       console.log(issue);
     }, (error) => {
       console.log(error);
