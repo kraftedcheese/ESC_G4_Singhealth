@@ -27,8 +27,9 @@ class BrowserTest(unittest.TestCase):
     # Test 1
     # Test a successful login for Staff User
     # Test the entering of Directory page
+    # Test the creation, editing, and deletion of Tenant
     # Test Logout Button
-    def test_001_staff_login(self):
+    def test_001_staff_login_and_create_edit_delete(self):
         firstUserDetails = {
             "name": "Tenant One",
             "email": "tenantone@test.com",
@@ -52,9 +53,7 @@ class BrowserTest(unittest.TestCase):
         self.loginToPage(loginEmail, loginPassword)
 
         # Check for Staff login page
-        self.waitUntilElementFound("//h6[.='Singhealth Audits - Staff']")
-        self.waitUntilElementFound("//p[.='Open Audits']")
-        self.waitAWhile()
+        self.checkEnteredLoginPage("Staff")
 
         # Try to enter the directory page
         self.enterDirectoryPage()
@@ -79,7 +78,7 @@ class BrowserTest(unittest.TestCase):
 
     # Test 2
     # Test a successful login for Tenant User
-    # Test the entering of Directory page
+    # Test the entering of Profile Page
     # Test Logout Button
     def test_002_tenant_login_success(self):
         email = "test@test.com"
@@ -91,11 +90,13 @@ class BrowserTest(unittest.TestCase):
         self.loginToPage(email, password)
         
         # Check for Staff login page
-        self.waitUntilElementFound("//h6[.='Singhealth Audits - Tenant']")
-        self.waitUntilElementFound("//p[.='Open Audits']")
+        self.checkEnteredLoginPage("Tenant")
+        self.waitAWhile()
 
-        # Try to enter the directory page
-        self.enterDirectoryPage()
+        # Enter the Profile Page
+        self.clickMenuButton()
+        self.enterProfile()
+        self.waitUntilElementFound("//h1[.='Profile']")
         self.waitAWhile()
 
         self.clickMenuButton()
@@ -142,6 +143,75 @@ class BrowserTest(unittest.TestCase):
         self.driver.switch_to.alert.accept()
         self.waitAWhile(1)
 
+    # Test 5
+    # Test a successful login for Staff User
+    # Test the creation of an Audit (Staff able to see successful submission screen, and view their audit on the main page)
+    # Test Logout Button
+    def test_005_staff_login_and_create_audit(self):
+
+        loginEmail = "admin@test.com"
+        loginPassword = "password"
+
+        # Navigate to home login page
+        self.enterHomePage()
+
+        self.loginToPage(loginEmail, loginPassword)
+
+        # Check for Staff login page
+        self.checkEnteredLoginPage("Staff")
+
+        # Enter audit page
+        self.driver.find_element_by_xpath("//button[@data-test='new_audit']").click()
+        self.waitUntilElementFound("//h1[.='New Audit']")
+
+        # Select tenant name
+        self.driver.find_element_by_xpath("//div[@data-test='tenant_select']").click()
+        self.driver.find_element_by_xpath("//li[@data-value='Fairprice']").click()
+        self.waitAWhile(1)
+
+        # Select F&B Audit
+        self.driver.find_element_by_xpath("//button[@data-test='fnb_nonfnb']").click()
+
+        # Select 'OK' for fields
+        for i in range(0, 18):
+            self.driver.find_element_by_xpath(f"//button[@data-test='{i}ok']").click()
+
+        for i in range(24, 39):
+            self.driver.find_element_by_xpath(f"//button[@data-test='{i}ok']").click()
+
+        # Select 'Not Ok' for last field
+        self.driver.find_element_by_xpath("//button[@data-test='39not_ok']").click()
+        self.driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+        self.waitAWhile()
+
+        # Select Contract End Date
+        self.driver.find_element_by_xpath("//input[@name='due_date']").clear()
+        self.driver.find_element_by_xpath("//input[@name='due_date']").send_keys("16/09/2021")
+
+        # Insert Description of issue
+        self.driver.find_element_by_xpath("//input[@name='Workplace Safety and Health.Electrical panels / DBs are covered..desc']").send_keys("Exposed electrical panels")
+
+        # Submit audit
+        self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
+        self.waitUntilElementFound("//h3[.='Results']")
+        self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
+        self.waitAWhile(5)
+
+        # Handle alert message
+        alertText = self.driver.switch_to.alert.text
+        assert alertText == "Completed submission successfully!"
+        self.driver.switch_to.alert.accept()
+
+        # Check that we have entered back to the login page
+        self.checkEnteredLoginPage("Staff")
+        self.driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+        self.waitAWhile()
+
+        # Logout
+        self.clickMenuButton()
+        self.waitAWhile(1)
+        self.logout()
+
 
     # Quit the webdriver to close the browser window
     def tearDown(self):
@@ -177,6 +247,11 @@ class BrowserTest(unittest.TestCase):
 
         # Try to login by clicking submit button
         self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
+
+    def checkEnteredLoginPage(self, userType):
+        self.waitUntilElementFound(f"//h6[.='Singhealth Audits - {userType}']")
+        self.waitUntilElementFound("//p[.='Open Audits']")
+        self.waitAWhile()
 
     def enterDirectoryPage(self):
         self.driver.find_element_by_xpath("//button[@data-test='directory']").click()
@@ -242,6 +317,9 @@ class BrowserTest(unittest.TestCase):
 
     def clickMenuButton(self):
         self.driver.find_element_by_xpath("//button[@data-test='menu']").click()
+
+    def enterProfile(self):
+        self.driver.find_element_by_xpath("//li[@data-test='profile']").click()
 
     def logout(self):
         self.driver.find_element_by_xpath("//li[@data-test='logout']").click()
