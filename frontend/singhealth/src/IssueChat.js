@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
-import { useHistory } from "react-router-dom";
+import { Prompt, useHistory } from "react-router-dom";
 import { GridList, IconButton, InputBase,Fab } from '@material-ui/core';
 import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
 import AddAPhotoRoundedIcon from '@material-ui/icons/AddAPhotoRounded';
@@ -151,7 +151,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(10,4,2),
     //margin: theme.spacing(10,2,0,),
     //overflow: 'auto',
-    // height: '64.5vh',
+    height: 'inherit',
   },
   timeReqPopup:{
     padding: theme.spacing(4,4),
@@ -281,6 +281,7 @@ function ChatBar(props){
   const open = Boolean(anchorEl);
   const { token } = useToken();
   const [imageToSend, setImageToSend] = useState("");
+  const [showImage, setShowImage] = useState(false);
   const [imageReady, setImageReady] = useState(false);
   const [messageTag, setTag]=useState("textonly");
   const issue = JSON.parse(localStorage.getItem('issue'));
@@ -315,6 +316,7 @@ function ChatBar(props){
       props.getMsgsFunction();
       console.log(response);
       setImageToSend("");
+      setShowImage(false);
       setImageReady(false);
       setTag("textonly");
       reset();
@@ -330,6 +332,7 @@ function ChatBar(props){
     console.log(e.target.files[0]);
     const fd = new FormData();
     fd.append('file', e.target.files[0], e.target.files[0].name);
+    setShowImage(true);
 
     axios
       .post("http://singhealthdb.herokuapp.com/api/image", fd, {params: {secret_token: token}})
@@ -370,7 +373,9 @@ function ChatBar(props){
     return(
       <Container className={classes.chatbarbase}>
         {console.log(imageReady)}
-        {imageReady && <Paper className={classes.imagePopup}><img className = {classes.imageToSend} src={imageToSend}/></Paper> }
+        {showImage && <Paper className={classes.imagePopup}> {imageReady ?
+          <img className = {classes.imageToSend} src={imageToSend}/> : <Typography>Getting Image...</Typography>}
+          </Paper> }
         
         <form onSubmit={handleSubmit(onSubmit)}>
           <input name="messageToSend" ref={register} className={classes.compose} autoComplete="off"></input>
@@ -482,7 +487,7 @@ function Chatroom(props){
   return loading ? (
     <Loading />
   ) : (
-    <Grid item>
+    <Grid item style={{height: "100%"}}>
       <Grid item className={classes.chatroomContainer}>
         {messages.map(message =>(
           //<BasicMessage text={message.body} fromStaff={message.from_staff}/>
@@ -533,7 +538,12 @@ export default function IssueChat() {
   }
 
   return (
-    <Grid container component="main" className={classes.root}>
+    <Grid container component="main" className={classes.root} style={{minHeight: 'fit-content'}}>
+      <Prompt message={(location,action) =>{
+        localStorage.setItem("lastAccessFor"+issueID,Date.now());
+        console.log(issueID, Date.now());
+        //return "Leaving"
+      }}/>
       <CssBaseline />
       <Grid item xs={12} sm={12} md={12} square >{/*this is for the buttons */}
         <Typography className = {classes.storename}>

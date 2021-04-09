@@ -146,8 +146,9 @@ const useStyles = makeStyles((theme) => ({
     const msg = props.msg;
     const tempissue = localStorage.getItem('issueForMsg');
     const issue = JSON.parse(tempissue);
-    const [pending, setPending] = useState(true);
+    const [pending, setPending] = useState(props.status == "pending");
     console.log(issue);
+
     
     function approveReq(){
       //have to set in msgservice
@@ -168,7 +169,7 @@ const useStyles = makeStyles((theme) => ({
       }}
     ).then((response)=>{
       console.log(response.data);
-      setStatus("approved");
+      setStatus(response.data.info);
       setPending(false);
     }).catch(error => {
       console.log(error);
@@ -211,7 +212,7 @@ const useStyles = makeStyles((theme) => ({
       }}
     ).then((response)=>{
       console.log(response.data);
-      setStatus("rejected");
+      setStatus(response.data.info);
       setPending(false);
     }).catch(error => {
       console.log(error);

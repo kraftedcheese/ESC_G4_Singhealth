@@ -41,9 +41,10 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: '93vh',
+    //height: '93vh',
     backgroundColor: theme.palette.primary.main,
     overflowX: "hidden",
+    overflowY: "hidden"
   },
   paper: {
     margin: theme.spacing(7, 4),
@@ -96,13 +97,19 @@ function IssueCard(props){
     const [notifs,setNotifs] = useState(0);
     const { token } = useToken();
     const audit_id = localStorage.getItem('audit_id');
+    const [imageLink, setImageLink] = useState("");
+    const lastAccessed = parseInt(localStorage.getItem('lastAccessFor'+issueID));
+    const [lastAccessTime, setlat] = useState(lastAccessed);
+    console.log(issueID,lastAccessed)
     
     useEffect(()=>{
       getNotifs();
-    },[setNotifs]);
+    },[setNotifs,setlat]);
 
     function getNotifs(){
       var tempNotifs;
+
+      
       axios.get("http://singhealthdb.herokuapp.com/api/message/time_issue_id_param", {
         params: { 
           secret_token: token ,
@@ -114,8 +121,13 @@ function IssueCard(props){
         resarr=>{
           //alert("hello");
           tempNotifs = Object.values(resarr.data).length;
-          console.log(tempNotifs);
+          console.log(lastAccessTime);
+          tempNotifs -= Object.values(resarr.data).filter((msg) => msg.time < lastAccessTime).length;
           setNotifs(tempNotifs);
+          //get first image
+          console.log(Object.values(resarr.data)[0].image);
+          setImageLink(Object.values(resarr.data)[0].image);
+          console.log(imageLink);
         }
                
       )
@@ -123,6 +135,8 @@ function IssueCard(props){
         console.log(error);
         setNotifs(0);
       });
+
+      
     }
 
     function cardClick(issueName,dueDate){
@@ -135,15 +149,17 @@ function IssueCard(props){
       //get card.store then display that in the next page header
     };
     
+
     return(
     <Grid item xs={10} sm={5} md={3} className={classes.issueCard}>
         <Badge badgeContent={notifs} color="primary">
             <Card className={classes.cardContainer}>
                 <CardActionArea onClick={() => cardClick(props.issue,props.date)}>
+                  {(imageLink.length > 0) &&
                     <CardMedia
                         className={classes.media}
-                        image="https://source.unsplash.com/featured/?food"
-                    />
+                        image={imageLink}
+                    />}
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">
                             {"Due Date: " + dueDate}
@@ -189,17 +205,21 @@ const tenantIssues = [
 
 function IssueGrid(props){
     const classes = useStyles();
-    const issueCard = props.openIssues;
-    console.log(issueCard);
+    const theme = useTheme();
+    //const issueCard = props.openIssues;
+    //console.log(issueCard);
+    if(props.openIssues.length >0){ console.log(props.openIssues);
     return(
         <Grid item xs={12} sm={12} md={12}>
             <Typography className={classes.issueCategory}>{props.issueCategory}</Typography>
             <hr color="#f06d1a" className={classes.hr}></hr>
-            <GridList>
-              <IssueCard date={issueCard.due_date} issue={issueCard.name} issueid={issueCard.issue_id} data={issueCard}/>
+            <GridList style={{padding: theme.spacing(2)}}>
+              {props.openIssues.map(issueCard=>
+              <IssueCard date={issueCard.due_date} issue={issueCard.name} issueid={issueCard.issue_id} data={issueCard}/>)}
             </GridList>
         </Grid>
-    )
+    )}
+    else{return null;}
 }
 
 export default function Issues() {
@@ -210,6 +230,8 @@ export default function Issues() {
   const storeName = localStorage.getItem('storeToDisplay');
   const audit_id = localStorage.getItem('audit_id');
   const [loading, setLoading] = useState(true);
+  const [tenantissuesmap,setmap] = useState([]);
+  const allCategories = ["Food","Professionalism and Staff Hygiene","Housekeeping and General Cleanliness","Food Hygiene","Healthier Choice in line with HPB’s Healthy Eating’s Initiative","Workplace Safety and Health","Safe Management Measures for Front-of-house","Staff Hygiene & Safe Management Measures"]
 
   useEffect(() => {
     getAllIssues();
@@ -230,6 +252,7 @@ export default function Issues() {
           issues = Object.values(resarr.data);
           console.log(issues);
           setIssues(issues);
+          categoriseIssues(issues);
           setLoading(false);
         }
                
@@ -241,21 +264,37 @@ export default function Issues() {
       });
   }
 
+  function categoriseIssues(tempIssues){
+    var categorisedIssues = [];
+    allCategories.forEach(cat => {
+      var indaCat = {};
+      var issuesForCat = tempIssues.filter((issue) => issue.category == cat);
+      console.log(cat);
+      console.log(issuesForCat);
+      indaCat["category"] = cat;
+      indaCat["data"] = issuesForCat;
+      categorisedIssues.push(indaCat);
+      console.log(indaCat);
+    });
+    console.log(categorisedIssues);
+    setmap(categorisedIssues);
+  }
+
   return loading ? (
     <Loading />
   ) : (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={12} sm={12} md={12} square >{/*this is for the buttons */}
+      <Grid item xs={12} sm={12} md={12} square style={{overflow:"visible"}}>{/*this is for the buttons */}
         <Typography className = {classes.storename}>
             {storeName} ({audit_id})
         </Typography>
       </Grid>
 
       <Grid item xs={12} sm={12} md={12} component={Paper} className={classes.roundcard} elevation={3}>
-        {/* {alert(tenantissues.length)} */}
-        {tenantissues.map(broadIssue => (
-            <IssueGrid issueCategory={broadIssue.category} openIssues={broadIssue}/>
+        {console.log(tenantissues)}
+        {tenantissuesmap.map(broadIssue => (
+            <IssueGrid issueCategory={broadIssue.category} openIssues={broadIssue.data}/>
         ))}
       </Grid>
     </Grid>
