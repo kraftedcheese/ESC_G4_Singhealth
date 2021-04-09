@@ -17,7 +17,7 @@ import Profile from "./Profile";
 
 
 const App = () => {
-  const { getToken, setToken } = useToken();
+  const { getToken, setToken, getRole } = useToken();
   const history = useHistory();
 
   function PrivateRoute({ children, ...rest }) {
@@ -31,6 +31,26 @@ const App = () => {
             <Redirect
               to={{
                 pathname: "/signin",
+                state: { from: location }
+              }}
+            />
+          )
+        }
+      />
+    );
+  }
+
+  function AdminRoute({ children, ...rest }) {
+    return (
+      <Route
+        {...rest}
+        render={({ location }) =>
+          (getRole()) ? (
+            children
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/home",
                 state: { from: location }
               }}
             />

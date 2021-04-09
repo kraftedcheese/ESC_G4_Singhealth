@@ -40,7 +40,6 @@ export default function PrimarySearchAppBar() {
   const classes = useStyles();
   const { removeToken, getRole } = useToken();
   const { removeUser }= useUser();
-  const role = getRole();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -113,6 +112,7 @@ export default function PrimarySearchAppBar() {
                 <TimelineRoundedIcon />
               </Badge>
             </IconButton> */}
+            {getRole() &&
             <IconButton
               aria-label="something"
               color="inherit"
@@ -122,7 +122,7 @@ export default function PrimarySearchAppBar() {
               <Badge badgeContent={0} color="primary">
                 <StoreMallDirectoryRoundedIcon />
               </Badge>
-            </IconButton>
+            </IconButton>}
             <IconButton
               edge="end"
               aria-label="account of current user"
