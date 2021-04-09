@@ -12,6 +12,8 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
+import useToken from "./useToken";
+import useUser from "./useUser";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -71,6 +73,8 @@ function IssueCard(props) {
 
 export default function ChecklistResult() {
   const { setValues, data } = useData();
+  const { token } = useToken();
+  const { user } = useUser();
   const classes = useStyles(useTheme);
   const history = useHistory();
   const { register, handleSubmit, setValue, errors } = useForm();
@@ -87,7 +91,7 @@ export default function ChecklistResult() {
       {Object.keys(data.audit[category].issues).length > 0 && (
         <Grid item xs={12}>
           <Typography variant="h6" className={classes.knownIssues}>
-            Known issues:
+            Issues
           </Typography>
         </Grid>
       )}
@@ -101,40 +105,160 @@ export default function ChecklistResult() {
     </Grid>
   ));
 
-  // const handleComplete = (e) => {
-  //   e.preventDefault();
+  const convertForDatabase = (data) => {
+    try {
+      let contract_date = parseInt(data.contract_date.getTime()).toFixed(0);
+      data.contract_date = contract_date;
+    } catch (error) {
+      console.log("Date not converted");
+    }
+  };
 
-  //   axios.post("http://singhealthdb.herokuapp.com/api/audit", {
-  //     params: { secret_token: token },
-  //   })
-  //   .then((response) => {
-  //     console.log("success", response);
-  //     history.push("/home");
-  //   })
-  //   .catch((error) => {
-  //     alert(error);
-  //   });
-  // };
+  //note to self: construct an axios spread array.
+  const makeIssues = (audit_id) => {
+    let issues = [];
+    let dataArr = Object.entries(data.audit);
+    for (let i = 0; i < dataArr.length; i++) {
+      let catIssues = Object.entries(dataArr[i][1].issues);
+      if (catIssues.length === 0) console.log("no probs here at" + i);
+      else {
+        issues.push(
+          catIssues.map((issue) => ({
+            audit_id: audit_id,
+            name: issue[0],
+            category: dataArr[i][0],
+            description: issue[1].desc,
+            due_date: parseInt(issue[1].due_date.getTime()).toFixed(0),
+          }))
+        );
+      }
+    }
+    return issues.flat();
+  };
+
+  const makeMessages = (issue) => {
+    let issueData = data.audit[issue.category].issues[issue.name];
+
+    return {
+      //issue_id: issue.issue_id,
+      issue_id: issue.issue_id,
+      staff_id: user.staff_id,
+      tenant_id: data.tenant.tenant_id,
+      from_staff: true,
+      tag: issueData.image ? "textimage" : "textonly",
+      body: issueData.desc,
+      image: issueData.image,
+    };
+  };
+
+  //handles the posting of audits. multi step process.
+  const handleComplete = (e) => {
+    e.preventDefault();
+
+    var audit = {};
+    audit.staff_id = user.staff_id;
+    audit.tenant_id = data.tenant.tenant_id;
+    audit.score = data.score;
+    switch (data.type) {
+      case 0:
+        audit.type = "non_fnb";
+      case 1:
+        audit.type = "fnb";
+      case 2:
+        audit.type = "safe";
+    }
+    if (data.score === 100) audit.all_resolved = true;
+
+    // console.log(audit);
+    // let is = makeIssues(0);
+    // console.log(makeMessages(is[0]))
+
+    axios
+      .post("http://singhealthdb.herokuapp.com/api/audit", audit, {
+        params: { secret_token: token },
+      })
+      .then((response) => {
+        console.log("success", response);
+        const audit_id = response.data.audit_id;
+
+        let issues = makeIssues(audit_id).map((issue) => {
+          return axios.post(
+            "http://singhealthdb.herokuapp.com/api/issue",
+            issue,
+            {
+              params: { secret_token: token },
+            }
+          );
+        });
+
+        Promise.all(issues)
+          .then((res) => {
+            console.log(res);
+            Promise.all(
+              res.map((eachRes) => {
+                return axios.post(
+                  "http://singhealthdb.herokuapp.com/api/message",
+                  makeMessages(eachRes.data),
+                  {
+                    params: { secret_token: token },
+                  }
+                );
+              })
+            )
+              .then((msgRes) => {
+                alert("Completed submission successfully!");
+                console.log(msgRes);
+                history.push("../home");
+              })
+              .catch((error) => {
+                alert(error);
+              });
+          })
+          .catch((error) => {
+            alert(error);
+          });
+
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
 
   return (
-    <Grid container direction="column">
+    <Grid container direction="row">
       <Grid item xs={12}>
-        <h1>Results</h1>
+        <Typography variant="h3" className={classes.issueCard}>
+          Results
+        </Typography>
       </Grid>
       {DisplayData}
-      <Typography variant="h4" className={classes.formControl}>
-        Score: {Math.round(data.score)}/100 -{" "}
-        {data.score > 95 ? "PASSED!" : "FAILED"}
-      </Typography>
 
-      <Grid item className={classes.formControl}>
-        <Button
-          color="primary"
-          variant="contained"
-          className={classes.formControl}
-        >
-          Complete Audit
-        </Button>
+      <Grid
+        item
+        container
+        xs={12}
+        justify="center"
+        direction="row"
+        className={classes.formControl}
+      >
+        <Grid item xs={12}>
+          <Typography variant="h4" className={classes.formControl}>
+            Score: {Math.round(data.score)}/100 -{" "}
+            {data.score > 95 ? "PASSED!" : "FAILED"}
+          </Typography>
+        </Grid>
+
+        <Grid item>
+          <Button
+            color="primary"
+            variant="contained"
+            data-test="submit"
+            onClick={handleComplete}
+            className={classes.formControl}
+          >
+            Complete Audit
+          </Button>
+        </Grid>
       </Grid>
     </Grid>
   );

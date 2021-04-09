@@ -158,9 +158,9 @@ export default function NewAudit() {
             <Grid item xs={1}></Grid>
             <FormControl className={classes.formControl}>
               <InputLabel>Store</InputLabel>
-              <Select value={currentTenant.name} onChange={handleChange}>
+              <Select value={currentTenant.name} onChange={handleChange} data-test="tenant_select">
                 {records.map((x) => (
-                  <MenuItem key={x.tenant_id} value={x.name}>
+                  <MenuItem key={x.tenant_id} value={x.name} name={x.name}>
                     {x.name}
                   </MenuItem>
                 ))}
@@ -174,8 +174,8 @@ export default function NewAudit() {
               align="center"
               justify="space-evenly"
             >
-              {selected && <Button variant="contained" color="primary" onClick={handleNextFnb} className={classes.button}>{renderType()}</Button>}
-              {selected && <Button variant="contained" color="primary" onClick={handleNextSafe} className={classes.button}>Safe Management Audit</Button>}
+              {selected && <Button variant="contained" color="primary" onClick={handleNextFnb} data-test="fnb_nonfnb" className={classes.button}>{renderType()}</Button>}
+              {selected && <Button variant="contained" color="primary" onClick={handleNextSafe} data-test="safe" className={classes.button}>Safe Management Audit</Button>}
             </Grid>
           </Grid>
           <Grid item container xs={12} direction="column"></Grid>

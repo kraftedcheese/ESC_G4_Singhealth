@@ -1,13 +1,11 @@
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
-import { useHistory } from "react-router-dom";
-import { GridList, IconButton, InputBase } from '@material-ui/core';
-import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
-import AddAPhotoRoundedIcon from '@material-ui/icons/AddAPhotoRounded';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
 import {useEffect, useState} from 'react';
+import useToken from "./useToken";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -127,7 +125,7 @@ const useStyles = makeStyles((theme) => ({
         <div className={classes.messageContainer}>
           <div className={props.isMine ? classes.messageMine : classes.messageOther} >
             <div>
-              <img className={classes.msgImage} src="https://source.unsplash.com/featured/?food"/>
+              <img className={classes.msgImage} src={props.imagelink}/>
             </div>
             <Typography>{ props.text }</Typography>
           </div>
@@ -142,29 +140,99 @@ const useStyles = makeStyles((theme) => ({
   function TimeExtensionMessage(props){
     const classes = useStyles(useTheme);
     const friendlyTimestamp = moment(props.timestamp).format('LLLL');
-    const newDateReq = moment(props.text).format('Do MMMM YYYY');
+    const newDateReq = moment(parseInt(props.text)).format('Do MMMM YYYY');
     const [status,setStatus] = useState(props.status);
+    const {token} = useToken();
+    const msg = props.msg;
+    const tempissue = localStorage.getItem('issueForMsg');
+    const issue = JSON.parse(tempissue);
+    const [pending, setPending] = useState(props.status == "pending");
+    console.log(issue);
 
+    
     function approveReq(){
-      setStatus("approved");
       //have to set in msgservice
       //alert(status)
+      axios.put("http://singhealthdb.herokuapp.com/api/message/message_id_param", {
+        "issue_id": msg.issue_id,
+        "staff_id": msg.staff_id,
+        "tenant_id": msg.tenant_id,
+        "from_staff": false,
+        "tag": "timeextension",
+        "info": "approved",
+        "body": props.text,
+        "image": ""
+    },{
+      params: { 
+        secret_token: token ,
+        message_id : msg.message_id,
+      }}
+    ).then((response)=>{
+      console.log(response.data);
+      setStatus(response.data.info);
+      setPending(false);
+    }).catch(error => {
+      console.log(error);
+    })
+    axios.put("http://singhealthdb.herokuapp.com/api/issue/issue_id_param", {
+      "audit_id": issue.audit_id,
+      "name": issue.name,
+      "category": issue.category,
+      "description": issue.description,
+      "due_date": parseInt(props.text),
+      "resolved": false
+    },{
+      params: { 
+        secret_token: token ,
+        issue_id : msg.issue_id
+      }}
+    ).then((response)=>{
+      console.log(response.data);
+      props.updateDueDate();
+    }).catch(error => {
+      console.log(error);
+    })
     }
 
     function rejectReq(){
-      setStatus("rejected");
       //alert(status)
+      axios.put("http://singhealthdb.herokuapp.com/api/message/message_id_param", {
+        "issue_id": msg.issue_id,
+        "staff_id": msg.staff_id,
+        "tenant_id": msg.tenant_id,
+        "from_staff": false,
+        "tag": "timeextension",
+        "info": "rejected",
+        "body": props.text,
+        "image": ""
+    },{
+      params: { 
+        secret_token: token ,
+        message_id : msg.message_id,
+      }}
+    ).then((response)=>{
+      console.log(response.data);
+      setStatus(response.data.info);
+      setPending(false);
+    }).catch(error => {
+      console.log(error);
+    })
     }
     
     if(props.isStaff){
       return (
         <div>
           <div className={classes.messageContainer}>
+            {pending ?
             <div className={props.isMine ? classes.messageMine : classes.messageOther} >
               <Typography>{"Request for time extension til " + newDateReq}</Typography>
+
               <Button className={classes.yesnobutton} onClick={approveReq}>Yes</Button>
               <Button className={classes.yesnobutton} onClick={rejectReq}>No</Button> {/*only visible to staff!*/}
-            </div>
+            </div> : <div className={props.isMine ? classes.messageMine : classes.messageOther} >
+              <Typography>{"Request for time extension til " + newDateReq}</Typography>
+              <Button disabled style={{color: 'black'}}>{status}</Button> {/*change this based on approved/rejected/pending later on*/}
+            </div>}
             <div className={props.isMine ? classes.timestampRight : classes.timestampLeft}>
               { friendlyTimestamp }
             </div>
@@ -194,9 +262,12 @@ export default function Message(props){
       return(<BasicMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp}/>)
     }
     else if (props.type == "textimage"){
-      return(<ImageMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp}/>)
+      return(<ImageMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp} imagelink={props.imagelink} />)
     }
     else if (props.type == "timeextension"){
-      return(<TimeExtensionMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp} isStaff={props.is_staff} status={props.info}/>)
+      return(<TimeExtensionMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp} isStaff={props.is_staff} status={props.info} msg={props.msg} updateDueDate={props.updateDueDate}/>)
+    }
+    else{
+      return(<BasicMessage text={props.body} isMine={props.is_mine} timestamp={props.timestamp}/>)
     }
   }

@@ -23,6 +23,7 @@ import { useHistory } from "react-router";
 import Loading from "./Loading";
 import useToken from "./useToken";
 import axios from "axios";
+import useUser from "./useUser";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,9 +42,12 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     margin: theme.spacing(2, 4),
+    padding: theme.spacing(2, 4),
+    borderRadius: "50px",
   },
   roundcard: {
     borderRadius: "100px 100px 0px 0px",
+    minHeight: "-webkit-fill-available",
   },
   typography: {
     margin: theme.spacing(4, 10, 2),
@@ -64,7 +68,18 @@ const useStyles = makeStyles((theme) => ({
     borderColor: theme.palette.primary.main,
     width: "200px",
   },
+  emptyTop : {
+    minHeight: "150px",
+  }
 }));
+
+const displayDate = (date_string) => {
+  let date = new Date(date_string);
+  let dd = date.getDate();
+  let mm = date.getMonth() + 1;
+  let yyyy = date.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+};
 
 function AuditScreenCard(props) {
   const classes = useStyles();
@@ -81,22 +96,24 @@ function AuditScreenCard(props) {
   return (
     <Grid item xs={12} sm={5} md={3} className={classes.ascgrid}>
       <Badge badgeContent={props.notifs} color="primary">
-        <Card className={classes.card} variant="outlined"  data-test="audit">
+        <Card className={classes.card} variant="outlined" data-test="audit">
           <CardActionArea onClick={() => cardClick(props)}>
             <CardHeader
               avatar={
-                <Avatar aria-label="coffeebean" className={classes.avatar}>
-                  C
-                </Avatar>
+                <Avatar
+                  aria-label="coffeebean"
+                  className={classes.avatar}
+                  src={props.image_logo}
+                ></Avatar>
               }
               title={props.tenant_name}
               // subheader={"Due Date: " + props.date}
               subheader={"Score: " + props.score}
             />
             <CardContent>
-              <p>{"Audit ID (to be passed to child): " + props.audit_id}</p>
+              <p>{"ID: " + props.audit_id}</p>
               <p>{"Auditor: " + props.staff_id}</p>
-              <p>{"Created: " + new Date(props.time)}</p>
+              <p>{"Created: " + displayDate(new Date(props.time))}</p>
             </CardContent>
           </CardActionArea>
         </Card>
@@ -167,12 +184,13 @@ function AuditScreenCard(props) {
 export default function Home() {
   const history = useHistory();
   const classes = useStyles(useTheme);
-  const { token } = useToken();
+  const { token, getRole } = useToken();
+  const { user } = useUser();
   const [audits, setAudits] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAllAudits();
+    getRole() ? getAllAudits() : getTenantAuditByID();
   }, [setAudits]);
 
   async function getAllAudits() {
@@ -193,9 +211,12 @@ export default function Home() {
           audits = Object.values(res1.data);
           tenants = Object.values(res2.data);
           //loops through audits, finds tenant, then sets audit tenant name to tenant
-          for (var i = 0; i < audits.length; i++){
-            let tenant = tenants.find(x => x.tenant_id === audits[i].tenant_id);
+          for (var i = 0; i < audits.length; i++) {
+            let tenant = tenants.find(
+              (x) => x.tenant_id === audits[i].tenant_id
+            );
             audits[i].tenant_name = tenant.name;
+            audits[i].image_logo = tenant.image_logo;
           }
           console.log("Home is printing audits");
           console.log(audits);
@@ -208,12 +229,38 @@ export default function Home() {
       });
   }
 
+  async function getTenantAuditByID() {
+    var audits;
+
+    await axios
+      .get("http://singhealthdb.herokuapp.com/api/audit/tenant_id_param", {
+        params: { secret_token: token, tenant_id: parseInt(user.tenant_id) },
+      })
+      .then((res) => {
+        console.log(res);
+        audits = Object.values(res.data);
+
+        for (var i = 0; i < audits.length; i++) {
+          audits[i].tenant_name = user.name;
+          audits[i].image_logo = user.image_logo;
+        }
+        setAudits(audits);
+        console.log(audits);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  }
+
   return loading ? (
     <Loading />
   ) : (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={12} sm={12} md={12}>
+      {getRole() ?
+      (<Grid item xs={12} sm={12} md={12}>
         {/*this is for the buttons */}
         <Button
           variant="contained"
@@ -234,7 +281,8 @@ export default function Home() {
         >
           Past Audits
         </Button>
-      </Grid>
+      </Grid>) : (<Grid item xs={12} sm={12} md={12} className={classes.emptyTop} />)
+      }
       <Grid
         item
         xs={12}
@@ -246,13 +294,12 @@ export default function Home() {
       >
         <Typography className={classes.typography}>Open Audits</Typography>
         <hr color="#f06d1a" className={classes.hr}></hr>
+        { audits ? (
         <Grid container className={classes.gridList}>
           {audits.map((audit) => (
-            <AuditScreenCard
-              {...audit}
-            />
+            <AuditScreenCard {...audit} />
           ))}
-        </Grid>
+        </Grid>) : (<Typography variant="h1" className={classes.gridList}>No Open Audits</Typography>)}
       </Grid>
     </Grid>
   );

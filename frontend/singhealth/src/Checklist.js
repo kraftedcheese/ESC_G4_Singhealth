@@ -95,6 +95,10 @@ export default function Checklist(props) {
     for (const [category, issues] of Object.entries(data)) {
       var count = 0;
       for (const [issue, details] of Object.entries(issues)) {
+        if (!details.ok) {
+          alert("Not all fields were filled in!");
+          return;
+        }
         if (details.ok == "true") count += 1;
         if (!details.due_date) data[`${category}`][`${issue}`].due_date = new Date();
       }
@@ -136,6 +140,19 @@ export default function Checklist(props) {
     history.push("/newaudit/result");
   };
 
+  const calculateIndexKey = (issueIndex, catIndex, checklist) => {
+    if (catIndex === 0) return issueIndex;
+    else{
+      var totalIndex = 0;
+      let objChecklist = Object.values(checklist);
+      for (var i=1; i<=catIndex; i++){
+        totalIndex += objChecklist[catIndex-1].issues.length;
+      }
+      return totalIndex + issueIndex;
+    }
+  }
+
+
   return (data === null) ? (
     <div>you messed up</div>
     ) : (
@@ -161,8 +178,7 @@ export default function Checklist(props) {
         </Grid>
       </Grid>
       {
-        //ideally non_fnb_audit should be interchangeable with other audit types
-        Object.keys(auditChecklist).map((x) => {
+        Object.keys(auditChecklist).map((x, catIndex) => {
           return (
             <React.Fragment key={x}>
               <Grid
@@ -177,13 +193,14 @@ export default function Checklist(props) {
                     {/* category name: */ x} ({auditChecklist[x].weightage}%)
                   </h2>
                 </Grid>
-                {auditChecklist[x].issues.map((issue) => {
+                {auditChecklist[x].issues.map((issue, index) => {
                   return (
                     <React.Fragment key={issue}>
                       <Grid item xs={10}>
                         <ChecklistCard
                           desc={issue}
                           name={`${x}.${issue}`}
+                          index={calculateIndexKey(index, catIndex, auditChecklist)}
                           getValues={getValues}
                           update={doRender}
                           register={register}
@@ -202,6 +219,7 @@ export default function Checklist(props) {
         variant="contained"
         type="submit"
         color="primary"
+        data-test="submit"
         className={classes.submit}
       >
         Submit

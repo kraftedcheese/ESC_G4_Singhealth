@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     top: "100px",
   },
   roundcard: {
-    borderRadius: "25px 25px 0px 0px",
+    borderRadius: "100px 100px 0px 0px",
     position: "absolute",
     top: "200px",
     minHeight: "100%",

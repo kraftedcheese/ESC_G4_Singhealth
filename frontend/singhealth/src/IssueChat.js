@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTheme } from '@material-ui/core/styles';
-import { useHistory } from "react-router-dom";
+import { Prompt, useHistory } from "react-router-dom";
 import { GridList, IconButton, InputBase,Fab } from '@material-ui/core';
 import CheckCircleRoundedIcon from '@material-ui/icons/CheckCircleRounded';
 import AddAPhotoRoundedIcon from '@material-ui/icons/AddAPhotoRounded';
@@ -20,6 +20,10 @@ import * as messageService from './messageService';
 import AlarmAddRoundedIcon from '@material-ui/icons/AlarmAddRounded';
 import Popover from '@material-ui/core/Popover';
 import DatePicker from "./Directory/DatePicker";
+import moment from 'moment';
+import useToken from "./useToken";
+import axios from "axios";
+import Loading from "./Loading";
 
 
 function Copyright() {
@@ -55,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
   roundcard:{
     borderRadius: '100px 100px 0px 0px',
+    minHeight: "-webkit-fill-available",
     // padding: theme.spacing(10,4),
   },
   storename:{
@@ -144,6 +149,9 @@ const useStyles = makeStyles((theme) => ({
   },
   chatroomContainer:{
     padding: theme.spacing(10,4,2),
+    //margin: theme.spacing(10,2,0,),
+    //overflow: 'auto',
+    height: 'inherit',
   },
   timeReqPopup:{
     padding: theme.spacing(4,4),
@@ -165,11 +173,19 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2),
     '&:hover': {
       backgroundColor: theme.palette.primary.dark,
-    },
+  },},
+  imageToSend:{
+    maxWidth: "10vw",
+  },
+  imagePopup:{
+    position: 'fixed',
+    right: '8.5%',
+    bottom: '10%',
+    padding:theme.spacing(2),
   }
 }));
 
-const isStaff = false;
+const isStaff = true;
 const chat_data = [{
   from_staff: true,
   body: "heyyy this is from the staff",
@@ -205,6 +221,9 @@ const chat_data = [{
 function TimeExtReqPopup(props){
   const classes = useStyles(useTheme);
   const [date,setDate] = useState(null); //maybe set to current due date
+  const {token} = useToken();
+  const issueID = localStorage.getItem('issueID');
+  const issue = JSON.parse(localStorage.getItem('issue'));
 
   const changeDate = (e) => {
     setDate(e.target.value);
@@ -218,8 +237,27 @@ function TimeExtReqPopup(props){
       alert("No date specified"); //should remove this later, prob just cannot submit
     }else{
       //alert(date.getTime());
-      messageService.sendTimeExtReq(date.getTime());
-      props.setStateFunction(messageService.getAllMessages());
+      // messageService.sendTimeExtReq(date.getTime());
+      // props.setStateFunction(messageService.getAllMessages());
+      axios.post("http://singhealthdb.herokuapp.com/api/message",
+      {
+        "issue_id": issueID,
+        "staff_id": 4,
+        "tenant_id": 4,
+        "from_staff": isStaff,
+        "tag": "timeextension",
+        "info": "pending",
+        "body": date.getTime().toString(),
+        "image": ""
+    },{params:{secret_token:token}})
+    .then((response) => {
+      console.log(response);
+      props.getMsgsFunction();
+      localStorage.setItem('issueForMsg',JSON.stringify(issue));
+      console.log(issue);
+    }, (error) => {
+      console.log(error);
+    });
     }
     props.closePopup();
   }
@@ -227,7 +265,6 @@ function TimeExtReqPopup(props){
   return(
     <Grid item className={classes.popupContents}>
       <Typography className={classes.timeReqPopup}>When would you like to extend the due date until?</Typography>
-      {/*insert datepicker here*/}
       <Grid item className={classes.datepicker}>
         <DatePicker name="newDueDate" label="New Due Date" value={date} onChange={changeDate}/>
       </Grid>
@@ -242,31 +279,120 @@ function ChatBar(props){
   const onSubmit = (data) => mehandleSubmit(data); 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const { token } = useToken();
+  const [imageToSend, setImageToSend] = useState("");
+  const [showImage, setShowImage] = useState(false);
+  const [imageReady, setImageReady] = useState(false);
+  const [messageTag, setTag]=useState("textonly");
+  const issue = JSON.parse(localStorage.getItem('issue'));
+  const issueID = localStorage.getItem('issueID');
+  const checkResolve = props.checkResolve;
+  console.log(issue);
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  useEffect(() => {
+    props.getMsgsFunction();
+  },[props.setStateFunction]);
+
+
   function mehandleSubmit(data){
     //alert(JSON.stringify(data));
-    messageService.sendMessage(data.messageToSend,isStaff);
+    //messageService.sendMessage(data.messageToSend,isStaff);
+    //alert(data.messageToSend.length);
+    axios.post("http://singhealthdb.herokuapp.com/api/message?secret_token="+token,
+      {
+        "issue_id": issueID,
+        "staff_id": 4,
+        "tenant_id": 4,
+        "from_staff": isStaff,
+        "tag": messageTag,
+        "info": "",
+        "body": data.messageToSend,
+        "image": imageToSend
+    }).then((response) => {
+      props.getMsgsFunction();
+      console.log(response);
+      setImageToSend("");
+      setShowImage(false);
+      setImageReady(false);
+      setTag("textonly");
+      reset();
+    }, (error) => {
+      console.log(error);
+    });
     //messageService.clearMessages();
     //messageService.defaultMessages();
-    //alert(JSON.stringify(messageService.getAllMessages()));
-    props.setStateFunction(messageService.getAllMessages());
-    reset();
+  }
+
+  function addPhoto(e){
+    console.log(e);
+    console.log(e.target.files[0]);
+    const fd = new FormData();
+    fd.append('file', e.target.files[0], e.target.files[0].name);
+    setShowImage(true);
+
+    axios
+      .post("http://singhealthdb.herokuapp.com/api/image", fd, {params: {secret_token: token}})
+      .then((response) => {
+        console.log(response.data.url);
+        setImageToSend(response.data.url);
+        setImageReady(true);
+        setTag("textimage");
+        console.log(imageToSend);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+  
+  function closeIssue(){
+    axios.put("http://singhealthdb.herokuapp.com/api/issue/issue_id_param", {
+      "audit_id": issue.audit_id,
+      "name": issue.name,
+      "category": issue.category,
+      "description": issue.description,
+      "due_date": issue.due_date,
+      "resolved": true
+    },{
+      params: { 
+        secret_token: token ,
+        issue_id : issueID,
+      }}
+    ).then((response)=>{
+      console.log(response.data);
+      checkResolve();
+    }).catch(error => {
+      console.log(error);
+    })
   }
 
   if(isStaff){
     return(
       <Container className={classes.chatbarbase}>
+        {console.log(imageReady)}
+        {showImage && <Paper className={classes.imagePopup}> {imageReady ?
+          <img className = {classes.imageToSend} src={imageToSend}/> : <Typography>Getting Image...</Typography>}
+          </Paper> }
+        
         <form onSubmit={handleSubmit(onSubmit)}>
           <input name="messageToSend" ref={register} className={classes.compose} autoComplete="off"></input>
           <IconButton>
-            <CheckCircleRoundedIcon className={classes.icon}/>
+            <CheckCircleRoundedIcon className={classes.icon} onClick={closeIssue}/>
           </IconButton>
           <IconButton>
-            <AddAPhotoRoundedIcon className={classes.icon}/>
+            <label for="uploadmsgpic">
+              <AddAPhotoRoundedIcon className={classes.icon} />
+              <input
+                  onChange={addPhoto}
+                  type="file"
+                  accept=".jpg,.jpeg,.png"
+                  id = "uploadmsgpic"
+                  hidden
+                />
+            </label>
           </IconButton>
         </form>
       </Container>
@@ -275,6 +401,7 @@ function ChatBar(props){
   else{
     return(
       <Container className={classes.chatbarbase}>
+        {imageReady && <Paper className={classes.imagePopup}><img className = {classes.imageToSend} src={imageToSend}/></Paper> }
         <form onSubmit={handleSubmit(onSubmit)}>
           <input name="messageToSend" ref={register} className={classes.compose} autoComplete="off"></input>
           <IconButton>
@@ -290,12 +417,23 @@ function ChatBar(props){
               horizontal: 'center',
             }}
           >
-            <TimeExtReqPopup setStateFunction={props.setStateFunction} closePopup={handleClose}/>
+            <TimeExtReqPopup setStateFunction={props.setStateFunction} closePopup={handleClose} getMsgsFunction={props.getMsgsFunction}/>
           </Popover>
           <IconButton>
-            <AddAPhotoRoundedIcon className={classes.icon}/>
+          <label for="uploadmsgpic">
+              <AddAPhotoRoundedIcon className={classes.icon}/>
+              <input
+                  onChange={addPhoto}
+                  type="file"
+                  accept=".jpg,.jpeg,.png"
+                  id = "uploadmsgpic"
+                  hidden
+                />
+            </label>
           </IconButton>
+          
         </form>
+        
       </Container>
     )
   }
@@ -304,18 +442,59 @@ function ChatBar(props){
 
 function Chatroom(props){
   const classes = useStyles(useTheme);
-  const [messages, setMessages] = useState(chat_data)
+  const [messages, setMessages] = useState([]);
+  const issueID = localStorage.getItem('issueID');
   //if the user isStaff, then 
   //i should render left or right based on whether it is mine. if i am staff then i can use the value fromstaff, if i am tenant then i flip it
-  return(
-    <Grid item>
+
+  const [loading, setLoading] = useState(true);
+  const { token } = useToken();
+    
+  useEffect(() => {
+    console.log("effect");
+    getAllMessages();
+  },[setMessages]);
+
+  //get all issues based on audit_id
+  async function getAllMessages() {
+    console.log("gettingmsgs");
+    var tempMsgs;
+
+    await axios
+      
+    axios.get("http://singhealthdb.herokuapp.com/api/message/time_issue_id_param", {
+      params: { 
+        secret_token: token ,
+        time : 0,
+        issue_id : issueID,
+      },
+      })
+      .then(
+        resarr=>{
+          //alert("hello");
+          tempMsgs = Object.values(resarr.data);
+          setMessages(tempMsgs);
+          console.log(tempMsgs);
+          setLoading(false);
+        }
+               
+      )
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  return loading ? (
+    <Loading />
+  ) : (
+    <Grid item style={{height: "100%"}}>
       <Grid item className={classes.chatroomContainer}>
         {messages.map(message =>(
           //<BasicMessage text={message.body} fromStaff={message.from_staff}/>
-          <Message type = {message.tag} body={message.body} is_mine={isStaff ? message.from_staff : !message.from_staff} timestamp={message.timestamp} is_staff={isStaff} info={message.info}/>
+          <Message type = {message.tag} body={message.body} imagelink={message.image} is_mine={isStaff ? message.from_staff : !message.from_staff} timestamp={message.time} is_staff={isStaff} info={message.info} msg={message} updateDueDate={props.updateDueDate}/>
         ))}
       </Grid>
-      <ChatBar className={classes.chatbar} setStateFunction = {setMessages}/>
+      <ChatBar className={classes.chatbar} setStateFunction = {setMessages} getMsgsFunction={getAllMessages} checkResolve={props.checkResolve}/>
     </Grid>
     
   );
@@ -325,10 +504,46 @@ export default function IssueChat() {
   const classes = useStyles(useTheme);
   const history = useHistory();
   const issueName = localStorage.getItem('issueName');
-  const dueDate = localStorage.getItem('dueDate');
+  const issueID = localStorage.getItem('issueID');
+  const initdueDate = localStorage.getItem('dueDate');
+  const {token} = useToken();
+  const [dueDate,setDueDate] = useState(initdueDate);
+  const [resolved,setResolved] = useState(false);
+  var duedate = moment(parseInt(dueDate)).format('Do MMMM YYYY');
+
+  useEffect(()=>{
+    checkResolve()
+  },[setResolved])
+
+  function checkResolve(){
+    axios.get("http://singhealthdb.herokuapp.com/api/issue/issue_id_param",{params:{secret_token:token,issue_id:issueID}})
+    .then((resarr)=>{
+      console.log(resarr.data);
+      console.log(resarr.data.resolved);
+      if(resarr.data.resolved == 1){
+        setResolved(true);
+      }
+    }).catch((error)=>{console.log(error)})
+  }
+
+  function updateDueDate(){
+    axios.get("http://singhealthdb.herokuapp.com/api/issue/issue_id_param",{params:{secret_token:token,issue_id:issueID}})
+    .then((resarr)=>{
+      console.log(resarr.data);
+      console.log(resarr.data.due_date);
+      setDueDate(resarr.data.due_date);
+      console.log(dueDate);
+      duedate = moment(parseInt(dueDate)).format('Do MMMM YYYY');
+    }).catch((error)=>{console.log(error)})
+  }
 
   return (
-    <Grid container component="main" className={classes.root}>
+    <Grid container component="main" className={classes.root} style={{minHeight: 'fit-content'}}>
+      <Prompt message={(location,action) =>{
+        localStorage.setItem("lastAccessFor"+issueID,Date.now());
+        console.log(issueID, Date.now());
+        //return "Leaving"
+      }}/>
       <CssBaseline />
       <Grid item xs={12} sm={12} md={12} square >{/*this is for the buttons */}
         <Typography className = {classes.storename}>
@@ -336,12 +551,15 @@ export default function IssueChat() {
         </Typography>
       </Grid>
       <div className={classes.dueDateContainer}>
+        {resolved ? <Fab variant="extended" className = {classes.duedate}>
+            Resolved
+        </Fab> :
         <Fab variant="extended" className = {classes.duedate}>
-            {"Due Date: " + dueDate}
-        </Fab>
+            {"Due Date: " + duedate}
+        </Fab>}
       </div>
       <Grid item xs={12} sm={12} md={12} component={Paper} className={classes.roundcard} elevation={3}>
-        <Chatroom/>
+        <Chatroom checkResolve={checkResolve} updateDueDate={updateDueDate}/>
       </Grid>
       {/* <ChatBar/> */}
     </Grid>

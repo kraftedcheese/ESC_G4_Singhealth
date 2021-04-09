@@ -6,7 +6,7 @@ import {
 import DateFnsUtils from "@date-io/date-fns";
 
 export default function DatePicker(props) {
-  const { name, label, value, onChange } = props;
+  const { name, label, value, onChange, datatest} = props;
 
   const convertToDefEventPara = (name, value) => ({
     target: {
@@ -25,6 +25,7 @@ export default function DatePicker(props) {
         format="dd/MM/yyyy"
         name={name}
         value={value}
+        data-test={datatest}
         onChange={(date) =>
           onChange(
             convertToDefEventPara(

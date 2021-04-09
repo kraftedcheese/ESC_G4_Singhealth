@@ -6,7 +6,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 
 export default function UploadPhoto(props) {
-  const { name, label, value, onChange, items } = props;
+  const { name, label, value, onChange, items, datatest } = props;
   const [loading, setLoading] = useState(false);
 
   const { token } = useToken();
@@ -48,6 +48,7 @@ export default function UploadPhoto(props) {
         type="file"
         accept=".jpg,.jpeg,.png"
         name={name}
+        data-test={datatest}
         hidden
       />
       <p></p>
