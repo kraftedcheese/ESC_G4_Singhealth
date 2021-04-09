@@ -511,6 +511,7 @@ export default function IssueChat() {
   const [resolved,setResolved] = useState(false);
   var duedate = moment(parseInt(dueDate)).format('Do MMMM YYYY');
 
+
   useEffect(()=>{
     checkResolve()
   },[setResolved])
@@ -536,6 +537,7 @@ export default function IssueChat() {
       duedate = moment(parseInt(dueDate)).format('Do MMMM YYYY');
     }).catch((error)=>{console.log(error)})
   }
+  updateDueDate();
 
   return (
     <Grid container component="main" className={classes.root} style={{minHeight: 'fit-content'}}>
