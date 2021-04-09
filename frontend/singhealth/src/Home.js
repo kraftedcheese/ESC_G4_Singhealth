@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     margin: theme.spacing(2, 4),
-    padding: theme.spacing(2,4),
+    padding: theme.spacing(2, 4),
     borderRadius: "50px",
   },
   roundcard: {
@@ -69,6 +69,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const displayDate = (date_string) => {
+  let date = new Date(date_string);
+  let dd = date.getDate();
+  let mm = date.getMonth() + 1;
+  let yyyy = date.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+};
+
 function AuditScreenCard(props) {
   const classes = useStyles();
   const history = useHistory();
@@ -84,22 +92,24 @@ function AuditScreenCard(props) {
   return (
     <Grid item xs={12} sm={5} md={3} className={classes.ascgrid}>
       <Badge badgeContent={props.notifs} color="primary">
-        <Card className={classes.card} variant="outlined"  data-test="audit">
+        <Card className={classes.card} variant="outlined" data-test="audit">
           <CardActionArea onClick={() => cardClick(props)}>
             <CardHeader
               avatar={
-                <Avatar aria-label="coffeebean" className={classes.avatar}>
-                  C
-                </Avatar>
+                <Avatar
+                  aria-label="coffeebean"
+                  className={classes.avatar}
+                  src={props.image_logo}
+                ></Avatar>
               }
               title={props.tenant_name}
               // subheader={"Due Date: " + props.date}
               subheader={"Score: " + props.score}
             />
             <CardContent>
-              <p>{"Audit ID (to be passed to child): " + props.audit_id}</p>
+              <p>{"ID: " + props.audit_id}</p>
               <p>{"Auditor: " + props.staff_id}</p>
-              <p>{"Created: " + new Date(props.time)}</p>
+              <p>{"Created: " + displayDate(new Date(props.time))}</p>
             </CardContent>
           </CardActionArea>
         </Card>
@@ -196,9 +206,12 @@ export default function Home() {
           audits = Object.values(res1.data);
           tenants = Object.values(res2.data);
           //loops through audits, finds tenant, then sets audit tenant name to tenant
-          for (var i = 0; i < audits.length; i++){
-            let tenant = tenants.find(x => x.tenant_id === audits[i].tenant_id);
+          for (var i = 0; i < audits.length; i++) {
+            let tenant = tenants.find(
+              (x) => x.tenant_id === audits[i].tenant_id
+            );
             audits[i].tenant_name = tenant.name;
+            audits[i].image_logo = tenant.image_logo;
           }
           console.log("Home is printing audits");
           console.log(audits);
@@ -251,9 +264,7 @@ export default function Home() {
         <hr color="#f06d1a" className={classes.hr}></hr>
         <Grid container className={classes.gridList}>
           {audits.map((audit) => (
-            <AuditScreenCard
-              {...audit}
-            />
+            <AuditScreenCard {...audit} />
           ))}
         </Grid>
       </Grid>
