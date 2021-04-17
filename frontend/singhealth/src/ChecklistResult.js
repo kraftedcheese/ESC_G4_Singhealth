@@ -85,7 +85,8 @@ export default function ChecklistResult() {
       <Grid item container xs={12} direction="row">
         <Grid item container direction="column" xs={12}>
           <Typography className={classes.issueCategory}>
-            {category} ({data.audit[category].count}/{data.audit[category].total})
+            {category} ({data.audit[category].count}/
+            {data.audit[category].total})
           </Typography>
           <hr color="#f06d1a" className={classes.hr}></hr>
         </Grid>
@@ -232,8 +233,40 @@ export default function ChecklistResult() {
     e.preventDefault();
 
     var html = ReactDOMServer.renderToStaticMarkup(Result);
-    console.log(html);
-  }
+
+    var auditType;
+
+    switch (data.type) {
+      case 0:
+        auditType = "Non-F&B Audit";
+      case 1:
+        auditType = "F&B Audit";
+      case 2:
+        auditType = "Safe Management Audit";
+    }
+
+    var email = {
+      to: "morontimes@gmail.com",
+      subject:
+        auditType + " for " + data.tenant.name + " (" + data.score + "/100)",
+      text: "This is to notify you of a recent retail audit at your store.",
+      html: html,
+    };
+
+    console.log(email);
+
+    axios
+      .post("http://singhealthdb.herokuapp.com/api/email", email, {
+        params: { secret_token: token },
+      })
+      .then((res) => {
+        console.log(res);
+        alert("Email sent successfully!");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
 
   const Result = (
     <Grid container direction="row">
@@ -255,38 +288,37 @@ export default function ChecklistResult() {
         <Grid item xs={12}>
           <Typography variant="h4" className={classes.formControl}>
             Score: {Math.round(data.score)}/100 -{" "}
-            {data.score > 95 ? "PASSED!" : "FAILED"}
+            {data.score > 95 ? "PASSED" : "FAILED"}
           </Typography>
         </Grid>
-
       </Grid>
     </Grid>
-  )
+  );
 
   return (
     <Grid container direction="row" justify="center">
       {Result}
       <Grid item>
-            <Button
-              color="primary"
-              variant="contained"
-              data-test="submit"
-              onClick={handleComplete}
-              className={classes.formControl}
-            >
-              Complete Audit
-            </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          data-test="submit"
+          onClick={handleComplete}
+          className={classes.formControl}
+        >
+          Complete Audit
+        </Button>
 
-            <Button
-              color="primary"
-              variant="contained"
-              data-test="submit"
-              onClick={handleEmail}
-              className={classes.formControl}
-            >
-              Send Email
-            </Button>
+        <Button
+          color="primary"
+          variant="contained"
+          data-test="submit"
+          onClick={handleEmail}
+          className={classes.formControl}
+        >
+          Send Email
+        </Button>
       </Grid>
     </Grid>
-    )
-  }
+  );
+}
