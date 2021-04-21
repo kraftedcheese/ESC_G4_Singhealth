@@ -15,6 +15,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import useToken from "./useToken";
 import useUser from "./useUser";
 import ReactDOMServer from "react-dom/server";
+import { ClockView } from "@material-ui/pickers";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -228,51 +229,45 @@ export default function ChecklistResult() {
       });
   };
 
-  Object.flatten = function(data) {
-    var result = {};
-    function recurse (cur, prop) {
-        if (Object(cur) !== cur) {
-            result[prop] = cur;
-        } else if (Array.isArray(cur)) {
-             for(var i=0, l=cur.length; i<l; i++)
-                 recurse(cur[i], prop + "[" + i + "]");
-            if (l == 0)
-                result[prop] = [];
-        } else {
-            var isEmpty = true;
-            for (var p in cur) {
-                isEmpty = false;
-                recurse(cur[p], prop ? prop+"."+p : p);
-            }
-            if (isEmpty && prop)
-                result[prop] = {};
-        }
-    }
-    recurse(data, "");
-    return result;
-}
-
   const handleToCSV = (e) => {
     e.preventDefault();
     const { parse } = require('json2csv');
 
     try {
-      const csv = parse(Object.flatten(data));
-      console.log(csv);
-      var encodedUri = "data:text/json;charset=utf-8," + encodeURIComponent(csv);
+      var thing = [];
+      for (var cat in data.audit) {
+        for (var issue in data.audit[cat].original) {
+          var items = data.audit[cat].original[issue];
+          var temp = {
+            'category': cat,
+            'issue': issue,
+            'clear': items.ok,
+            'desc': items.desc,
+            'due_date': displayDate(items.due_date),
+            'image': items.image,
+          }
+          thing.push(temp);
+        }
+      }
+
+      var parsed = parse(thing);
+      console.log(parsed);
+
+      var auditType;
+      if (data.type===0) auditType = "Non-F&B Audit";
+      else if (data.type===1) auditType = "F&B Audit";
+      else if (data.type===2) auditType = "Safe Management Audit";
+
+      var encodedUri = "data:text/json;charset=utf-8," + encodeURIComponent(parsed);
       var downloadAnchorNode = document.createElement('a');
       downloadAnchorNode.setAttribute("href", encodedUri);
-      downloadAnchorNode.setAttribute("download","audit.csv");
+      downloadAnchorNode.setAttribute("download", auditType + " for " + data.tenant.name + ".csv");
       document.body.appendChild(downloadAnchorNode); // required for firefox
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
     } catch (err) {
       console.error(err);
     }
-
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-
-    
 
   };
 
@@ -282,7 +277,6 @@ export default function ChecklistResult() {
     var html = ReactDOMServer.renderToStaticMarkup(Email);
 
     var auditType;
-
     if (data.type===0) auditType = "Non-F&B Audit";
     else if (data.type===1) auditType = "F&B Audit";
     else if (data.type===2) auditType = "Safe Management Audit";
@@ -335,7 +329,7 @@ export default function ChecklistResult() {
                     <div>
                       <p>Description: {items.desc}</p>
                       <p>Due: {displayDate(items.due_date)}</p>
-                      <img src={items.image}></img>
+                      {items.image && <img src={items.image}></img>}
                     </div>
                   )}
                 </div>
