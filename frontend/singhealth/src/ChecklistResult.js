@@ -174,7 +174,7 @@ export default function ChecklistResult() {
     audit.staff_id = user.staff_id;
     audit.tenant_id = data.tenant.tenant_id;
     audit.score = data.score;
-    if (data.type===0) audit.type = "non_fnb";
+    if (data.type===0) audit.type = "nonfnb";
     else if (data.type===1) audit.type = "fnb";
     else if (data.type===2) audit.type = "safe";
     if (data.score === 100) audit.all_resolved = true;
@@ -398,7 +398,7 @@ export default function ChecklistResult() {
         <Button
           color="primary"
           variant="contained"
-          data-test="submit"
+          data-test="email"
           onClick={handleEmail}
           className={classes.formControl}
         >
@@ -408,7 +408,7 @@ export default function ChecklistResult() {
         <Button
           color="primary"
           variant="contained"
-          data-test="submit"
+          data-test="download"
           onClick={handleToCSV}
           className={classes.formControl}
         >
