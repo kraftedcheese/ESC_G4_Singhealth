@@ -228,8 +228,52 @@ export default function ChecklistResult() {
       });
   };
 
+  Object.flatten = function(data) {
+    var result = {};
+    function recurse (cur, prop) {
+        if (Object(cur) !== cur) {
+            result[prop] = cur;
+        } else if (Array.isArray(cur)) {
+             for(var i=0, l=cur.length; i<l; i++)
+                 recurse(cur[i], prop + "[" + i + "]");
+            if (l == 0)
+                result[prop] = [];
+        } else {
+            var isEmpty = true;
+            for (var p in cur) {
+                isEmpty = false;
+                recurse(cur[p], prop ? prop+"."+p : p);
+            }
+            if (isEmpty && prop)
+                result[prop] = {};
+        }
+    }
+    recurse(data, "");
+    return result;
+}
+
   const handleToCSV = (e) => {
     e.preventDefault();
+    const { parse } = require('json2csv');
+
+    try {
+      const csv = parse(Object.flatten(data));
+      console.log(csv);
+      var encodedUri = "data:text/json;charset=utf-8," + encodeURIComponent(csv);
+      var downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", encodedUri);
+      downloadAnchorNode.setAttribute("download","audit.csv");
+      document.body.appendChild(downloadAnchorNode); // required for firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    } catch (err) {
+      console.error(err);
+    }
+
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+
+    
+
   };
 
   const handleEmail = (e) => {
@@ -365,6 +409,16 @@ export default function ChecklistResult() {
           className={classes.formControl}
         >
           Send Email
+        </Button>
+
+        <Button
+          color="primary"
+          variant="contained"
+          data-test="submit"
+          onClick={handleToCSV}
+          className={classes.formControl}
+        >
+          Download CSV
         </Button>
       </Grid>
     </Grid>
