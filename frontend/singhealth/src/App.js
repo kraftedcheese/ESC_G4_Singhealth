@@ -72,15 +72,15 @@ const App = () => {
             <Route path="/dashboard">
               <TaskBar />
             </Route>
-            <PrivateRoute path="/directory">
+            <AdminRoute path="/directory">
               <Directory />
-            </PrivateRoute>
-            <PrivateRoute path="/newaudit">
+            </AdminRoute>
+            <AdminRoute path="/newaudit">
               {/* //DataProvider holds all data for the new audit component */}
               <DataProvider>
                 <NewAudit />
               </DataProvider>
-            </PrivateRoute>
+            </AdminRoute>
             <PrivateRoute path="/frame">
               <Frame />
             </PrivateRoute>
@@ -90,14 +90,14 @@ const App = () => {
             <Route exact path="/signin">
               <SignIn setToken={setToken}/>
             </Route>
-            <Route path="/issues">
+            <PrivateRoute path="/issues">
               <TaskBar />
               <Issues />
-            </Route>
-            <Route path="/issueChat">
+            </PrivateRoute>
+            <PrivateRoute path="/issueChat">
               <TaskBar/>
               <IssueChat/>
-            </Route>
+            </PrivateRoute>
             <Route exact path="/">
               <Redirect to={{
                 pathname: "/signin",

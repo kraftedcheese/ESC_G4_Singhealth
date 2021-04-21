@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
   roundcard:{
     borderRadius: '100px 100px 0px 0px',
-    minHeight: "-webkit-fill-available",
+    minHeight: "71.3vh",
   },
   storename:{
     margin: theme.spacing(4,4),
@@ -165,7 +165,7 @@ function IssueCard(props){
                             {"Due Date: " + dueDate}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
-                            {props.issue + issueID}
+                            {props.issue}
                         </Typography>
                     </CardContent>
                 </CardActionArea>
@@ -287,7 +287,7 @@ export default function Issues() {
       <CssBaseline />
       <Grid item xs={12} sm={12} md={12} square style={{overflow:"visible"}}>{/*this is for the buttons */}
         <Typography className = {classes.storename}>
-            {storeName} ({audit_id})
+            {storeName} 
         </Typography>
       </Grid>
 

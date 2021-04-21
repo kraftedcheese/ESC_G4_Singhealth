@@ -185,7 +185,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const isStaff = true;
+const isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
 const chat_data = [{
   from_staff: true,
   body: "heyyy this is from the staff",
@@ -253,7 +253,7 @@ function TimeExtReqPopup(props){
     .then((response) => {
       console.log(response);
       props.getMsgsFunction();
-      localStorage.setItem('issueForMsg',JSON.stringify(issue));
+      //localStorage.setItem('issueForMsg',JSON.stringify(issue));
       console.log(issue);
     }, (error) => {
       console.log(error);
@@ -511,6 +511,7 @@ export default function IssueChat() {
   const [resolved,setResolved] = useState(false);
   var duedate = moment(parseInt(dueDate)).format('Do MMMM YYYY');
 
+
   useEffect(()=>{
     checkResolve()
   },[setResolved])
@@ -536,6 +537,7 @@ export default function IssueChat() {
       duedate = moment(parseInt(dueDate)).format('Do MMMM YYYY');
     }).catch((error)=>{console.log(error)})
   }
+  updateDueDate();
 
   return (
     <Grid container component="main" className={classes.root} style={{minHeight: 'fit-content'}}>

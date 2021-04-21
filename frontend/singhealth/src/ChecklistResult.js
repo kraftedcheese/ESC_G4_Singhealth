@@ -14,6 +14,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import useToken from "./useToken";
 import useUser from "./useUser";
+import ReactDOMServer from "react-dom/server";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -80,29 +81,34 @@ export default function ChecklistResult() {
   const { register, handleSubmit, setValue, errors } = useForm();
 
   const DisplayData = Object.keys(data.audit).map((category) => (
-    <Grid item container xs={12} direction="row">
-      <Grid item container direction="column" xs={12}>
-        <Typography className={classes.issueCategory}>
-          {category} ({data.audit[category].count}/{data.audit[category].total})
-        </Typography>
-        <hr color="#f06d1a" className={classes.hr}></hr>
-      </Grid>
-
-      {Object.keys(data.audit[category].issues).length > 0 && (
-        <Grid item xs={12}>
-          <Typography variant="h6" className={classes.knownIssues}>
-            Issues
+    <React.Fragment key={category}>
+      <Grid item container xs={12} direction="row">
+        <Grid item container direction="column" xs={12}>
+          <Typography className={classes.issueCategory}>
+            {category} ({data.audit[category].count}/
+            {data.audit[category].total})
           </Typography>
+          <hr color="#f06d1a" className={classes.hr}></hr>
         </Grid>
-      )}
-      <Grid item container xs={12} justify="center" direction="row">
-        {Object.entries(data.audit[category].issues).map(([issue, items]) => (
-          <div>
-            <IssueCard name={issue} {...items}></IssueCard>
-          </div>
-        ))}
+
+        {Object.keys(data.audit[category].issues).length > 0 && (
+          <Grid item xs={12}>
+            <Typography variant="h6" className={classes.knownIssues}>
+              Issues
+            </Typography>
+          </Grid>
+        )}
+        <Grid item container xs={12} justify="center" direction="row">
+          {Object.entries(data.audit[category].issues).map(([issue, items]) => (
+            <React.Fragment key={issue}>
+              <div>
+                <IssueCard name={issue} {...items}></IssueCard>
+              </div>
+            </React.Fragment>
+          ))}
+        </Grid>
       </Grid>
-    </Grid>
+    </React.Fragment>
   ));
 
   const convertForDatabase = (data) => {
@@ -217,14 +223,52 @@ export default function ChecklistResult() {
           .catch((error) => {
             alert(error);
           });
-
       })
       .catch((error) => {
         alert(error);
       });
   };
 
-  return (
+  const handleEmail = (e) => {
+    e.preventDefault();
+
+    var html = ReactDOMServer.renderToStaticMarkup(Result);
+
+    var auditType;
+
+    switch (data.type) {
+      case 0:
+        auditType = "Non-F&B Audit";
+      case 1:
+        auditType = "F&B Audit";
+      case 2:
+        auditType = "Safe Management Audit";
+    }
+
+    var email = {
+      to: "morontimes@gmail.com",
+      subject:
+        auditType + " for " + data.tenant.name + " (" + data.score + "/100)",
+      text: "This is to notify you of a recent retail audit at your store.",
+      html: html,
+    };
+
+    console.log(email);
+
+    axios
+      .post("http://singhealthdb.herokuapp.com/api/email", email, {
+        params: { secret_token: token },
+      })
+      .then((res) => {
+        console.log(res);
+        alert("Email sent successfully!");
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
+  const Result = (
     <Grid container direction="row">
       <Grid item xs={12}>
         <Typography variant="h3" className={classes.issueCard}>
@@ -244,21 +288,36 @@ export default function ChecklistResult() {
         <Grid item xs={12}>
           <Typography variant="h4" className={classes.formControl}>
             Score: {Math.round(data.score)}/100 -{" "}
-            {data.score > 95 ? "PASSED!" : "FAILED"}
+            {data.score > 95 ? "PASSED" : "FAILED"}
           </Typography>
         </Grid>
+      </Grid>
+    </Grid>
+  );
 
-        <Grid item>
-          <Button
-            color="primary"
-            variant="contained"
-            data-test="submit"
-            onClick={handleComplete}
-            className={classes.formControl}
-          >
-            Complete Audit
-          </Button>
-        </Grid>
+  return (
+    <Grid container direction="row" justify="center">
+      {Result}
+      <Grid item>
+        <Button
+          color="primary"
+          variant="contained"
+          data-test="submit"
+          onClick={handleComplete}
+          className={classes.formControl}
+        >
+          Complete Audit
+        </Button>
+
+        <Button
+          color="primary"
+          variant="contained"
+          data-test="submit"
+          onClick={handleEmail}
+          className={classes.formControl}
+        >
+          Send Email
+        </Button>
       </Grid>
     </Grid>
   );

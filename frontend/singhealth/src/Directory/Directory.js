@@ -25,14 +25,24 @@ const useStyles = makeStyles((theme) => ({
 export default function Directory() {
   const { token } = useToken();
   const classes = useStyles(useTheme);
+  const [original, setOriginal] = useState(null);
   const [records, setRecords] = useState(null);
   const [loading, setLoading] = useState(true);
   const [openPopup, setOpenPopup] = useState(false);
   const [recordForEdit, setRecordForEdit] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     getAllTenants();
   }, [setRecords]);
+
+  useEffect(() => {
+    if (!loading) {
+      setRecords(original.filter((rec) => {
+        return rec.name.includes(search);
+      }));
+    }
+  }, [search]);
 
   async function getAllTenants() {
     var tenants;
@@ -51,6 +61,7 @@ export default function Directory() {
         console.log(tenants);
 
         setRecords(tenants);
+        setOriginal(tenants);
         setLoading(false);
       })
       .catch((error) => {
@@ -203,7 +214,7 @@ export default function Directory() {
           <Grid item></Grid>
           <Grid item></Grid>
           <Grid item xs={10}>
-            <SearchBar />
+            <SearchBar onChange={(e) => setSearch(e.target.value)}/>
           </Grid>
           <Grid item></Grid>
           <Grid item></Grid>

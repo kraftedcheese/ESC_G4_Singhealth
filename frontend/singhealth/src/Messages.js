@@ -144,10 +144,10 @@ const useStyles = makeStyles((theme) => ({
     const [status,setStatus] = useState(props.status);
     const {token} = useToken();
     const msg = props.msg;
-    const tempissue = localStorage.getItem('issueForMsg');
+    const tempissue = localStorage.getItem('issue');
     const issue = JSON.parse(tempissue);
     const [pending, setPending] = useState(props.status == "pending");
-    console.log(issue);
+    console.log("something", issue);
 
     
     function approveReq(){

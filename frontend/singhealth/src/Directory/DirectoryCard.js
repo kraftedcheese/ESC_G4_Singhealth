@@ -90,7 +90,7 @@ export default function DirectoryCard(props) {
             <ExpandMoreIcon />
           </IconButton>
         }
-        title={props.name}
+        title={props.name + " (" + props.institution + ")"}
         subheader={props.unit}
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>

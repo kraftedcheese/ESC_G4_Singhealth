@@ -84,6 +84,7 @@ const displayDate = (date_string) => {
 function AuditScreenCard(props) {
   const classes = useStyles();
   const history = useHistory();
+  const [color, setColor] = React.useState();
 
   function cardClick(store) {
     //alert(store);
@@ -188,10 +189,16 @@ export default function Home() {
   const { user } = useUser();
   const [audits, setAudits] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [pastAudits, setPastAudits] = useState(false);
 
   useEffect(() => {
     getRole() ? getAllAudits() : getTenantAuditByID();
   }, [setAudits]);
+
+  const handlePastAudits = () => {
+    setPastAudits(true);
+  }
+
 
   async function getAllAudits() {
     var audits;
@@ -278,6 +285,7 @@ export default function Home() {
           data-test="past_audit"
           className={classes.button}
           startIcon={<VisibilityIcon />}
+          onClick={() => handlePastAudits()}
         >
           Past Audits
         </Button>
@@ -292,7 +300,7 @@ export default function Home() {
         className={classes.roundcard}
         elevation={3}
       >
-        <Typography className={classes.typography}>Open Audits</Typography>
+        <Typography className={classes.typography}>{pastAudits ? "Past Audits" : "Open Audits"}</Typography>
         <hr color="#f06d1a" className={classes.hr}></hr>
         { audits ? (
         <Grid container className={classes.gridList}>

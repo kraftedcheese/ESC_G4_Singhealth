@@ -28,20 +28,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CustomizedInputBase() {
+export default function CustomizedInputBase(props) {
+  const {onChange} = props;
   const classes = useStyles();
 
   return (
     <Paper component="form" className={classes.root}>
-      <IconButton className={classes.iconButton} aria-label="filter">
+      {/* <IconButton className={classes.iconButton} aria-label="filter">
         <FilterListRoundedIcon />
-      </IconButton>
+      </IconButton> */}
       <InputBase
         className={classes.input}
         placeholder="Search Directory"
+        onChange={onChange}
         inputProps={{ 'aria-label': 'search directory' }}
       />
-      <IconButton type="submit" className={classes.iconButton} aria-label="search">
+      <IconButton className={classes.iconButton} aria-label="search">
         <SearchIcon />
       </IconButton>
     </Paper>
