@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     },
     timestampLeft:{
       display: 'flex',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       color: '#999',
       fontWeight: '600',
       fontSize: '12px',
@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
     },
     timestampRight:{
       display: 'flex',
-      justifyContent: 'center',
+      justifyContent: 'flex-end',
       color: '#999',
       fontWeight: '600',
       fontSize: '12px',

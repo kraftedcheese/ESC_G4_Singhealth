@@ -40,10 +40,16 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.dark,
   },
-  button: {
+  buttonPast: {
     margin: theme.spacing(2, 4),
     padding: theme.spacing(2, 4),
     borderRadius: "50px",
+  },
+  buttonOpen:{
+    margin: theme.spacing(2, 4),
+    padding: theme.spacing(2, 4),
+    borderRadius: "50px",
+    backgroundColor: theme.palette.primary.dark,
   },
   roundcard: {
     borderRadius: "100px 100px 0px 0px",
@@ -190,13 +196,21 @@ export default function Home() {
   const [audits, setAudits] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pastAudits, setPastAudits] = useState(false);
+  const [showThis,setShow] = useState(0);
 
   useEffect(() => {
     getRole() ? getAllAudits() : getTenantAuditByID();
   }, [setAudits]);
 
   const handlePastAudits = () => {
-    setPastAudits(true);
+    setPastAudits(!pastAudits);
+    console.log(audits[0].all_resolved);
+    if(pastAudits){
+      setShow(0);
+    }else{
+      setShow(1);
+    }
+    
   }
 
 
@@ -273,7 +287,7 @@ export default function Home() {
           variant="contained"
           color="primary"
           data-test="new_audit"
-          className={classes.button}
+          className={classes.buttonPast}
           startIcon={<AddIcon />}
           onClick={() => history.push("/newaudit")}
         >
@@ -283,12 +297,13 @@ export default function Home() {
           variant="contained"
           color="primary"
           data-test="past_audit"
-          className={classes.button}
+          className={!pastAudits ? classes.buttonPast : classes.buttonOpen}
           startIcon={<VisibilityIcon />}
           onClick={() => handlePastAudits()}
         >
           Past Audits
-        </Button>
+        </Button> 
+        
       </Grid>) : (<Grid item xs={12} sm={12} md={12} className={classes.emptyTop} />)
       }
       <Grid
@@ -304,7 +319,7 @@ export default function Home() {
         <hr color="#f06d1a" className={classes.hr}></hr>
         { audits ? (
         <Grid container className={classes.gridList}>
-          {audits.map((audit) => (
+          {audits.filter((audit) => audit.all_resolved == showThis).map((audit) => (
             <AuditScreenCard {...audit} />
           ))}
         </Grid>) : (<Typography variant="h1" className={classes.gridList}>No Open Audits</Typography>)}

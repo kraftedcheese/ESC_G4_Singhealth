@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
     height:200,
   },
   issueCard:{
-    margin: theme.spacing(4,4),
+    margin: theme.spacing(4,0),
   },
   gridList:{
     padding: theme.spacing(4,8),
@@ -100,7 +100,9 @@ function IssueCard(props){
     const [imageLink, setImageLink] = useState("");
     const lastAccessed = parseInt(localStorage.getItem('lastAccessFor'+issueID));
     const [lastAccessTime, setlat] = useState(lastAccessed);
+    var resolved = (props.resolved==1);
     console.log(issueID,lastAccessed)
+
     
     useEffect(()=>{
       getNotifs();
@@ -149,9 +151,8 @@ function IssueCard(props){
       //get card.store then display that in the next page header
     };
     
-
     return(
-    <Grid item xs={10} sm={5} md={3} className={classes.issueCard}>
+    <Grid item xs={12} sm={6} md={4} className={classes.issueCard}>
         <Badge badgeContent={notifs} color="primary">
             <Card className={classes.cardContainer}>
                 <CardActionArea onClick={() => cardClick(props.issue,props.date)}>
@@ -161,9 +162,12 @@ function IssueCard(props){
                         image={imageLink}
                     />}
                     <CardContent>
-                        <Typography gutterBottom variant="h5" component="h2">
+                        {resolved ? <Typography gutterBottom variant="h5" component="h2">
+                            Resolved
+                        </Typography> : <Typography gutterBottom variant="h5" component="h2">
                             {"Due Date: " + dueDate}
-                        </Typography>
+                        </Typography>}
+                        
                         <Typography variant="body2" color="textSecondary" component="p">
                             {props.issue}
                         </Typography>
@@ -213,10 +217,10 @@ function IssueGrid(props){
         <Grid item xs={12} sm={12} md={12}>
             <Typography className={classes.issueCategory}>{props.issueCategory}</Typography>
             <hr color="#f06d1a" className={classes.hr}></hr>
-            <GridList style={{padding: theme.spacing(2)}}>
+            <Grid container className={classes.gridList} style={{padding: theme.spacing(2)}}>
               {props.openIssues.map(issueCard=>
-              <IssueCard date={issueCard.due_date} issue={issueCard.name} issueid={issueCard.issue_id} data={issueCard}/>)}
-            </GridList>
+              <IssueCard date={issueCard.due_date} issue={issueCard.name} issueid={issueCard.issue_id} resolved={issueCard.resolved} data={issueCard}/>)}
+            </Grid>
         </Grid>
     )}
     else{return null;}
@@ -251,9 +255,10 @@ export default function Issues() {
           //alert("hello");
           issues = Object.values(resarr.data);
           console.log(issues);
-          setIssues(issues);
+          //setIssues(issues);
           categoriseIssues(issues);
           setLoading(false);
+          setAuditResolved(issues);
         }
                
       )
@@ -280,6 +285,44 @@ export default function Issues() {
     setmap(categorisedIssues);
   }
 
+  function setAuditResolved(tempIssues){
+    let auditResolved = true;
+    var audit = null;
+    for(let i =0;i<tempIssues.length;i++){
+      //console.log(tempIssues[i].resolved);
+      if (tempIssues[i].resolved == 0){
+        auditResolved = false;
+      }
+    }
+    if(auditResolved){
+      axios.get("http://singhealthdb.herokuapp.com/api/audit/audit_id_param",{
+        params: { secret_token: token, audit_id : audit_id },
+      })
+      .then(
+        resarr=>{
+          audit = Object.values(resarr)[0];
+          console.log(audit);
+          console.log(audit.staff_id);
+          axios.put("http://singhealthdb.herokuapp.com/api/audit/" + audit_id,{
+              "staff_id": audit.staff_id,
+              "tenant_id": audit.tenant_id,
+              "time": audit.time,
+              "score": audit.score,
+              "type": audit.type,
+              "all_resolved": true
+          }, {params: {secret_token: token}})
+            .then(
+              response=>{
+                console.log(response);
+              }   
+            )
+          }
+      )
+      .catch((error) => {
+        console.log(error);
+      });
+  }}
+
   return loading ? (
     <Loading />
   ) : (
@@ -292,7 +335,7 @@ export default function Issues() {
       </Grid>
 
       <Grid item xs={12} sm={12} md={12} component={Paper} className={classes.roundcard} elevation={3}>
-        {console.log(tenantissues)}
+        {console.log(tenantissuesmap)}
         {tenantissuesmap.map(broadIssue => (
             <IssueGrid issueCategory={broadIssue.category} openIssues={broadIssue.data}/>
         ))}

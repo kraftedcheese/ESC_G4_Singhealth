@@ -185,7 +185,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
+var isStaff = null;
+if (localStorage.getItem('token')) {
+  isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
+}
+
 const chat_data = [{
   from_staff: true,
   body: "heyyy this is from the staff",
@@ -226,7 +230,16 @@ function TimeExtReqPopup(props){
   const issue = JSON.parse(localStorage.getItem('issue'));
 
   const changeDate = (e) => {
+    //console.log(props.dueDate);
+    let dateclicked = e.target.value.getTime();
+    console.log(e.target.value);
+    //console.log(dateclicked);
+    if(dateclicked>props.dueDate){
     setDate(e.target.value);
+    }
+    else{
+      alert("Please pick a later date");
+    }
     //alert(e.target.value)
   }
 
@@ -276,7 +289,7 @@ function TimeExtReqPopup(props){
 function ChatBar(props){
   const classes = useStyles(useTheme);
   const { register, handleSubmit, reset } = useForm();
-  const onSubmit = (data) => mehandleSubmit(data); 
+  const onSubmit = (data) => sendMessageText(data); 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const { token } = useToken();
@@ -287,6 +300,7 @@ function ChatBar(props){
   const issue = JSON.parse(localStorage.getItem('issue'));
   const issueID = localStorage.getItem('issueID');
   const checkResolve = props.checkResolve;
+  const history = useHistory();
   console.log(issue);
 
   const handleClose = () => {
@@ -298,33 +312,39 @@ function ChatBar(props){
   },[props.setStateFunction]);
 
 
-  function mehandleSubmit(data){
+  function sendMessageText(data){
     //alert(JSON.stringify(data));
     //messageService.sendMessage(data.messageToSend,isStaff);
     //alert(data.messageToSend.length);
-    axios.post("http://singhealthdb.herokuapp.com/api/message?secret_token="+token,
-      {
-        "issue_id": issueID,
-        "staff_id": 4,
-        "tenant_id": 4,
-        "from_staff": isStaff,
-        "tag": messageTag,
-        "info": "",
-        "body": data.messageToSend,
-        "image": imageToSend
-    }).then((response) => {
-      props.getMsgsFunction();
-      console.log(response);
-      setImageToSend("");
-      setShowImage(false);
-      setImageReady(false);
-      setTag("textonly");
-      reset();
-    }, (error) => {
-      console.log(error);
-    });
-    //messageService.clearMessages();
-    //messageService.defaultMessages();
+
+    let re = /\w/;
+    if(re.exec(data.messageToSend)!=null){
+      axios.post("http://singhealthdb.herokuapp.com/api/message?secret_token="+token,
+        {
+          "issue_id": issueID,
+          "staff_id": 4,
+          "tenant_id": 4,
+          "from_staff": isStaff,
+          "tag": messageTag,
+          "info": "",
+          "body": data.messageToSend,
+          "image": imageToSend
+      }).then((response) => {
+        props.getMsgsFunction();
+        console.log(response);
+        setImageToSend("");
+        setShowImage(false);
+        setImageReady(false);
+        setTag("textonly");
+        reset();
+      }, (error) => {
+        console.log(error);
+      });
+      //messageService.clearMessages();
+      //messageService.defaultMessages();
+    }else{
+      //alert("Message empty");
+    }
   }
 
   function addPhoto(e){
@@ -364,6 +384,7 @@ function ChatBar(props){
     ).then((response)=>{
       console.log(response.data);
       checkResolve();
+      history.push("/issues");
     }).catch(error => {
       console.log(error);
     })
@@ -417,7 +438,7 @@ function ChatBar(props){
               horizontal: 'center',
             }}
           >
-            <TimeExtReqPopup setStateFunction={props.setStateFunction} closePopup={handleClose} getMsgsFunction={props.getMsgsFunction}/>
+            <TimeExtReqPopup setStateFunction={props.setStateFunction} closePopup={handleClose} getMsgsFunction={props.getMsgsFunction} dueDate={props.dueDate}/>
           </Popover>
           <IconButton>
           <label for="uploadmsgpic">
@@ -455,6 +476,10 @@ function Chatroom(props){
     getAllMessages();
   },[setMessages]);
 
+  // const chatTimer = setInterval(() => {
+  //   getAllMessages();
+  // }, 10000);
+
   //get all issues based on audit_id
   async function getAllMessages() {
     console.log("gettingmsgs");
@@ -473,7 +498,9 @@ function Chatroom(props){
         resarr=>{
           //alert("hello");
           tempMsgs = Object.values(resarr.data);
-          setMessages(tempMsgs);
+          if(tempMsgs != messages){
+            setMessages(tempMsgs);
+          }
           console.log(tempMsgs);
           setLoading(false);
         }
@@ -494,7 +521,7 @@ function Chatroom(props){
           <Message type = {message.tag} body={message.body} imagelink={message.image} is_mine={isStaff ? message.from_staff : !message.from_staff} timestamp={message.time} is_staff={isStaff} info={message.info} msg={message} updateDueDate={props.updateDueDate}/>
         ))}
       </Grid>
-      <ChatBar className={classes.chatbar} setStateFunction = {setMessages} getMsgsFunction={getAllMessages} checkResolve={props.checkResolve}/>
+      <ChatBar className={classes.chatbar} setStateFunction = {setMessages} getMsgsFunction={getAllMessages} checkResolve={props.checkResolve} dueDate={props.dueDate}/>
     </Grid>
     
   );
@@ -511,17 +538,25 @@ export default function IssueChat() {
   const [resolved,setResolved] = useState(false);
   var duedate = moment(parseInt(dueDate)).format('Do MMMM YYYY');
 
+  // const dueDateTimer = setInterval(() => {
+  //   checkResolve();
+  //   updateDueDate();
+  // }, 1000);
 
   useEffect(()=>{
     checkResolve()
   },[setResolved])
+
+  // useEffect(()=>{
+  //   updateDueDate()
+  // },[setDueDate])
 
   function checkResolve(){
     axios.get("http://singhealthdb.herokuapp.com/api/issue/issue_id_param",{params:{secret_token:token,issue_id:issueID}})
     .then((resarr)=>{
       console.log(resarr.data);
       console.log(resarr.data.resolved);
-      if(resarr.data.resolved == 1){
+      if(resarr.data.resolved == 1 && resarr.data.resolved != resolved){
         setResolved(true);
       }
     }).catch((error)=>{console.log(error)})
@@ -532,7 +567,9 @@ export default function IssueChat() {
     .then((resarr)=>{
       console.log(resarr.data);
       console.log(resarr.data.due_date);
-      setDueDate(resarr.data.due_date);
+      if(resarr.data.due_date != dueDate){
+        setDueDate(resarr.data.due_date);
+      }
       console.log(dueDate);
       duedate = moment(parseInt(dueDate)).format('Do MMMM YYYY');
     }).catch((error)=>{console.log(error)})
@@ -561,7 +598,7 @@ export default function IssueChat() {
         </Fab>}
       </div>
       <Grid item xs={12} sm={12} md={12} component={Paper} className={classes.roundcard} elevation={3}>
-        <Chatroom checkResolve={checkResolve} updateDueDate={updateDueDate}/>
+        <Chatroom checkResolve={checkResolve} updateDueDate={updateDueDate} dueDate={dueDate}/>
       </Grid>
       {/* <ChatBar/> */}
     </Grid>
