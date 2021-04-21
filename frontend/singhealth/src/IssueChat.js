@@ -185,7 +185,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
+var isStaff = null;
+if (localStorage.getItem('token')) {
+  isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
+}
+
 const chat_data = [{
   from_staff: true,
   body: "heyyy this is from the staff",
