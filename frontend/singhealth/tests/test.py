@@ -248,7 +248,8 @@ class BrowserTest(unittest.TestCase):
         self.logout()
 
     # 2. Staff deleting Tenant
-    def test_4_2_staff_delete_tenant(self):
+    # (Special Case, only run at the end to remove Tenant)
+    def test_7_2_staff_delete_tenant(self):
         # Navigate to home login page
         self.enterHomePage()
         self.loginToPage(self.staffUser["email"], self.staffUser["password"])
@@ -270,6 +271,55 @@ class BrowserTest(unittest.TestCase):
         self.waitAWhile(1)
         self.logout()
         
+    ##########################################
+    # TEST SUITE 5: Audits, Issues
+    ##########################################
+
+    # 1. Staff creating Audit for Tenant (All Ok)
+    def test_5_1_staff_create_audit_all_ok(self):
+        # Navigate to home login page
+        self.enterHomePage()
+        self.loginToPage(self.staffUser["email"], self.staffUser["password"])
+
+        # Check for Staff login page
+        self.checkEnteredLoginPage("Staff")
+        self.waitAWhile()
+
+        # Enter the Directory Page
+        self.enterDirectoryPage()
+        self.waitAWhile()
+
+        # Enter audit page
+        self.enterAudit()
+
+        # Select tenant name
+        self.driver.find_element_by_xpath("//div[@data-test='tenant_select']").click()
+        self.driver.find_element_by_xpath("//li[@data-value='Tenant Two (NCCS)']").click()
+        self.waitAWhile(1)
+
+        # Select F&B Audit
+        self.driver.find_element_by_xpath("//button[@data-test='fnb_nonfnb']").click()
+
+        # Select 'OK' for fields
+        for i in range(0, 34):
+            self.driver.find_element_by_xpath(f"//button[@data-test='{i}ok']").click()
+
+        # Submit audit
+        self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
+        self.waitUntilElementFound("//h3[.='Results']")
+
+        # TODO: Send Email, Download CSV, and then clikc Complete Audit
+
+        self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
+        self.waitAWhile(5)
+
+        # Logout
+        self.clickMenuButton()
+        self.waitAWhile(1)
+        self.logout()
+
+
+
 
     # # Test 1
     # # Test a successful login for Staff User
@@ -561,13 +611,16 @@ class BrowserTest(unittest.TestCase):
         # Wait until we reach the Directory page again
         self.waitUntilElementFound("//h1[.='Directory']")
 
-
     def clickMenuButton(self):
         self.driver.find_element_by_xpath("//button[@data-test='menu']").click()
 
     def enterProfile(self):
         self.driver.find_element_by_xpath("//li[@data-test='profile']").click()
         self.waitUntilElementFound("//h1[.='Profile']")
+
+    def enterAudit(self):
+        self.driver.find_element_by_xpath("//button[@data-test='new_audit']").click()
+        self.waitUntilElementFound("//h1[.='New Audit']")
 
     def logout(self):
         self.driver.find_element_by_xpath("//li[@data-test='logout']").click()
