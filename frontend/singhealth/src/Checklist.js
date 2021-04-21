@@ -119,6 +119,7 @@ export default function Checklist(props) {
       );
 
       data[`${category}`] = {};
+      data[`${category}`].original = issues;
       data[`${category}`].issues = flaggedIssues;
       data[`${category}`].count = count;
       data[`${category}`].total = length;

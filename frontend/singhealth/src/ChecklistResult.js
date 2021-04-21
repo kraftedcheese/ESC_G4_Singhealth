@@ -80,6 +80,14 @@ export default function ChecklistResult() {
   const history = useHistory();
   const { register, handleSubmit, setValue, errors } = useForm();
 
+  const displayDate = (date_string) => {
+    let date = new Date(date_string);
+    let dd = date.getDate();
+    let mm = date.getMonth() + 1;
+    let yyyy = date.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  };
+
   const DisplayData = Object.keys(data.audit).map((category) => (
     <React.Fragment key={category}>
       <Grid item container xs={12} direction="row">
@@ -165,19 +173,10 @@ export default function ChecklistResult() {
     audit.staff_id = user.staff_id;
     audit.tenant_id = data.tenant.tenant_id;
     audit.score = data.score;
-    switch (data.type) {
-      case 0:
-        audit.type = "non_fnb";
-      case 1:
-        audit.type = "fnb";
-      case 2:
-        audit.type = "safe";
-    }
+    if (data.type===0) audit.type = "non_fnb";
+    else if (data.type===1) audit.type = "fnb";
+    else if (data.type===2) audit.type = "safe";
     if (data.score === 100) audit.all_resolved = true;
-
-    // console.log(audit);
-    // let is = makeIssues(0);
-    // console.log(makeMessages(is[0]))
 
     axios
       .post("http://singhealthdb.herokuapp.com/api/audit", audit, {
@@ -229,26 +228,25 @@ export default function ChecklistResult() {
       });
   };
 
+  const handleToCSV = (e) => {
+    e.preventDefault();
+  };
+
   const handleEmail = (e) => {
     e.preventDefault();
 
-    var html = ReactDOMServer.renderToStaticMarkup(Result);
+    var html = ReactDOMServer.renderToStaticMarkup(Email);
 
     var auditType;
 
-    switch (data.type) {
-      case 0:
-        auditType = "Non-F&B Audit";
-      case 1:
-        auditType = "F&B Audit";
-      case 2:
-        auditType = "Safe Management Audit";
-    }
+    if (data.type===0) auditType = "Non-F&B Audit";
+    else if (data.type===1) auditType = "F&B Audit";
+    else if (data.type===2) auditType = "Safe Management Audit";
 
     var email = {
       to: "morontimes@gmail.com",
       subject:
-        auditType + " for " + data.tenant.name + " (" + data.score + "/100)",
+        auditType + " for " + data.tenant.name + " (" + Math.round(data.score) + "/100)",
       text: "This is to notify you of a recent retail audit at your store.",
       html: html,
     };
@@ -267,6 +265,56 @@ export default function ChecklistResult() {
         alert(error);
       });
   };
+
+  const DisplayData2 = Object.keys(data.audit).map((category) => (
+    <React.Fragment key={category}>
+      <Grid item container xs={12} direction="row">
+        <Grid item container direction="column" xs={12}>
+          <h2>
+            {category} ({data.audit[category].count}/
+            {data.audit[category].total})
+          </h2>
+          <hr color="#f06d1a" className={classes.hr}></hr>
+        </Grid>
+
+        <Grid item xs={12}>
+          <h3>Issues</h3>
+        </Grid>
+
+        <Grid item container xs={12} justify="center" direction="row">
+          {Object.entries(data.audit[category].original).map(
+            ([issue, items]) => (
+              <React.Fragment key={issue}>
+                <div>
+                  <h4>{issue} {(items.ok==='true') ? '✓' : 'X'}</h4>
+                  {(items.ok==='false') && (
+                    <div>
+                      <p>Description: {items.desc}</p>
+                      <p>Due: {displayDate(items.due_date)}</p>
+                      <img src={items.image}></img>
+                    </div>
+                  )}
+                </div>
+              </React.Fragment>
+            )
+          )}
+        </Grid>
+      </Grid>
+    </React.Fragment>
+  ));
+
+  const Email = (
+    <div>
+      <h1>Results</h1>
+
+      {DisplayData2}
+
+      <h1>
+        Score: {Math.round(data.score)}/100 -{" "}
+        {data.score > 95 ? "PASSED" : "FAILED"}
+      </h1>
+    </div>
+  );
 
   const Result = (
     <Grid container direction="row">
