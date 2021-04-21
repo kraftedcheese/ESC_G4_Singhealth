@@ -161,7 +161,7 @@ export default function NewAudit() {
               <Select value={currentTenant.name} onChange={handleChange} data-test="tenant_select">
                 {records.map((x) => (
                   <MenuItem key={x.tenant_id} value={x.name} name={x.name}>
-                    {x.name}
+                    {x.name + " (" + x.institution + ")"}
                   </MenuItem>
                 ))}
               </Select>
