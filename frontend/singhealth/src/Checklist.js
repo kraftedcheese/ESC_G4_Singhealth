@@ -147,7 +147,7 @@ export default function Checklist(props) {
       var totalIndex = 0;
       let objChecklist = Object.values(checklist);
       for (var i=1; i<=catIndex; i++){
-        totalIndex += objChecklist[catIndex-1].issues.length;
+        totalIndex += objChecklist[i-1].issues.length;
       }
       return totalIndex + issueIndex;
     }
