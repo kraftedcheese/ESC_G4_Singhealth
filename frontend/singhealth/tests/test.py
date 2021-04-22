@@ -20,10 +20,19 @@ class BrowserTest(unittest.TestCase):
     def setUp(self):
         self.options = Options()
         self.options.headless = not SHOW_BROWSER
+
+        # profile = webdriver.FirefoxProfile()
+
+        # profile.set_preference("browser.download.folderList", 2)
+        # profile.set_preference("browser.download.manager.showWhenStarting", False)
+        # profile.set_preference("browser.download.dir", "/home/songgee/Documents")
+        # profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv,attachment/csv,application/csv")
         # self.options.add_argument("-profile")
         # self.options.add_argument(PROFILE_PATH)
 
         self.driver = webdriver.Firefox(executable_path=WEBDRIVER_PATH, options = self.options)
+        # self.driver = webdriver.Firefox(executable_path=WEBDRIVER_PATH, options = self.options, firefox_profile = profile)
+
 
         # Setup Login Credentials for Tenant and Staff
         self.tenantUser = {
@@ -63,6 +72,7 @@ class BrowserTest(unittest.TestCase):
 
         # Check for Staff login page
         self.checkEnteredLoginPage("Staff")
+        self.waitAWhile(100)
 
         # Logout
         self.clickMenuButton()
@@ -285,16 +295,12 @@ class BrowserTest(unittest.TestCase):
         self.checkEnteredLoginPage("Staff")
         self.waitAWhile()
 
-        # Enter the Directory Page
-        self.enterDirectoryPage()
-        self.waitAWhile()
-
         # Enter audit page
         self.enterAudit()
 
         # Select tenant name
         self.driver.find_element_by_xpath("//div[@data-test='tenant_select']").click()
-        self.driver.find_element_by_xpath("//li[@data-value='Tenant Two (NCCS)']").click()
+        self.driver.find_element_by_xpath("//li[@data-value='Tenant Two']").click()
         self.waitAWhile(1)
 
         # Select F&B Audit
@@ -308,18 +314,68 @@ class BrowserTest(unittest.TestCase):
         self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
         self.waitUntilElementFound("//h3[.='Results']")
 
-        # TODO: Send Email, Download CSV, and then clikc Complete Audit
-
+        # TODO: Send Email, and then click Complete Audit
+        self.clickSendEmailButton()
+        # self.clickDownloadCSVButton()
         self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
-        self.waitAWhile(5)
+        self.clickCompleteAuditButton()
 
         # Logout
         self.clickMenuButton()
         self.waitAWhile(1)
         self.logout()
 
+    # 2. Staff creating Audit for Tenant (At least one Issue)
+    def test_5_2_staff_create_audit_one_issue(self):
+        # Navigate to home login page
+        self.enterHomePage()
+        self.loginToPage(self.staffUser["email"], self.staffUser["password"])
 
+        # Check for Staff login page
+        self.checkEnteredLoginPage("Staff")
+        self.waitAWhile()
 
+        # Enter audit page
+        self.enterAudit()
+
+        # Select tenant name
+        self.driver.find_element_by_xpath("//div[@data-test='tenant_select']").click()
+        self.driver.find_element_by_xpath("//li[@data-value='Tenant Two']").click()
+        self.waitAWhile(1)
+
+        # Select F&B Audit
+        self.driver.find_element_by_xpath("//button[@data-test='fnb_nonfnb']").click()
+
+        # Select 'OK' for fields
+        for i in range(0, 33):
+            self.driver.find_element_by_xpath(f"//button[@data-test='{i}ok']").click()
+
+        self.driver.find_element_by_xpath("//button[@data-test='34not_ok']").click()
+        self.driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+        self.waitAWhile()
+
+        # Select Contract End Date
+        self.driver.find_element_by_xpath("//input[@name='due_date']").clear()
+        self.driver.find_element_by_xpath("//input[@name='due_date']").send_keys("16/09/2021")
+
+        # Insert Description of issue
+        self.driver.find_element_by_xpath("//input[@name='Workplace Safety and Health.Electrical panels / DBs are covered..desc']").send_keys("Exposed electrical panels")
+
+        # Submit audit
+        self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
+        self.waitUntilElementFound("//h3[.='Results']")
+
+        # TODO: Send Email, and then click Complete Audit
+        self.clickSendEmailButton()
+        # self.clickDownloadCSVButton()
+        self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
+        self.clickCompleteAuditButton()
+
+        # Logout
+        self.clickMenuButton()
+        self.waitAWhile(1)
+        self.logout()
+        
 
     # # Test 1
     # # Test a successful login for Staff User
@@ -621,6 +677,27 @@ class BrowserTest(unittest.TestCase):
     def enterAudit(self):
         self.driver.find_element_by_xpath("//button[@data-test='new_audit']").click()
         self.waitUntilElementFound("//h1[.='New Audit']")
+
+    def clickSendEmailButton(self):
+        self.driver.find_element_by_xpath("//button[@data-test='email']").click()
+        self.waitAWhile(2)
+        self.driver.switch_to.alert.accept()
+
+    def clickDownloadCSVButton(self):
+        self.driver.find_element_by_xpath("//button[@data-test='download']").click()
+        self.waitAWhile(2)
+        self.driver.switch_to.alert.dismiss()
+
+    def clickCompleteAuditButton(self):
+        self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
+        self.waitAWhile(2)
+
+        # Handle alert message
+        alertText = self.driver.switch_to.alert.text
+        assert alertText == "Completed submission successfully!"
+        self.driver.switch_to.alert.accept()
+        self.waitAWhile(3)
+
 
     def logout(self):
         self.driver.find_element_by_xpath("//li[@data-test='logout']").click()
