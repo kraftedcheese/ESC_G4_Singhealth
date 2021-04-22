@@ -119,6 +119,7 @@ function AuditScreenCard(props) {
             />
             <CardContent>
               <p>{"ID: " + props.audit_id}</p>
+              <p>{"Type: " + props.type}</p>
               <p>{"Auditor: " + props.staff_id}</p>
               <p>{"Created: " + displayDate(new Date(props.time))}</p>
             </CardContent>

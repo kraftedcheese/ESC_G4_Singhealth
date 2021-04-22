@@ -38,9 +38,11 @@ export default function Directory() {
 
   useEffect(() => {
     if (!loading) {
-      setRecords(original.filter((rec) => {
-        return rec.name.includes(search);
-      }));
+      setRecords(
+        original.filter((rec) => {
+          return rec.name.includes(search);
+        })
+      );
     }
   }, [search]);
 
@@ -53,9 +55,9 @@ export default function Directory() {
       })
       .then((response) => {
         tenants = Object.values(response.data);
-        for (var i = 0; i < tenants.length; i++){
-          if (tenants[i].fnb === 1) (tenants[i].fnb = "true");
-          else (tenants[i].fnb = "false");
+        for (var i = 0; i < tenants.length; i++) {
+          if (tenants[i].fnb === 1) tenants[i].fnb = "true";
+          else tenants[i].fnb = "false";
         }
         console.log("got some tenants");
         console.log(tenants);
@@ -69,7 +71,6 @@ export default function Directory() {
       });
   }
 
-
   async function deleteTenant(tenant) {
     setLoading(true);
 
@@ -78,21 +79,59 @@ export default function Directory() {
     console.log(tenant.email);
 
     await axios
+      .get(
+        `http://singhealthdb.herokuapp.com/api/audit/tenant_id/${tenant.tenant_id}`,
+        {
+          params: { secret_token: token },
+        }
+      )
+      .then((response) => {
+        var audits = Object.values(response.data);
+        axios
+          .all(
+            audits.map((audit) => [
+              axios.delete(
+                `http://singhealthdb.herokuapp.com/api/audit/${audit.audit_id}`,
+                { params: { secret_token: token } }
+              ),
+            ])
+          )
+          .then((response) => {
+            console.log(response);
+            deleteSingleTenant(tenant, token);
+          })
+          .catch((error) => {
+              alert(error);
+          });
+      })
+      .catch((error) => {
+        if (error.response.data.message === "request with params not found") {
+          deleteSingleTenant(tenant, token);
+        } 
+        else alert(error);
+      });
+  }
+
+  async function deleteSingleTenant(tenant, token) {
+    axios
       .all([
-        axios.delete("http://singhealthdb.herokuapp.com/api/tenant/tenant_id_param", {
-          params: { secret_token: token, tenant_id: tenant.tenant_id },
-        }),
-        // axios.delete("http://singhealthdb.herokuapp.com/auth/tenant_delete", {
-        //   email: tenant.email
-        // }),
+        axios.delete(
+          "http://singhealthdb.herokuapp.com/api/tenant/tenant_id_param",
+          {
+            params: {
+              secret_token: token,
+              tenant_id: tenant.tenant_id,
+            },
+          }
+        ),
         axios({
-          method: 'delete',
+          method: "delete",
           url: "http://singhealthdb.herokuapp.com/auth/tenant_delete",
-          headers: {}, 
+          headers: {},
           data: {
             email: tenant.email, // This is the body part
-          }
-        })
+          },
+        }),
       ])
       .then(
         axios.spread((res1, res2) => {
@@ -108,6 +147,7 @@ export default function Directory() {
       )
       .catch((error) => {
         console.log(error);
+        getAllTenants();
       });
   }
 
@@ -214,7 +254,7 @@ export default function Directory() {
           <Grid item></Grid>
           <Grid item></Grid>
           <Grid item xs={10}>
-            <SearchBar onChange={(e) => setSearch(e.target.value)}/>
+            <SearchBar onChange={(e) => setSearch(e.target.value)} />
           </Grid>
           <Grid item></Grid>
           <Grid item></Grid>
@@ -244,7 +284,12 @@ export default function Directory() {
           </Grid>
         </Grid>
 
-        <Fab color="primary" className={classes.fab} data-test="add" aria-label="add">
+        <Fab
+          color="primary"
+          className={classes.fab}
+          data-test="add"
+          aria-label="add"
+        >
           <AddIcon
             onClick={() => {
               setOpenPopup(true);
