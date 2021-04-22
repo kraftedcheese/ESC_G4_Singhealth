@@ -4,6 +4,8 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import ElementClickInterceptedException, NoAlertPresentException, StaleElementReferenceException
+from selenium.webdriver.common.action_chains import ActionChains
 
 import time
 import random
@@ -25,17 +27,28 @@ class BrowserTest(unittest.TestCase):
 
         self.driver = webdriver.Firefox(executable_path=WEBDRIVER_PATH, options = self.options)
 
+        self.actionchains = ActionChains(self.driver)
+
+        # Setup Login Credentials for Tenant and Staff
+        self.tenantUser = {
+            "email": "test@test.com",
+            "password": "password"
+        }
+
+        self.staffUser = {
+            "email": "admin@test.com",
+            "password": "password"
+        }
+
     # Test 1
     # Monkey Testing
     def test_001_monkey(self):
-        loginEmail = "admin@test.com"
-        loginPassword = "password"
 
         # Navigate to home login page
         self.enterHomePage()
 
         # Trigger Login Sequence
-        self.loginToPage(loginEmail, loginPassword)
+        self.loginToPage(self.staffUser["email"], self.staffUser["password"])
 
         # Check for Staff login page
         self.checkEnteredLoginPage("Staff")
@@ -54,16 +67,48 @@ class BrowserTest(unittest.TestCase):
         if SHOW_BROWSER:
             time.sleep(seconds)
 
-    def doMonkey(self, times = 5):
+    def doMonkey(self, times = 50):
         # Find all buttons in current webpage
+        # self.waitAWhile(2)
         buttons = self.driver.find_elements_by_xpath("//button")
         count = 1
 
-        while (count <= 10):
+        while (count <= times):
+        
             button = random.choice(buttons)
-            button.click()
-            self.waitAWhile()
-            buttons = self.driver.find_elements_by_xpath("//button")
+            
+            fileButton = button.find_elements_by_xpath(".//input[@type='file']")
+            
+            if fileButton:
+                continue
+            try:
+                button.click()
+            except ElementClickInterceptedException:
+                try:
+                    # Try to find data-test = "close-popup"
+                    closeButton = self.driver.find_elements_by_xpath("//button[@data-test='close-popup']")
+                    if closeButton:
+                        closeButton[0].click()
+                        continue
+
+                    self.driver.switch_to.alert
+                except NoAlertPresentException:
+                    point = self.driver.find_element_by_tag_name("html")
+                    try:
+                        self.actionchains.move_to_element_with_offset(point, 50, 50).click().perform()
+                    except:
+                        self.driver.execute_script("arguments[0].scrollIntoView(true);", point)
+                        self.actionchains.move_to_element_with_offset(point, 50, 50).click().perform()
+                        
+
+            finally:
+                count += 1
+                print(count)
+                self.waitAWhile(1)
+                buttons = self.driver.find_elements_by_xpath("//button")
+                while not buttons:
+                    buttons = self.driver.find_elements_by_xpath("//button")
+
 
     def waitUntilElementFound(self, xpath):
         # If does not find, a TimeoutException is thrown
@@ -167,4 +212,4 @@ class BrowserTest(unittest.TestCase):
         
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=2)

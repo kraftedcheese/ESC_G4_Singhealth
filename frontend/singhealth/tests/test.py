@@ -72,7 +72,6 @@ class BrowserTest(unittest.TestCase):
 
         # Check for Staff login page
         self.checkEnteredLoginPage("Staff")
-        self.waitAWhile(100)
 
         # Logout
         self.clickMenuButton()
@@ -344,13 +343,13 @@ class BrowserTest(unittest.TestCase):
         self.waitAWhile(1)
 
         # Select F&B Audit
-        self.driver.find_element_by_xpath("//button[@data-test='fnb_nonfnb']").click()
+        self.driver.find_element_by_xpath("//button[@data-test='safe']").click()
 
         # Select 'OK' for fields
-        for i in range(0, 33):
+        for i in range(0, 12):
             self.driver.find_element_by_xpath(f"//button[@data-test='{i}ok']").click()
 
-        self.driver.find_element_by_xpath("//button[@data-test='34not_ok']").click()
+        self.driver.find_element_by_xpath("//button[@data-test='12not_ok']").click()
         self.driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
         self.waitAWhile()
 
@@ -359,7 +358,7 @@ class BrowserTest(unittest.TestCase):
         self.driver.find_element_by_xpath("//input[@name='due_date']").send_keys("16/09/2021")
 
         # Insert Description of issue
-        self.driver.find_element_by_xpath("//input[@name='Workplace Safety and Health.Electrical panels / DBs are covered..desc']").send_keys("Exposed electrical panels")
+        self.driver.find_element_by_xpath("//input[@name='Staff Hygiene & Safe Management Measures.Check with supervisor that all staff record SafeEntry check-in and check-out (Note: Supervisor is accountable for adherence).desc']").send_keys("Exposed electrical panels")
 
         # Submit audit
         self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
@@ -579,7 +578,7 @@ class BrowserTest(unittest.TestCase):
 
     def waitUntilElementFound(self, xpath):
         # If does not find, a TimeoutException is thrown
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, 20).until(
             lambda x: self.driver.find_element_by_xpath(xpath)
         )
 
@@ -696,7 +695,8 @@ class BrowserTest(unittest.TestCase):
         alertText = self.driver.switch_to.alert.text
         assert alertText == "Completed submission successfully!"
         self.driver.switch_to.alert.accept()
-        self.waitAWhile(3)
+        self.waitAWhile(2)
+        self.driver.switch_to.alert.accept()
 
 
     def logout(self):
