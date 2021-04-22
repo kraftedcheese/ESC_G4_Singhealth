@@ -100,6 +100,12 @@ function AuditScreenCard(props) {
     //get card.store then display that in the next page header
   }
 
+  function displayType(type) {
+    if (type === "nonfnb") return "Non-F&B";
+    else if (type === "fnb") return "F&B";
+    else if (type === "safe") return "Safe Management"
+  }
+
   return (
     <Grid item xs={12} sm={5} md={3} className={classes.ascgrid}>
       <Badge badgeContent={props.notifs} color="primary">
@@ -119,6 +125,7 @@ function AuditScreenCard(props) {
             />
             <CardContent>
               <p>{"ID: " + props.audit_id}</p>
+              <p>{"Type: " + displayType(props.type)}</p>
               <p>{"Auditor: " + props.staff_id}</p>
               <p>{"Created: " + displayDate(new Date(props.time))}</p>
             </CardContent>
