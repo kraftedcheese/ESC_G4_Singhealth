@@ -40,7 +40,7 @@ export default function Directory() {
     if (!loading) {
       setRecords(
         original.filter((rec) => {
-          return rec.name.includes(search);
+          return rec.name.toLowerCase().includes(search.toLowerCase());
         })
       );
     }
