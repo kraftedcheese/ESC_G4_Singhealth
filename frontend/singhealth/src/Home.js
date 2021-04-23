@@ -221,6 +221,7 @@ export default function Home() {
         for (var i = 0; i < audits.length; i++) {
           audits[i].tenant_name = user.name;
           audits[i].image_logo = user.image_logo;
+          audits[i].institution = user.institution;
         }
         setAudits(audits);
         console.log(audits);
