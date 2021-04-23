@@ -31,6 +31,8 @@ class BrowserTest(unittest.TestCase):
         # self.options.add_argument(PROFILE_PATH)
 
         self.driver = webdriver.Firefox(executable_path=WEBDRIVER_PATH, options = self.options)
+        self.driver.maximize_window()
+
         # self.driver = webdriver.Firefox(executable_path=WEBDRIVER_PATH, options = self.options, firefox_profile = profile)
 
 
