@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
     minHeight: "100%",
     flexBasis: "auto",
     alignSelf: "flex-end",
+    padding: "0 0 50px 0",
   },
 }));
 

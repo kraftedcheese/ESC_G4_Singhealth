@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     bottom: theme.spacing(5),
     right: theme.spacing(5),
-  },
+  }
 }));
 
 export default function Directory() {
