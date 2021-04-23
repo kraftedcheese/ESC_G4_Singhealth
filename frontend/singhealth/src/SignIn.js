@@ -139,10 +139,16 @@ export default function SignIn() {
       })
       .then((res) => {
         console.log("getting tenant complete");
-        console.log(res.data);
-        setUser(res.data);
-        setLoading(false);
-        history.push("/home");
+        console.log(new Date().getTime());
+        if (res.data[0].contract_date < new Date().getTime()){
+          alert("Your contract has expired!");
+          setLoading(false);
+        }
+        else{
+          setUser(res.data);
+          setLoading(false);
+          history.push("/home");
+        }
       })
       .catch((error) => {
         setLoading(false);
@@ -203,10 +209,6 @@ export default function SignIn() {
               autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth
@@ -220,9 +222,6 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                {/* <Link href="#" variant="body2">
-                  Forgot password?
-                </Link> */}
               </Grid>
             </Grid>
             <Box mt={5}>

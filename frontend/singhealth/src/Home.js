@@ -144,65 +144,6 @@ function AuditScreenCard(props) {
   );
 }
 
-// const audits=[
-//   {
-//     tenant_name: "Coffee Bean",
-//     notifs: 10,
-//     score: 96,
-//   },
-//   {
-//     tenant_name: "Watsons",
-//     notifs: 10,
-//     score: 97,
-//   },
-//   {
-//     tenant_name: "Starbucks",
-//     notifs: 1,
-//     score: 96,
-//   },
-//   {
-//     tenant_name: "NTUC",
-//     notifs: 19,
-//     score: 96,
-//   },
-//   {
-//     tenant_name: "Coffee Bean",
-//     notifs: 10,
-//     score: 96,
-//   },
-//   {
-//     tenant_name: "Coffee Bean",
-//     notifs: 10,
-//     score: 96,
-//   },
-//   {
-//     tenant_name: "Coffee Bean",
-//     notifs: 10,
-//     score: 96,
-//   },
-
-//   {
-//     tenant_name: "Coffee Bean",
-//     notifs: 10,
-//     score: 96,
-//   },
-//   {
-//     tenant_name: "Coffee Bean",
-//     notifs: 10,
-//     score: 96,
-//   },
-//   {
-//     tenant_name: "Coffee Bean",
-//     notifs: 10,
-//     score: 96,
-//   },
-//   {
-//     tenant_name: "Coffee Bean",
-//     notifs: 10,
-//     score: 96,
-//   },
-// ]
-
 export default function Home() {
   const history = useHistory();
   const classes = useStyles(useTheme);
