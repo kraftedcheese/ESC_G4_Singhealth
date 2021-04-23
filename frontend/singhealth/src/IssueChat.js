@@ -311,11 +311,19 @@ function ChatBar(props){
     props.getMsgsFunction();
   },[props.setStateFunction]);
 
+  if (localStorage.getItem('token')) {
+    isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
+  }
+
 
   function sendMessageText(data){
     //alert(JSON.stringify(data));
     //messageService.sendMessage(data.messageToSend,isStaff);
     //alert(data.messageToSend.length);
+
+    if (localStorage.getItem('token')) {
+      isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
+    }
 
     let re = /\w/;
     if(re.exec(data.messageToSend)!=null){

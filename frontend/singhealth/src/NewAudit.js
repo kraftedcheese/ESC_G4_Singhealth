@@ -109,8 +109,8 @@ export default function NewAudit() {
     }
   }
 
-  const getTenant = (name) => {
-    return records.find((tenant) => tenant.name === name);
+  const getTenant = (id) => {
+    return records.find((tenant) => tenant.tenant_id === id);
   };
 
   async function getAllTenants() {
@@ -158,9 +158,9 @@ export default function NewAudit() {
             <Grid item xs={1}></Grid>
             <FormControl className={classes.formControl}>
               <InputLabel>Store</InputLabel>
-              <Select value={currentTenant.name} onChange={handleChange} data-test="tenant_select">
+              <Select value={currentTenant.tenant_id} onChange={handleChange} data-test="tenant_select">
                 {records.map((x) => (
-                  <MenuItem key={x.tenant_id} value={x.name} name={x.name}>
+                  <MenuItem key={x.name} value={x.tenant_id} name={x.name}>
                     {x.name + " (" + x.institution + ")"}
                   </MenuItem>
                 ))}
