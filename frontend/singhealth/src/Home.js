@@ -20,10 +20,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import { Badge, CardActionArea, GridList } from "@material-ui/core";
 import { useHistory } from "react-router";
-import Loading from "./Loading";
-import useToken from "./useToken";
+import Loading from "./Common/Loading";
+import useToken from "./Common/useToken";
 import axios from "axios";
-import useUser from "./useUser";
+import useUser from "./Common/useUser";
 
 const useStyles = makeStyles((theme) => ({
   root: {

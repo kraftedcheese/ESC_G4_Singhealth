@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import useUser from "./useUser";
-import Frame from "./Frame";
-import useToken from "./useToken";
+import useUser from "./Common/useUser";
+import Frame from "./Common/Frame";
+import useToken from "./Common/useToken";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';

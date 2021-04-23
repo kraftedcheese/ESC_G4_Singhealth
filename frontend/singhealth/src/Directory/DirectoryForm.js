@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Grid } from "@material-ui/core";
 import { useForm, Form } from "./useForm";
 import TextField from "@material-ui/core/TextField";
-import RadioGroup from "./RadioGroup";
+import RadioGroup from "../Common/RadioGroup";
 import Button from "./Button";
-import DatePicker from "./DatePicker";
-import Select from "./Select";
+import DatePicker from "../Common/DatePicker";
+import Select from "../Common/Select";
 import * as tenantService from "./tenantService";
-import UploadPhoto from "./UploadPhoto";
+import UploadPhoto from "../Common/UploadPhoto";
 
 const fnbItems = [
   { id: "true", title: "F&B" },

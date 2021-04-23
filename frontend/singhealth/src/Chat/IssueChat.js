@@ -19,11 +19,11 @@ import Message from "./Messages";
 import * as messageService from './messageService';
 import AlarmAddRoundedIcon from '@material-ui/icons/AlarmAddRounded';
 import Popover from '@material-ui/core/Popover';
-import DatePicker from "./Directory/DatePicker";
+import DatePicker from "../Common/DatePicker";
 import moment from 'moment';
-import useToken from "./useToken";
+import useToken from "../Common/useToken";
 import axios from "axios";
-import Loading from "./Loading";
+import Loading from "../Common/Loading";
 
 
 function Copyright() {

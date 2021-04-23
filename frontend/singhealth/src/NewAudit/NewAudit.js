@@ -4,13 +4,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import { useForm } from "react-hook-form";
 import { useData } from "./DataContext";
-import Frame from "./Frame";
+import Frame from "../Common/Frame";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import * as tenantService from "./Directory/tenantService";
 import Checklist from "./Checklist";
 import { DataProvider } from "./DataContext";
 import {
@@ -22,9 +21,9 @@ import {
   Redirect,
 } from "react-router-dom";
 import ChecklistResult from "./ChecklistResult";
-import useToken from "./useToken";
+import useToken from "../Common/useToken";
 import axios from "axios";
-import Loading from "./Loading";
+import Loading from "../Common/Loading";
 import CardMedia from "@material-ui/core/CardMedia";
 import Card from "@material-ui/core/Card";
 import SwitchUI from "@material-ui/core/Switch";
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     width: 200,
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
 }));
 
@@ -78,8 +77,8 @@ export default function NewAudit() {
   useEffect(() => {
     setSafeMgmt(false);
     setType(currentTenant.fnb);
-  }, [currentTenant])
-  
+  }, [currentTenant]);
+
   const handleNextFnb = (e) => {
     e.preventDefault();
     var output = {};
@@ -88,7 +87,7 @@ export default function NewAudit() {
     setValues(output);
     setHasData(true);
     history.push("/newaudit/checklist");
-  }
+  };
 
   const handleNextSafe = (e) => {
     e.preventDefault();
@@ -98,7 +97,7 @@ export default function NewAudit() {
     setValues(output);
     setHasData(true);
     history.push("/newaudit/checklist");
-  }
+  };
 
   const renderType = () => {
     switch (currentTenant.fnb) {
@@ -107,7 +106,7 @@ export default function NewAudit() {
       case 1:
         return "F&B Audit";
     }
-  }
+  };
 
   const getTenant = (id) => {
     return records.find((tenant) => tenant.tenant_id === id);
@@ -158,7 +157,11 @@ export default function NewAudit() {
             <Grid item xs={1}></Grid>
             <FormControl className={classes.formControl}>
               <InputLabel>Store</InputLabel>
-              <Select value={currentTenant.tenant_id} onChange={handleChange} data-test="tenant_select">
+              <Select
+                value={currentTenant.tenant_id}
+                onChange={handleChange}
+                data-test="tenant_select"
+              >
                 {records.map((x) => (
                   <MenuItem key={x.name} value={x.tenant_id} name={x.name}>
                     {x.name + " (" + x.institution + ")"}
@@ -174,19 +177,43 @@ export default function NewAudit() {
               align="center"
               justify="space-evenly"
             >
-              {selected && <Button variant="contained" color="primary" onClick={handleNextFnb} data-test="fnb_nonfnb" className={classes.button}>{renderType()}</Button>}
-              {selected && <Button variant="contained" color="primary" onClick={handleNextSafe} data-test="safe" className={classes.button}>Safe Management Audit</Button>}
+              {selected && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNextFnb}
+                  data-test="fnb_nonfnb"
+                  className={classes.button}
+                >
+                  {renderType()}
+                </Button>
+              )}
+              {selected && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNextSafe}
+                  data-test="safe"
+                  className={classes.button}
+                >
+                  Safe Management Audit
+                </Button>
+              )}
             </Grid>
           </Grid>
           <Grid item container xs={12} direction="column"></Grid>
         </Route>
 
         <Route path={`${path}/checklist/`}>
-          {hasData ? <Checklist/> : <Redirect to="/newaudit"></Redirect>}
+          {hasData ? <Checklist /> : <Redirect to="/newaudit"></Redirect>}
         </Route>
 
         <Route path={`${path}/result`}>
-          {hasData ? <ChecklistResult></ChecklistResult> : <Redirect to="/newaudit"></Redirect>}
+          {hasData ? (
+            <ChecklistResult></ChecklistResult>
+          ) : (
+            <Redirect to="/newaudit"></Redirect>
+          )}
         </Route>
       </Switch>
     </Frame>

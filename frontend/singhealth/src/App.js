@@ -3,16 +3,16 @@ import "./App.css";
 import SignIn from "./SignIn";
 import { ThemeProvider } from "@material-ui/core";
 import theme from "./theme";
-import TaskBar from "./TaskBar";
+import TaskBar from "./Common/TaskBar";
 import Home from "./Home";
 import Directory from "./Directory/Directory";
-import Frame from "./Frame";
-import NewAudit from "./NewAudit";
+import Frame from "./Common/Frame";
+import NewAudit from "./NewAudit/NewAudit";
 import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from "react-router-dom";
-import { DataProvider } from "./DataContext";
-import useToken from "./useToken";
-import Issues from "./Issues";
-import IssueChat from "./IssueChat";
+import { DataProvider } from "./NewAudit/DataContext";
+import useToken from "./Common/useToken";
+import Issues from "./Chat/Issues";
+import IssueChat from "./Chat/IssueChat";
 import Profile from "./Profile";
 
 

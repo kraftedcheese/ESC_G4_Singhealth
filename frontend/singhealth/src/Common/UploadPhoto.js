@@ -1,6 +1,6 @@
 import Button from "@material-ui/core/Button";
 import axios from "axios";
-import useToken from "../useToken";
+import useToken from "./useToken";
 import { useState, useEffect } from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
