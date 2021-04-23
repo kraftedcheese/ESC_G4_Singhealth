@@ -9,10 +9,10 @@ import AddIcon from "@material-ui/icons/Add";
 import * as tenantService from "./tenantService";
 import DirectoryForm from "./DirectoryForm";
 import Popup from "./Popup";
-import Frame from "../Frame";
-import useToken from "../useToken";
+import Frame from "../Common/Frame";
+import useToken from "../Common/useToken";
 import axios from "axios";
-import Loading from "../Loading";
+import Loading from "../Common/Loading";
 
 const useStyles = makeStyles((theme) => ({
   fab: {

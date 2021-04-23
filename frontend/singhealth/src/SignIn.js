@@ -17,10 +17,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import Loading from "./Loading";
+import Loading from "./Common/Loading";
 import tr from "date-fns/esm/locale/tr/index.js";
-import useToken from "./useToken";
-import useUser from "./useUser";
+import useToken from "./Common/useToken";
+import useUser from "./Common/useUser";
 
 function Copyright() {
   return (

@@ -12,8 +12,8 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
-import useToken from "./useToken";
-import useUser from "./useUser";
+import useToken from "../Common/useToken";
+import useUser from "../Common/useUser";
 import ReactDOMServer from "react-dom/server";
 import { ClockView } from "@material-ui/pickers";
 

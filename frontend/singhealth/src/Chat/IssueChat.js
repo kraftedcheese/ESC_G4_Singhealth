@@ -19,11 +19,11 @@ import Message from "./Messages";
 import * as messageService from './messageService';
 import AlarmAddRoundedIcon from '@material-ui/icons/AlarmAddRounded';
 import Popover from '@material-ui/core/Popover';
-import DatePicker from "./Directory/DatePicker";
+import DatePicker from "../Common/DatePicker";
 import moment from 'moment';
-import useToken from "./useToken";
+import useToken from "../Common/useToken";
 import axios from "axios";
-import Loading from "./Loading";
+import Loading from "../Common/Loading";
 
 
 function Copyright() {
@@ -311,11 +311,19 @@ function ChatBar(props){
     props.getMsgsFunction();
   },[props.setStateFunction]);
 
+  if (localStorage.getItem('token')) {
+    isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
+  }
+
 
   function sendMessageText(data){
     //alert(JSON.stringify(data));
     //messageService.sendMessage(data.messageToSend,isStaff);
     //alert(data.messageToSend.length);
+
+    if (localStorage.getItem('token')) {
+      isStaff = JSON.parse(localStorage.getItem('token')).isAdmin;
+    }
 
     let re = /\w/;
     if(re.exec(data.messageToSend)!=null){

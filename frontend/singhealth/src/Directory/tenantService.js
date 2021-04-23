@@ -1,6 +1,6 @@
 //simplest to integrate with backend. simply replace the get/post requests to localstorage to actual REST calls
 import axios from "axios";
-import useToken from "../useToken";
+import useToken from "../Common/useToken";
 
 const KEYS = {
   tenants: "tenants",
