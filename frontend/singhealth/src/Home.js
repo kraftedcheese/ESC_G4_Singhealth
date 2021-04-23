@@ -59,6 +59,14 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(4, 10, 2),
     textAlign: "left",
   },
+  score_passed: {
+    fontSize: "0.875rem",
+    color: "green",
+  },
+  score_failed:{
+    fontSize: "0.875rem",
+    color: "red",
+  },
   hr: {
     margin: theme.spacing(0, 8),
   },
@@ -119,9 +127,9 @@ function AuditScreenCard(props) {
                   src={props.image_logo}
                 ></Avatar>
               }
-              title={props.tenant_name}
+              title={props.tenant_name + " (" + props.institution + ")"}
               // subheader={"Due Date: " + props.date}
-              subheader={"Score: " + props.score}
+              subheader={<Typography className={props.score>=95 ? classes.score_passed : classes.score_failed}>{"Score: "  + props.score }</Typography>}
             />
             <CardContent>
               <p>{"ID: " + props.audit_id}</p>
@@ -245,6 +253,7 @@ export default function Home() {
             );
             audits[i].tenant_name = tenant.name;
             audits[i].image_logo = tenant.image_logo;
+            audits[i].institution = tenant.institution;
           }
           console.log("Home is printing audits");
           console.log(audits);
