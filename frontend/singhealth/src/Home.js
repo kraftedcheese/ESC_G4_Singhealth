@@ -262,7 +262,18 @@ export default function Home() {
           Past Audits
         </Button> 
         
-      </Grid>) : (<Grid item xs={12} sm={12} md={12} className={classes.emptyTop} />)
+      </Grid>) : (<Grid item xs={12} sm={12} md={12} >
+        <Button
+          variant="contained"
+          color="primary"
+          data-test="past_audit"
+          className={!pastAudits ? classes.buttonPast : classes.buttonOpen}
+          startIcon={<VisibilityIcon />}
+          onClick={() => handlePastAudits()}
+        >
+          Past Audits
+        </Button> 
+        </Grid>)
       }
       <Grid
         item
