@@ -53,7 +53,7 @@ class BrowserTest(unittest.TestCase):
         # Check for Staff login page
         self.checkEnteredLoginPage("Staff")
 
-        self.doMonkey()
+        self.doMonkey(20)
 
     # Test 2
     # Protected Routes

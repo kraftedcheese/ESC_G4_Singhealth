@@ -138,7 +138,7 @@ class BrowserTest(unittest.TestCase):
         self.waitAWhile(1)
 
     # 6. Prevent expired Tenant Login
-    def test_1_6_empty_inputs(self):
+    def test_1_6_expired_tenant(self):
         # Navigate to home login page
         self.enterHomePage()
 
@@ -314,7 +314,7 @@ class BrowserTest(unittest.TestCase):
 
         # Select tenant name
         self.driver.find_element_by_xpath("//div[@data-test='tenant_select']").click()
-        self.driver.find_element_by_xpath("//li[@data-value='Tenant Two']").click()
+        self.driver.find_element_by_xpath("//li[@name='Tenant Two']").click()
         self.waitAWhile(1)
 
         # Select F&B Audit
@@ -354,7 +354,7 @@ class BrowserTest(unittest.TestCase):
 
         # Select tenant name
         self.driver.find_element_by_xpath("//div[@data-test='tenant_select']").click()
-        self.driver.find_element_by_xpath("//li[@data-value='Tenant Two']").click()
+        self.driver.find_element_by_xpath("//li[@name='Tenant Two']").click()
         self.waitAWhile(1)
 
         # Select F&B Audit
@@ -374,14 +374,16 @@ class BrowserTest(unittest.TestCase):
 
         # Insert Description of issue
         self.driver.find_element_by_xpath("//input[@name='Staff Hygiene & Safe Management Measures.Check with supervisor that all staff record SafeEntry check-in and check-out (Note: Supervisor is accountable for adherence).desc']").send_keys("Exposed electrical panels")
-
+        self.waitAWhile(10)
         # Submit audit
         self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
         self.waitUntilElementFound("//h3[.='Results']")
 
         # TODO: Send Email, and then click Complete Audit
         self.clickSendEmailButton()
-        # self.clickDownloadCSVButton()
+        self.clickDownloadCSVButton()
+        self.waitAWhile(5)
+
         self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
         self.clickCompleteAuditButton()
 
@@ -422,6 +424,8 @@ class BrowserTest(unittest.TestCase):
 
         emailField.send_keys(email)
         passwordField.send_keys(password)
+
+        self.waitAWhile(2)
 
         # Try to login by clicking submit button
         self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
@@ -511,7 +515,6 @@ class BrowserTest(unittest.TestCase):
     def clickDownloadCSVButton(self):
         self.driver.find_element_by_xpath("//button[@data-test='download']").click()
         self.waitAWhile(2)
-        self.driver.switch_to.alert.dismiss()
 
     def clickCompleteAuditButton(self):
         self.driver.find_element_by_xpath("//button[@data-test='submit']").click()
@@ -523,6 +526,7 @@ class BrowserTest(unittest.TestCase):
         self.driver.switch_to.alert.accept()
         self.waitAWhile(2)
         self.driver.switch_to.alert.accept()
+        self.waitAWhile(2)
 
 
     def logout(self):
