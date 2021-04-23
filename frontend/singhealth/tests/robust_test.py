@@ -55,8 +55,62 @@ class BrowserTest(unittest.TestCase):
 
         self.doMonkey()
 
+    # Test 2
+    # Protected Routes
+    def test_002_routes(self):
 
-        # Quit the webdriver to close the browser window
+        # Navigate to home login page
+        self.enterHomePage()
+
+        # Test for paths which should not be accessed without logging in
+        PROTECTED_PATHS = ["directory", "home", "newaudit", "issues", "issueChat"]
+        for path in PROTECTED_PATHS:
+            new_path = APP_PATH + "/" + path
+            self.driver.get(new_path) # Enter path
+            self.waitAWhile(1)
+            self.assertEqual(self.driver.current_url, "http://localhost:3000/signin", "Route not protected on Signin Screen")
+
+        # Login as Tenant, and test for paths which should not be accessed by Tenant user
+        # Trigger Login Sequence
+        self.loginToPage(self.tenantUser["email"], self.tenantUser["password"])
+
+        # Check for Staff login page
+        self.checkEnteredLoginPage("Tenant")
+        PROTECTED_STAFF_PATHS = ["directory", "newaudit", "newaudit/checklist", "newaudit/result"]
+        for path in PROTECTED_STAFF_PATHS:
+            new_path = APP_PATH + "/" + path
+            self.driver.get(new_path) # Enter path
+            self.waitAWhile(1)
+            self.assertEqual(self.driver.current_url, "http://localhost:3000/home", "Staff Route not protected for Tenant")
+
+        
+
+    # Test 3
+    # XSS Attack
+    def test_003_XSS(self):
+        xss_attack_strings = ["<script>alert(‘XSS’)</script>", \
+                            "javascript:/*--></title></style></textarea></script></xmp><svg/onload='+/\"/+/onmouseover=1/+/[*/[]/+alert(1)//'>",
+                            "<IMG SRC='javascript:alert('XSS');'>",
+                            "<<SCRIPT>alert('XSS');//\<</SCRIPT>",
+                            "<IMG SRC=javascript:alert(&quot;XSS&quot;)>",
+                            "<IMG SRC=' &#14; javascript:alert('XSS');'>",
+                            "<img src=x onerror='&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041'>"]
+
+        # Navigate to home login page
+        self.enterHomePage()
+
+        for string in xss_attack_strings:
+            # Trigger Login Sequence
+            self.loginToPage(string, string)
+
+            self.waitAWhile(1)
+            alert = self.driver.switch_to.alert
+            self.assertEqual(alert.text, "Invalid login fields!")
+            alert.accept()
+    
+
+
+    # Quit the webdriver to close the browser window
     def tearDown(self):
         self.driver.quit()
 
