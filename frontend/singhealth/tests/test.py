@@ -137,6 +137,21 @@ class BrowserTest(unittest.TestCase):
         self.driver.switch_to.alert.accept()
         self.waitAWhile(1)
 
+    # 6. Prevent expired Tenant Login
+    def test_1_6_empty_inputs(self):
+        # Navigate to home login page
+        self.enterHomePage()
+
+        # Login with Expired Tenant's email
+        self.loginToPage("fairprice@unfairprice.com", "password")
+        self.waitAWhile(3)
+
+        alertText = self.driver.switch_to.alert.text
+        assert alertText == "Your contract has expired!", "Alert Text not correct!"
+
+        self.driver.switch_to.alert.accept()
+        self.waitAWhile(1)
+
     ##########################################
     # TEST SUITE 2: Profile
     ##########################################
