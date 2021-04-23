@@ -245,9 +245,8 @@ export default function Directory() {
       <div>
         <Grid
           container
-          item
           xs={12}
-          spacing={2}
+          spacing={0,2}
           direction="column"
           alignItems="center"
         >
@@ -260,11 +259,8 @@ export default function Directory() {
           <Grid item></Grid>
           <Grid
             container
-            item
             xs={12}
             spacing={5}
-            justify="center"
-            alignitems="center"
           >
             {records
               .map((item) => {
@@ -275,8 +271,8 @@ export default function Directory() {
                 };
               })
               .map((store) => (
-                <React.Fragment key={store.id}>
-                  <Grid item xs={12} sm={6} md={4}>
+                <React.Fragment key={store.id} >
+                  <Grid item xs={12} sm={6} md={4} style={{textAlign: "-webkit-center"}}>
                     <DirectoryCard {...store} />
                   </Grid>
                 </React.Fragment>
